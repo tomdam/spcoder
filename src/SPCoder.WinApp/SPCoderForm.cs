@@ -1,0 +1,877 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Forms;
+
+using SPCoder.Autorun;
+using SPCoder.Context;
+using SPCoder.Describer;
+using SPCoder.HelperWindows;
+using AutoRunScriptsForm = SPCoder.Autorun.AutoRunScriptsForm;
+using SPCoder.Utils.Nodes;
+using SPCoder.Windows;
+using System.Reflection;
+using WeifenLuo.WinFormsUI.Docking;
+using FastColoredTextBoxNS;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition;
+using SPCoder.Core.Utils;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using SPCoder.Utils;
+
+namespace SPCoder
+{
+    /// <summary>
+    /// SPCoder main form.
+    /// </summary>
+    /// <author>Damjan Tomic</author>
+    public partial class SPCoderForm : Form
+    {
+        #region Fields
+
+        public SPCoder.Context.Context MyContext = ContextFactory.GetCurrentContext();
+
+        public BaseNode DragedBaseNode;
+        ObjectDescriber describer = new ObjectDescriber();
+
+        private DeserializeDockContent m_deserializeDockContent;
+
+        private Windows.Output m_output;
+        private Windows.Properties m_properties;
+        private Windows.Log m_log;
+
+        public Windows.Context m_context;
+
+        private Windows.ExplorerView m_explorerView;
+        private Windows.GridViewer m_gridviewer;
+        private AutoRunScriptsForm m_autoRun;
+        private DescriberForm m_describer;
+
+        public static SPCoderForm MainForm;
+        FrmSplashScreen splashScreen;
+        #endregion
+
+        #region Properties
+        public Output OutputWindow { get { return m_output; } }
+
+        #endregion
+
+
+        public SPCoderForm(FrmSplashScreen splashScreen)
+        {
+            MainForm = this;
+            InitializeComponent();
+            this.splashScreen = splashScreen;
+
+            //Load modules (MEF)
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+            var d = new DirectoryCatalog(path, "SPCoder.*.dll");
+            var container = new CompositionContainer(d);
+
+            try
+            {
+                container.ComposeParts(this);
+            }
+            catch (Exception exc)
+            {
+                //Log
+            }
+
+
+            //Create all windows
+            m_output = new Windows.Output();
+            m_properties = new Windows.Properties();
+            m_log = new Windows.Log();
+            m_context = new Windows.Context();
+            m_explorerView = new Windows.ExplorerView();
+            m_gridviewer = new Windows.GridViewer();
+            m_autoRun = new AutoRunScriptsForm();
+            m_describer = new DescriberForm();
+
+            this.SpLog = m_log;
+            this.SpOutput = m_output;
+            this.SpGrid = m_gridviewer;
+
+            Application.DoEvents();
+
+            m_deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
+            //dockPanel.Skin = new DockPanelSkin();
+            var theme = new VS2015BlueTheme();
+            //var theme = new VS2015LightTheme();
+            //var theme = new VS2015DarkTheme();
+            
+            this.ReloadDockingSettings(theme);
+
+            Application.DoEvents();
+        }
+
+        public void ReloadDockingSettings(ThemeBase theme)
+        {
+            dockPanel.SuspendLayout(true);
+
+            // In order to load layout from XML, we need to close all the DockContents
+            CloseAllContents();
+
+            this.dockPanel.Theme = theme;
+
+            Assembly assembly = Assembly.GetAssembly(typeof(SPCoderForm));
+
+            String xmlPath = System.IO.Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Config2016\CSharp\DockPanel.xml");
+            dockPanel.LoadFromXml(xmlPath, m_deserializeDockContent);
+
+            //add new code window
+            toolStripButton6_Click(null, null);
+
+            dockPanel.ResumeLayout(true, true);
+        }
+
+        public WeifenLuo.WinFormsUI.Docking.DockPanel DockPanel 
+        {
+            get { return this.dockPanel; }
+        }
+
+        [ImportMany]
+        public List<ModuleDescription> Modules { get; set; }
+
+        private IDockContent GetContentFromPersistString(string persistString)
+        {            
+            if (persistString == typeof(Windows.Properties).ToString())
+                return m_properties;
+            else if (persistString == typeof(Windows.Context).ToString())
+                return m_context;
+            else if (persistString == typeof(Output).ToString())
+                return m_output;
+            else if (persistString == typeof(Log).ToString())
+                return m_log;
+            else if (persistString == typeof(AutoRunScriptsForm).ToString())
+                return m_autoRun;      
+            else if (persistString == typeof(DescriberForm).ToString())
+                return m_describer;
+            else if (persistString == typeof(GridViewer).ToString())
+                return m_gridviewer;
+            else if (persistString == typeof(ExplorerView).ToString())
+                return m_explorerView;
+            else
+            {
+                
+                string[] parsedStrings = persistString.Split(new char[] { ',' });
+                if (parsedStrings.Length != 3)
+                    return null;
+
+                if (parsedStrings[0] != typeof(CSharpCode).ToString())
+                    return null;
+
+                CSharpCode myDoc = new CSharpCode();
+                codeWindows.Add(myDoc);
+
+                if (parsedStrings[1] != string.Empty)
+                    myDoc.FileName = parsedStrings[1];
+                if (parsedStrings[2] != string.Empty)
+                    myDoc.Text = parsedStrings[2];
+
+                return myDoc;
+            }
+        }
+
+        private void CloseAllContents()
+        {
+            // Close all other document windows
+            CloseAllDocuments();
+        }
+
+        private void CloseAllDocuments()
+        {
+            if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
+            {
+                foreach (Form form in MdiChildren)
+                    form.Close();
+            }
+            else
+            {
+                for (int index = dockPanel.Contents.Count - 1; index >= 0; index--)
+                {
+                    if (dockPanel.Contents[index] is IDockContent)
+                    {
+                        IDockContent content = (IDockContent)dockPanel.Contents[index];
+                        content.DockHandler.Close();
+                    }
+                }
+            }
+        }
+
+        private IDockContent FindDocument(string text)
+        {
+            if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
+            {
+                foreach (Form form in MdiChildren)
+                    if (form.Text == text)
+                        return form as IDockContent;
+
+                return null;
+            }
+            else
+            {
+                foreach (IDockContent content in dockPanel.Documents)
+                    if (content.DockHandler.TabText == text)
+                        return content;
+
+                return null;
+            }
+        }
+
+  
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            CSharpCode c = ActiveDocument;
+            if (c != null)
+            {
+                c.ExecuteSelectionCSharp();
+            }            
+        }
+
+     
+        public void LogException(Exception ex)
+        {
+            SPCoderLogging.Logger.Error(ex);
+            m_log.LogError(ex.Message);
+            if (ex.StackTrace != null && !ex.StackTrace.Contains("SPCoder.SPCoderForm.ExecuteScriptCSharp"))
+            {
+                m_log.LogError(ex.StackTrace);
+            }
+            
+            m_log.Show(dockPanel);
+            //MessageBox.Show("An error has occurred during execution of the script:" + ex.Message);
+        }
+
+        public void LogError(string err)
+        {
+            SPCoderLogging.Logger.Error(err);
+            m_log.LogError(err);            
+            m_log.Show(dockPanel);
+            //MessageBox.Show("An error has occurred during execution of the script:" + ex.Message);
+        }
+
+        public void AppendToLog(string text)
+        {            
+            m_log.AppendToLog(text);
+            SPCoderLogging.Logger.Info(text);
+        }
+
+        //public object ExecuteScript(string script)
+        //{
+        //    try
+        //    {
+        //        object result = ironPythonEngine.Execute(script);
+        //        return result;
+        //    }
+        //    catch (Exception exc)
+        //    {
+        //        throw exc;
+        //    }
+        //}
+
+        public object ExecuteScriptCSharp(string script, int timesCalled = 0)
+        {
+            try
+            {
+                //check to see if it is the one liner script and if it ends with ;
+                if (!string.IsNullOrEmpty(script) && script.IndexOf("\n") == -1 && !script.EndsWith(";"))
+                    script += ";";
+
+                if (timesCalled == 0)
+                {
+                    m_output.ClearOutputIfChecked();
+                }
+                
+            ScriptStateCSharp = ScriptStateCSharp == null ? 
+                    CSharpScript.RunAsync(script, ScriptOptions.Default.AddImports("System"), MyContext).Result : 
+                    ScriptStateCSharp.ContinueWithAsync(script)
+                    .Result;
+                //check if this is the executeFile call
+                var execNext = ScriptStateCSharp.GetVariable(SPCoderConstants.SP_CODER_EXECUTE_NEXT);
+                if (execNext != null && execNext.Value != null)
+                {
+                    string codeToExecute = execNext.Value.ToString();
+                    //ScriptStateCSharp.Variables.Remove(execNext);
+                    execNext.Value = null;
+                    //prevent the further recursion
+                    if (timesCalled == 0)
+                    {
+                        ExecuteScriptCSharp(codeToExecute, 1);
+                    }
+                    
+                }
+                return ScriptStateCSharp;
+            }
+            catch (Exception exc)
+            {
+                if (exc != null && exc.InnerException != null)
+                    throw exc.InnerException;
+                else
+                    throw exc;
+            }
+        }
+        
+        delegate object ExecuteScriptDelegate(string script);
+
+     
+        public static ScriptState<object> ScriptStateCSharp = null;
+
+        private void AddItemToContext(object item)
+        {            
+            m_context.AddToContext(item);
+        }
+
+        //This can be called by the user from the script
+        public void AddToContext(object item)
+        {
+
+            m_context.AddToContext(item);
+        }
+
+
+        public void RemoveDataItemFromContext(object objectToRemove)
+        {
+            m_context.RemoveDataItemFromContext(objectToRemove);
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            Application.DoEvents();
+            Init();
+            Application.DoEvents();
+            splashScreen.Hide();
+        }
+
+        private void Init()
+        {
+            this.CenterToScreen();
+
+            Application.DoEvents();
+
+            this.BringToFront();
+
+            ExecuteAutorunScripts();
+
+            //This has been moved to run after the first autorun script, inside the ExecuteAutorunScripts() method
+            //because the main.Connect must be available in the autorun scripts that run after the first one
+            /*
+            m_context.AddToContext(new ContextItem { Data = m_output.RtOutput, Name = "rtTxt", Type = m_output.RtOutput.GetType().ToString() });
+            m_context.AddToContext(new ContextItem { Data = m_log, Name = "spLog", Type = typeof(ISPCoderLog).ToString() });
+            //AddItemToContext(new ContextItem { Data = describer, Name = "describer", Type = describer.GetType().ToString() });
+            m_context.AddToContext(new ContextItem { Data = this, Name = "main", Type = this.GetType().ToString() });
+            */
+
+            splashScreen.turnOffTimer();
+        }
+        
+        public FastColoredTextBox SourceCodeBox
+        {
+            get
+            {
+                Form activeMdi = ActiveMdiChild;
+                FastColoredTextBox tempsbc = null;
+                if (activeMdi != null && activeMdi is CSharpCode)
+                {
+                    foreach (Control cont in activeMdi.Controls)
+                    {
+                        if (cont is FastColoredTextBox)
+                        {
+                            tempsbc = (FastColoredTextBox)cont;
+                            break;
+                        }
+                    }
+                }
+                return tempsbc;
+            }
+        }
+
+        public Windows.CSharpCode ActiveDocument
+        {
+            get
+            {
+                Form activeMdi = ActiveMdiChild;
+                
+                if (activeMdi != null && activeMdi is CSharpCode)
+                {
+                    return activeMdi as CSharpCode;
+                }
+                return null;
+            }
+        }
+
+        public List<string> FilesRegisteredForExecution = new List<string>();
+        private void ExecuteAutorunScripts()
+        {
+            try
+            {
+                List<string> scripts = AutorunScriptUtils.GetAutorunScriptSources();
+                int numOfScripts = 0; // scripts.Count;
+                foreach (string script in scripts)
+                {
+                    try
+                    {
+                       
+                      
+                        ExecuteScriptCSharp(script);
+                     
+                        if (numOfScripts == 0)
+                        {
+                            //m_context.AddToContext(new ContextItem { Data = m_output.RtOutput, Name = "rtTxt", Type = m_output.RtOutput.GetType().ToString() });
+                            //m_context.AddToContext(new ContextItem { Data = m_log, Name = "spLog", Type = typeof(ISPCoderLog).ToString() });
+                            //AddItemToContext(new ContextItem { Data = describer, Name = "describer", Type = describer.GetType().ToString() });
+                            m_context.AddToContext(new ContextItem { Data = this, Name = "main", Type = this.GetType().ToString() });
+                        }
+                        numOfScripts++;
+                    }
+                    catch (Exception ex)
+                    {
+                        //LogException(ex);
+                        //AppendToLog(ex.Message); 
+                        LogError(ex.Message);
+                    }
+                }
+
+                //if a file has been registered for execution during the autorunscripts run (plugin?), run it
+                foreach (string script in FilesRegisteredForExecution)
+                {
+                    try
+                    {
+                        string code = File.ReadAllText(script);
+                        ExecuteScriptCSharp(code);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("Error during execution of FilesRegisteredForExecution: " + script + "; " + ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);                
+            }
+        }
+
+        public Windows.Log SpLog { get; set; }
+        public Windows.Output SpOutput { get; set; }
+
+        public Windows.GridViewer SpGrid { get; set; }
+        public bool AllowClose { get; set; }
+        
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            AllowClose = true;
+            //Here try to close all code windows and if any of them is not closed (cancel is pressed) stop closing the app.
+            //var forms = codeWindows
+
+            foreach (var c in codeWindows.ToArray())
+            {                
+                c.Close();
+                if (!AllowClose)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            String xmlPath = System.IO.Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Config2016\CSharp\DockPanel.xml");
+            dockPanel.SaveAsXml(xmlPath);
+        }
+
+        public void RemoveCodeWindow(CSharpCode code)
+        {
+            if (codeWindows.Contains(code))
+                codeWindows.Remove(code);
+        }
+
+        private void lbContext_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //char c = (Char) Keys.Delete;
+        }
+
+        private void virToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            string name = "New Script " + codeWindows.Count;
+            GenerateNewSourceTab(name, "", null);
+        }
+
+
+        List<CSharpCode> codeWindows = new List<CSharpCode>();
+        /// <summary>
+        /// Creates the new source tab.
+        /// </summary>
+        /// <param name="title">Title of the window</param>
+        /// <param name="source">Source code</param>
+        /// <param name="fullFileName">Full file path</param>
+        public void GenerateNewSourceTab(string title, string source, string fullFileName)
+        {
+            CSharpCode newCode = new CSharpCode();
+            newCode.Source = source;
+            newCode.Title = title;
+            newCode.FullFileName = fullFileName;
+            newCode.FileName = fullFileName;
+            newCode.Show(dockPanel, DockState.Document);
+            codeWindows.Add(newCode);
+        }
+
+        //void Document_ModifiedChanged(object sender, EventArgs e)
+        //{
+        //    if (sender is SyntaxDocument)
+        //    { 
+        //        SyntaxDocument doc = (SyntaxDocument)sender;                
+        //        SyntaxBoxControl sbc = doc.Tag as SyntaxBoxControl;
+        //        if (sbc != null)
+        //        { 
+        //            TabPage tab = (TabPage)sbc.Parent;
+        //            if (!tab.Text.EndsWith("*"))
+        //            {
+        //                tab.Text = tab.Text + "*";
+        //            }
+        //        }
+        //    }            
+        //}
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.FileOk += openFileDialog1_FileOk;
+            fd.ShowDialog(this);            
+        }
+
+        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            OpenFileDialog fd = (OpenFileDialog)sender;
+            string fileName = fd.FileName;
+            //Check if the file is already opened in SPCoder and if it is switch to the tab
+            bool alreadyOpened = false;
+            foreach (CSharpCode window in codeWindows)
+            {
+                string path = window.GetFilePath();
+                if (path != null && path == fileName)
+                {
+                    window.Show(dockPanel, DockState.Document);
+                    alreadyOpened = true;
+                    break;
+                }
+            }
+
+            if (!alreadyOpened)
+            {
+                Stream s = fd.OpenFile();
+                StreamReader tr = new StreamReader(s);
+                string source = tr.ReadToEnd();
+                tr.Close();
+                string title = fd.SafeFileName;
+                string fullFileName = fd.FileName;
+
+                GenerateNewSourceTab(title, source, fullFileName);
+            }
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                a.SaveCurrentCode(true);
+            }   
+        }
+
+        private void SaveCurrentCode()
+        {
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                a.SaveCurrentCode(true);
+            }            
+        }
+        private bool SaveCurrentCode(bool forceOverwrite)
+        { 
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                return a.SaveCurrentCode(forceOverwrite);
+            }
+            return false;
+        }
+      
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateNewSourceTab("New Script *", "", null);
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.FileOk += openFileDialog1_FileOk;
+            fd.ShowDialog(this);      
+        }
+
+        private void btnSaveAs_Click(object sender, EventArgs e)
+        {
+            SaveCurrentCode(false);
+        }
+
+        //private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    TabPage tab = sourceTabs.SelectedTab;
+        //    if (tab.Text.EndsWith("*"))
+        //    {
+        //        DialogResult dialog = MessageBox.Show("Do you want to save script before closing?","Save the script",MessageBoxButtons.YesNoCancel,MessageBoxIcon.Question);
+        //        if (dialog == DialogResult.Yes)
+        //        {
+        //            SaveCurrentCode(false);
+        //            sourceTabs.TabPages.Remove(tab);
+        //        }
+        //        else if (dialog == DialogResult.No)
+        //        {
+        //            sourceTabs.TabPages.Remove(tab);
+        //        }
+        //        //in case of Cancel just continue.
+        //    }
+        //    else
+        //    {
+        //        sourceTabs.TabPages.Remove(tab);
+        //    }
+        //}
+
+        private void btnSaveAsAutoRunScript_Click(object sender, EventArgs e)
+        {
+            SaveAsAutorunScript();
+        }
+
+        private void SaveAsAutorunScript()
+        {
+            //First check if this script has been saved.
+            bool result = SaveCurrentCode(true);
+
+            if (!result)
+            {
+                return;
+            }
+            FastColoredTextBox tempsbc = SourceCodeBox;
+            if (tempsbc == null)
+            {
+                throw new Exception("Cannot find control box control!");
+            }
+            string tempFileName = tempsbc.Tag.ToString();
+
+            //After saving the script add it as autorun script at the last position, and then open the autorun scripts window
+            var currentConfig = AutorunScriptUtils.GetAutorunConfig();
+            int order = (currentConfig.AutoRunScripts == null) ? 1 : currentConfig.AutoRunScripts.Count + 1;
+            var script = new AutorunScriptConfigItem();
+            script.Order = order;
+            script.Path = tempFileName;
+            script.Title = Path.GetFileName(tempFileName);
+
+            currentConfig.AutoRunScripts.Add(script);
+            AutorunScriptUtils.SaveConfig(currentConfig);
+            AppendToLog("Added new autorun script");
+            
+            //AutoRunScriptsForm arsForm = new AutoRunScriptsForm();
+            //arsForm.ShowDialog(this);
+            m_autoRun.Show(dockPanel);
+            m_autoRun.RefreshView();
+            
+        }
+
+        private void propertiesToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void propertiesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cms2TreeView_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void codeWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveCurrentCode(true);
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveCurrentCode(false);
+        }
+
+        private void saveAsAutorunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveAsAutorunScript();
+        }
+
+        private void autorunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_autoRun.Show(dockPanel);
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox box = new AboutBox();
+            box.ShowDialog(this);
+        }
+
+        private void toolStripButton1_Click_1(object sender, EventArgs e)
+        {
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                a.ExecuteSelectionCSharp();
+            }
+        }
+
+        public void Connect(string url)
+        {
+            m_explorerView.Connect(url);
+        }
+
+        public void Connect(string url, string omType, string username, string password)
+        {
+            m_explorerView.Connect(url, omType, username, password);
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            m_properties.Show(dockPanel);
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            m_output.Show(dockPanel);
+        }
+
+        private void toolStripButton7_Click(object sender, EventArgs e)
+        {
+            m_context.Show(dockPanel);
+        }
+
+        public void ShowProperties(object obj)
+        {
+            m_properties.PgEditor.SelectedObject = obj;
+            m_properties.Show(dockPanel);
+        }
+
+        internal void ClearOutput()
+        {
+            m_output.RtOutput.PerformSafely2<RichTextBox> (m => m.Clear(), m_output.RtOutput);
+        }
+
+        internal void Describe(ContextItem item)
+        {
+            m_describer.Describe(item);
+            m_describer.Show(dockPanel, DockState.Document);
+        }
+
+        private void toolStripButtonDescriber_Click(object sender, EventArgs e)
+        {
+            m_describer.Show(dockPanel, DockState.Document);
+        }
+
+        private void toolStripButtonAutorun_Click(object sender, EventArgs e)
+        {
+            m_autoRun.Show(dockPanel);
+        }
+
+        public bool ShouldHighlightInvisibleChars() 
+        {
+            return btInvisibleChars.Checked;
+        }
+
+        private void btInvisibleChars_Click(object sender, EventArgs e)
+        {
+            foreach (CSharpCode tab in codeWindows)
+            {
+                
+                tab.HighlightInvisibleChars();
+            }
+            if (SourceCodeBox != null)
+                SourceCodeBox.Invalidate();
+        }
+
+        internal void CodeFormClosed(CSharpCode code)
+        {
+            codeWindows.Remove(code);
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+        private void btnExplorer_Click(object sender, EventArgs e)
+        {
+            m_explorerView.Show(dockPanel);
+        }
+
+        private void SPCoderForm_FormClosed(object sender, FormClosedEventArgs e)
+        {            
+            Application.Exit();
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            AboutBox box = new AboutBox();
+            box.ShowDialog(this);
+        }
+
+        private void btnViewer_Click(object sender, EventArgs e)
+        {
+            m_gridviewer.Show(dockPanel, DockState.Document);
+        }
+
+        public void ShowGridWindow()
+        {
+            m_gridviewer.Show(dockPanel, DockState.Document);
+        }
+
+        private void tsExecuteAsync_Click(object sender, EventArgs e)
+        {
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                a.ExecuteSelectionCSharp(true);
+            }
+        }
+
+        private void toolStripButton8_Click(object sender, EventArgs e)
+        {
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                a.ExecuteSelectionCSharp(true);
+            }
+        }
+
+        private void toolStripButton8_Click_1(object sender, EventArgs e)
+        {
+            m_log.Show(dockPanel);
+        }
+    }
+}

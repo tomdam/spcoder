@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutorunScriptConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Properties>
+    <ConfigProperty Name="ReplaceWorkingDirectoryInScripts" Value="true" />
+    <ConfigProperty Name="WorkingDirectoryPlaceholder" Value="{{WorkingDirectory}}" />
+    
+  </Properties>
+  <AutoRunScripts>
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>1</Order>
+      <Path>Scripts\CSharp\SPCoderImports.csx</Path>
+      <Title>Base Imports Script</Title>
+    </AutorunScriptConfigItem>
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>2</Order>
+      <Path>Scripts\CSharp\SPBaseLib.csx</Path>
+      <Title>Base Script</Title>
+    </AutorunScriptConfigItem>
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>3</Order>
+      <Path>Scripts\CSharp\SPPluginsScripts.csx</Path>
+      <Title>Base Plugins</Title>
+    </AutorunScriptConfigItem>    
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>4</Order>
+      <Path>Scripts\CSharp\SPAutoConnect.csx</Path>
+      <Title>Base AutoConnect Script</Title>
+    </AutorunScriptConfigItem>    
+  </AutoRunScripts>
+</AutorunScriptConfig>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPCoderConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Properties>
+    <ConfigProperty Name="Active Config" Value="CSharp" />
+    <!--ConfigProperty Name="Images Folder Path" Value="C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\TEMPLATE\IMAGES" /-->
+    <ConfigProperty Name="Images Folder Path" Value="Images\Modules\" />
+  </Properties>
+  <ConfigSections>
+    <Config Name="IronPython">
+      <Properties />
+      <ConfigFiles>
+        <ConfigFile Name="Autorun" Path="Config2016\IronPython\autorun.xml" />
+        <ConfigFile Name="Describer" Path="Config2016\IronPython\describer.xml" />
+        <ConfigFile Name="Editor" Path="Config2016\IronPython\editor.xml" />
+      </ConfigFiles>
+    </Config>
+    <Config Name="CSharp">
+      <Properties />
+      <ConfigFiles>
+        <ConfigFile Name="Autorun" Path="Config2016\CSharp\autorun.xml" />
+        <ConfigFile Name="Describer" Path="Config2016\CSharp\describer.xml" />
+        <ConfigFile Name="Editor" Path="Config2016\CSharp\editor.xml" />
+      </ConfigFiles>
+    </Config>
+  </ConfigSections>
+</SPCoderConfig>

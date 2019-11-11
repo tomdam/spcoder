@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutorunScriptConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Properties />
+  <AutoRunScripts>
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>1</Order>
+      <Path>Scripts\SPCoderImports.py</Path>
+      <Title>Base Imports Script</Title>
+    </AutorunScriptConfigItem>
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>2</Order>
+      <Path>Scripts\SPBaseLib.py</Path>
+      <Title>Base Script</Title>
+    </AutorunScriptConfigItem>
+    <AutorunScriptConfigItem>
+      <Properties />
+      <Order>3</Order>
+      <Path>Scripts\SPAutoConnect.py</Path>
+      <Title>Base AutoConnect Script</Title>
+    </AutorunScriptConfigItem>
+  </AutoRunScripts>
+</AutorunScriptConfig>

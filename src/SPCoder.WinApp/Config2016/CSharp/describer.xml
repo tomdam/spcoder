@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BaseConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Properties>
+    <ConfigProperty Name="Link Format" Value="http://msdn.microsoft.com/en-us/library/{0}(v=office.15).aspx" />
+    <ConfigProperty Name="Editable" Value="false" />
+    <ConfigProperty Name="Max Characters" Value="512" />
+    <ConfigProperty Name="Word Wrap" Value="false" />
+  </Properties>
+</BaseConfig>

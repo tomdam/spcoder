@@ -1,0 +1,18 @@
+﻿<doc>
+  <style name="Green" color="Green" fontStyle="Italic"/>
+  <style name="Blue" color="Blue"/>
+  <style name="Red" color="Red"/>
+  <style name="String" color="Brown"/>
+  <style name="Orange" color="Orange"/>
+  <style name="Class" color="SteelBlue" fontStyle="Bold"/>
+  <style name="Numbers" color="#2b91af"/>
+
+  <rule style="Numbers" options="Multiline">\s*-*[0-9,\.]+\s*</rule>
+  <rule style="Green" options="Multiline">#.*$</rule>
+  <rule style="Blue">\b(and|self|del|from|not|while|as|elif|global|or|with|assert|else|if|pass|yield|break|except|import|print|class|exec|in|raise|continue|finally|is|return|def|for|lambda|try)\b</rule>
+  <rule style="Red">[-{}():=+*/]</rule>
+
+  <rule style="String" options="Multiline">".*?[^\\]"|""|'.*?[^\\]'|''</rule>
+  <rule style="Class" options="Multiline">def.*$</rule>
+ 
+</doc>
