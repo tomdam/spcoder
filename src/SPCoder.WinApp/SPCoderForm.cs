@@ -518,6 +518,8 @@ namespace SPCoder
         public void GenerateNewSourceTab(string title, string source, string fullFileName)
         {
             CSharpCode newCode = new CSharpCode();
+            newCode.Fctb.ContextMenuStrip = cmMain;
+            
             newCode.Source = source;
             newCode.Title = title;
             newCode.FullFileName = fullFileName;
@@ -609,7 +611,7 @@ namespace SPCoder
       
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GenerateNewSourceTab("New Script *", "", null);
+            GenerateNewSourceTab("New Script ", "", null);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -873,5 +875,145 @@ namespace SPCoder
         {
             m_log.Show(dockPanel);
         }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.Cut();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.Copy();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.Paste();
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.Selection.SelectAll();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SourceCodeBox.UndoEnabled)
+                SourceCodeBox.Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SourceCodeBox.RedoEnabled)
+                SourceCodeBox.Redo();
+        }
+
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.ShowFindDialog();
+        }
+
+        private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.ShowReplaceDialog();
+        }
+
+        private void autoIndentSelectedTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.DoAutoIndent();
+        }
+
+        private void commentSelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.InsertLinePrefix("//");
+        }
+
+        private void uncommentSelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SourceCodeBox.RemoveLinePrefix("//");
+        }
+
+        private void cloneLinesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var scb = SourceCodeBox;
+            //expand selection
+            scb.Selection.Expand();
+            //get text of selected lines
+            string text = Environment.NewLine + scb.Selection.Text;
+            //move caret to end of selected lines
+            scb.Selection.Start = scb.Selection.End;
+            //insert text
+            scb.InsertText(text);
+        }
+
+        private void cloneLinesAndCommentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var scb = SourceCodeBox;
+            //start autoUndo block
+            scb.BeginAutoUndo();
+            //expand selection
+            scb.Selection.Expand();
+            //get text of selected lines
+            string text = Environment.NewLine + scb.Selection.Text;
+            //comment lines
+            scb.InsertLinePrefix("//");
+            //move caret to end of selected lines
+            scb.Selection.Start = scb.Selection.End;
+            //insert text
+            scb.InsertText(text);
+            //end of autoUndo block
+            scb.EndAutoUndo();
+        }
+
+        
+        private void tmUpdateInterface_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                var scb = SourceCodeBox;
+                if (scb != null)// && tsFiles.Items.Count > 0)
+                {
+                    var tb = scb;
+                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = tb.UndoEnabled;
+                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = tb.RedoEnabled;
+                    saveToolStripButton.Enabled = tb.IsChanged;
+                    saveAsToolStripButton.Enabled = true;
+                    pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = true;
+                    cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
+                    copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = !tb.Selection.IsEmpty;
+                    printToolStripButton.Enabled = true;
+                }
+                else
+                {
+                    saveToolStripButton.Enabled = false;
+                    saveAsToolStripButton.Enabled = false;
+                    cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
+                    copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = false;
+                    pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = false;
+                    printToolStripButton.Enabled = false;
+                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = false;
+                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = false;
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void printToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (SourceCodeBox != null)
+            {
+                var settings = new PrintDialogSettings();
+                settings.Title = ActiveDocument.Title;
+                settings.Header = "&b&w&b";
+                settings.Footer = "&b&p";
+                SourceCodeBox.Print(settings);
+            }
+        }
+
     }
 }

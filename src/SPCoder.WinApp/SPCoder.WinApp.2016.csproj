@@ -100,7 +100,6 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AdamsLair.TreeViewAdv.1.7.7\lib\net20\Aga.Controls.dll</HintPath>
@@ -327,7 +326,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utils\Globals.cs" />
     <Compile Include="Windows\CSharpCode.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -541,6 +539,8 @@
     <Content Include="Images\Sp1.ico" />
     <Content Include="Images\TaskListWindow.ico" />
     <Content Include="Images\ToolboxWindow.ico" />
+    <None Include="Resources\undo_16x16.png" />
+    <None Include="Resources\redo_16x16.png" />
     <None Include="Images\tsSpinnerButton.Image.gif" />
     <None Include="Images\tsSpinnerButton.Image-small.gif" />
     <Content Include="Images\XmlFile.ico" />
@@ -553,6 +553,16 @@
     <None Include="Scripts\CSharp\SPAutoConnect.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\backward0_16x16.png" />
+    <None Include="Resources\bookmark--plus.png" />
+    <None Include="Resources\box.png" />
+    <None Include="Resources\class_libraries.png" />
+    <None Include="Resources\edit-padding-top.png" />
+    <None Include="Resources\forward_16x16.png" />
+    <None Include="Resources\layer--minus.png" />
+    <None Include="Resources\layer--plus.png" />
+    <None Include="Resources\lightning.png" />
+    <None Include="Resources\property.png" />
     <Content Include="Resources\python.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

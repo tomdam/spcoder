@@ -36,7 +36,10 @@ namespace SPCoder.Utils.Nodes
                 {
                     List list = ((Web)objWeb).Lists.GetByTitle(this.Title);
                     list.Context.Load(list);
-                    list.Context.Load(list.DefaultView);                    
+                    //TODO:
+                    //check this - in sp2010 DefaultView doesn't exist
+                    //use DefaultViewUrl instead in externalopen and copy link
+                    list.Context.Load(list.DefaultView);
                     list.Context.ExecuteQuery();
                     realObject = list;
                     return list;

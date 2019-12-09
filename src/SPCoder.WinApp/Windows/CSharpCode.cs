@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Threading;
 
 namespace SPCoder.Windows
 {
@@ -86,7 +87,9 @@ namespace SPCoder.Windows
             fctb.AddStyle(GrayStyle);
             fctb.AddStyle(BoldStyle);
             fctb.AddStyle(BlueStyle);
-            
+
+            //CSharpSyntaxHighlight(e);
+
 
         }
 
@@ -107,15 +110,18 @@ namespace SPCoder.Windows
         }
 
         private void fctb_TextChanged(object sender, TextChangedEventArgs e)
+        { }
+
+        private void fctb_TextChanged_delayed2(object sender, TextChangedEventArgs e)
         {
-            switch (lang)
-            {
-                case "CSharp (custom highlighter)":
-                    CSharpSyntaxHighlight(e);//custom highlighting
-                    break;
-                default:
-                    break;//for highlighting of other languages, we use built-in FastColoredTextBox highlighter
-            }
+            //switch (lang)
+            //{
+            //    case "CSharp (custom highlighter)":
+            //        CSharpSyntaxHighlight(e);//custom highlighting
+            //        break;
+            //    default:
+            //        break;//for highlighting of other languages, we use built-in FastColoredTextBox highlighter
+            //}
 
             
             string trimmedText = fctb.Text.Trim();
@@ -129,7 +135,7 @@ namespace SPCoder.Windows
                 fctb.AutoIndentNeeded -= fctb_AutoIndentNeeded;
 
                 fctb.OnSyntaxHighlight(new TextChangedEventArgs(fctb.Range));
-            }
+            } else
             //
             if (trimmedText.StartsWith("<!DOCTYPE html") || trimmedText.StartsWith("<html") || trimmedText.StartsWith("<body"))
             {
@@ -295,8 +301,20 @@ namespace SPCoder.Windows
             }
         }
 
+        DateTime lastNavigatedDateTime = DateTime.Now;
         private void fctb_SelectionChangedDelayed(object sender, EventArgs e)
         {
+            //var tb = sender as FastColoredTextBox;
+            //remember last visit time
+            if (fctb.Selection.IsEmpty && fctb.Selection.Start.iLine < fctb.LinesCount)
+            {
+                if (lastNavigatedDateTime != fctb[fctb.Selection.Start.iLine].LastVisit)
+                {
+                    fctb[fctb.Selection.Start.iLine].LastVisit = DateTime.Now;
+                    lastNavigatedDateTime = fctb[fctb.Selection.Start.iLine].LastVisit;
+                }
+            }
+
             fctb.VisibleRange.ClearStyle(SameWordsStyle);
             if (!fctb.Selection.IsEmpty)
                 return;//user selected diapason
@@ -739,7 +757,18 @@ namespace SPCoder.Windows
         protected void CloseCodeWindow()
         {            
             this.Close();
-        }       
+        }
+
+        private void fctb_TextChangedDelayed(object sender, TextChangedEventArgs e)
+        {
+            fctb_TextChanged_delayed2(sender, e);
+            //if (!this.Text.EndsWith("*"))
+            //{
+            //    this.Text += "*";
+            //}
+            //show invisible chars
+            HighlightInvisibleChars(e.ChangedRange);
+        }
     }
 
     internal class DynamicCollection : IEnumerable<AutocompleteItem>
