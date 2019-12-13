@@ -85,7 +85,7 @@ namespace SPCoder.Utils
             string root = callTrail[0];
             Type type = typeof(void);
             //if (SPCoderForm.MainForm.MyContext.Scope.ContainsVariable(root))
-            if (SPCoderForm.MainForm.MyContext.GetContext.ContainsKey(root))
+            //if (SPCoderForm.MainForm.MyContext.GetContext.ContainsKey(root))
             {
                 //object variable = SPCoderForm.MainForm.MyContext.Scope.GetVariable(root);
                 //object variable = SPCoderForm.MainForm.MyContext.GetVariable(root);
@@ -99,6 +99,9 @@ namespace SPCoder.Utils
                 for (int i = 1; i < callTrail.Length; i++)
                 {
                     string current = callTrail[i];
+                    if (string.IsNullOrEmpty(current))
+                        continue;
+
                     if (current.Contains("(")) //Method
                     {
                         try
@@ -118,17 +121,24 @@ namespace SPCoder.Utils
                         {
                             //type = type.GetProperty(current).PropertyType;
                             variable = type.GetProperty(current).GetValue(variable);
-                            type = variable.GetType();
-
+                            if (variable == null)
+                            {
+                                type = ((PropertyInfo)type.GetMember(current)[0]).PropertyType;
+                            }
+                            else
+                            {
+                                type = variable.GetType();
+                            }                            
                         }
                         catch (Exception exc)
-                        {                            
+                        {                    
+                            //check for Non static property requires the target
                         }
                     }
                 }
             }
-            else
-                return new List<string>();
+            //else
+              //  return new List<string>();
 
             IList<string> all = GetProperties(type);
             ((List<string>)all).AddRange(GetMethods(type));

@@ -75,8 +75,6 @@ namespace SPCoder
             this.cutToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.btHighlightCurrentLine = new System.Windows.Forms.ToolStripButton();
-            this.btShowFoldingLines = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.undoStripButton = new System.Windows.Forms.ToolStripButton();
             this.redoStripButton = new System.Windows.Forms.ToolStripButton();
@@ -396,7 +394,7 @@ namespace SPCoder
             this.btInvisibleChars.Image = ((System.Drawing.Image)(resources.GetObject("btInvisibleChars.Image")));
             this.btInvisibleChars.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btInvisibleChars.Name = "btInvisibleChars";
-            this.btInvisibleChars.Size = new System.Drawing.Size(23, 19);
+            this.btInvisibleChars.Size = new System.Drawing.Size(23, 22);
             this.btInvisibleChars.Text = "¶";
             this.btInvisibleChars.Click += new System.EventHandler(this.btInvisibleChars_Click);
             // 
@@ -415,8 +413,6 @@ namespace SPCoder
             this.copyToolStripButton,
             this.pasteToolStripButton,
             this.btInvisibleChars,
-            this.btHighlightCurrentLine,
-            this.btShowFoldingLines,
             this.toolStripSeparator8,
             this.undoStripButton,
             this.redoStripButton,
@@ -484,29 +480,6 @@ namespace SPCoder
             this.pasteToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.pasteToolStripButton.Text = "&Paste";
             this.pasteToolStripButton.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
-            // 
-            // btHighlightCurrentLine
-            // 
-            this.btHighlightCurrentLine.CheckOnClick = true;
-            this.btHighlightCurrentLine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btHighlightCurrentLine.Image = global::SPCoder.Properties.Resources.edit_padding_top;
-            this.btHighlightCurrentLine.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btHighlightCurrentLine.Name = "btHighlightCurrentLine";
-            this.btHighlightCurrentLine.Size = new System.Drawing.Size(23, 22);
-            this.btHighlightCurrentLine.Text = "Highlight current line";
-            this.btHighlightCurrentLine.ToolTipText = "Highlight current line";
-            // 
-            // btShowFoldingLines
-            // 
-            this.btShowFoldingLines.Checked = true;
-            this.btShowFoldingLines.CheckOnClick = true;
-            this.btShowFoldingLines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.btShowFoldingLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btShowFoldingLines.Image = ((System.Drawing.Image)(resources.GetObject("btShowFoldingLines.Image")));
-            this.btShowFoldingLines.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btShowFoldingLines.Name = "btShowFoldingLines";
-            this.btShowFoldingLines.Size = new System.Drawing.Size(23, 22);
-            this.btShowFoldingLines.Text = "Show folding lines";
             // 
             // toolStripSeparator8
             // 
@@ -759,8 +732,6 @@ namespace SPCoder
         private System.Windows.Forms.ToolStripButton cutToolStripButton;
         private System.Windows.Forms.ToolStripButton copyToolStripButton;
         private System.Windows.Forms.ToolStripButton pasteToolStripButton;
-        private System.Windows.Forms.ToolStripButton btHighlightCurrentLine;
-        private System.Windows.Forms.ToolStripButton btShowFoldingLines;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripButton undoStripButton;
         private System.Windows.Forms.ToolStripButton redoStripButton;
