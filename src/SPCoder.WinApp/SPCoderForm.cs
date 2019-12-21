@@ -27,7 +27,7 @@ namespace SPCoder
     /// SPCoder main form.
     /// </summary>
     /// <author>Damjan Tomic</author>
-    public partial class SPCoderForm : Form
+    public partial class SPCoderForm : Form, ISPCoderForm
     {
         #region Fields
 
@@ -258,20 +258,7 @@ namespace SPCoder
             m_log.AppendToLog(text);
             SPCoderLogging.Logger.Info(text);
         }
-
-        //public object ExecuteScript(string script)
-        //{
-        //    try
-        //    {
-        //        object result = ironPythonEngine.Execute(script);
-        //        return result;
-        //    }
-        //    catch (Exception exc)
-        //    {
-        //        throw exc;
-        //    }
-        //}
-
+        
         public object ExecuteScriptCSharp(string script, int timesCalled = 0)
         {
             try
@@ -327,7 +314,6 @@ namespace SPCoder
         //This can be called by the user from the script
         public void AddToContext(object item)
         {
-
             m_context.AddToContext(item);
         }
 
@@ -388,7 +374,7 @@ namespace SPCoder
             }
         }
 
-        public Windows.CSharpCode ActiveDocument
+        public CSharpCode ActiveDocument
         {
             get
             {
@@ -454,10 +440,10 @@ namespace SPCoder
             }
         }
 
-        public Windows.Log SpLog { get; set; }
-        public Windows.Output SpOutput { get; set; }
+        public Log SpLog { get; set; }
+        public Output SpOutput { get; set; }
 
-        public Windows.GridViewer SpGrid { get; set; }
+        public GridViewer SpGrid { get; set; }
         public bool AllowClose { get; set; }
         
 

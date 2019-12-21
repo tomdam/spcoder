@@ -2,6 +2,6 @@
 	
 //main.Connect("SP-Online-site-url", "SharePoint Client O365", "sponlineemail", "sponlinepass");
 
-main.Connect(@"C:\", "File system", null, null);
+//main.Connect(@"C:\", "File system", null, null);
 
 

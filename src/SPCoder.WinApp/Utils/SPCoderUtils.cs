@@ -74,22 +74,28 @@ namespace SPCoder.Utils
             if (obj is IronPython.Runtime.Types.OldInstance)
                 return GetPythonObjectMethods(obj, objName);
             */
+            if (obj != null)
+            {
+                var type = obj.GetType();
+                if (AutocompleteItems.ContainsKey(type))
+                    return AutocompleteItems[type];
+            
             IList<string> all = GetProperties(obj, objName);
             ((List<string>)all).AddRange(GetMethods(obj, objName));
             ((List<string>)all).Sort();
+            AutocompleteItems[type] = all;
             return all;
+            }
+            return new List<string>();
         }
 
         public static IList<string> GetPropertiesAndMethods(string[] callTrail)
         {
             string root = callTrail[0];
             Type type = typeof(void);
-            //if (SPCoderForm.MainForm.MyContext.Scope.ContainsVariable(root))
-            //if (SPCoderForm.MainForm.MyContext.GetContext.ContainsKey(root))
-            {
-                //object variable = SPCoderForm.MainForm.MyContext.Scope.GetVariable(root);
-                //object variable = SPCoderForm.MainForm.MyContext.GetVariable(root);
 
+            try
+            {
                 object variable = SPCoderForm.ScriptStateCSharp.GetVariable(root);
                 if (variable != null)
                     variable = ((Microsoft.CodeAnalysis.Scripting.ScriptVariable)variable).Value;
@@ -112,7 +118,7 @@ namespace SPCoder.Utils
                             variable = null;
                         }
                         catch (Exception exc)
-                        {                            
+                        {
                         }
                     }
                     else//Property
@@ -128,24 +134,32 @@ namespace SPCoder.Utils
                             else
                             {
                                 type = variable.GetType();
-                            }                            
+                            }
                         }
                         catch (Exception exc)
-                        {                    
+                        {
                             //check for Non static property requires the target
                         }
                     }
                 }
             }
-            //else
-              //  return new List<string>();
+            catch (Exception)
+            {
+                //
+            }
+
+            if (AutocompleteItems.ContainsKey(type))
+                return AutocompleteItems[type];
 
             IList<string> all = GetProperties(type);
             ((List<string>)all).AddRange(GetMethods(type));
             ((List<string>)all).Sort();
+            AutocompleteItems[type] = all;
             return all;
              //return GetPropertiesAndMethods(obj, objName);
         }
+
+        public static IDictionary<Type, IList<string>> AutocompleteItems = new Dictionary<Type, IList<string>>();
 
         public static IList<string> GetProperties(object obj, string objName)
         {
