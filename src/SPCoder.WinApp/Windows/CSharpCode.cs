@@ -48,13 +48,15 @@ namespace SPCoder.Windows
             popupMenu.SearchPattern = @"[\w\.:=!<>()]";
             //popupMenu.SearchPattern = @"[\w\.]";
             popupMenu.AllowTabKey = true;
+            popupMenu.AppearInterval = 200;
             //assign DynamicCollection as items source
             popupMenu.Items.SetAutocompleteItems(new DynamicCollection(popupMenu, fctb));
-            
+
             //popupMenu.Items.MaximumSize = new System.Drawing.Size(300, 400);
-            popupMenu.Items.Width = 300;
-            popupMenu.Items.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
+            popupMenu.Items.MaximumSize = new System.Drawing.Size(300, 300);
+            popupMenu.Items.Width = 250;
             
+            popupMenu.Items.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             
             //fctb.OnTextChangedDelayed(fctb.Range);
 
@@ -116,7 +118,8 @@ namespace SPCoder.Windows
                 fctb.AutoIndentNeeded -= fctb_AutoIndentNeeded;
 
                 fctb.OnSyntaxHighlight(new TextChangedEventArgs(fctb.Range));
-            } else
+            }
+            else
             //
             if (trimmedText.StartsWith("<!DOCTYPE html") || trimmedText.StartsWith("<html") || trimmedText.StartsWith("<body"))
             {
@@ -300,7 +303,7 @@ namespace SPCoder.Windows
                 fctb.Tag = value;
             }
         }
-
+        
         public string FileName { get; set; }
 
         Style invisibleCharsStyle = new InvisibleCharsRenderer(Pens.Gray);

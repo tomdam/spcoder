@@ -9,7 +9,7 @@ public void DoShowObjectInGrid(object item)
     main.ShowGridWindow();
 }
 
-//execute plugin classes - mage them ready for usage
+//execute plugin classes - make them ready to use
 List<string> pluginFiles = new List<string>();
 string pluginsDirectoryRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"Scripts\CSharp\Plugins\");
 pluginFiles.Add(pluginsDirectoryRoot + "SPSharePointListItemsGetter.csx");

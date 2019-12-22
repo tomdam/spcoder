@@ -65,5 +65,15 @@ namespace SPCoder.Windows
                 openInExternalAppToolStripMenuItem.Enabled = true;
             }
         }
+
+        private void closeOtherWindowsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SPCoderForm.MainForm.CloseAllCodeWindows(this);
+        }
+
+        private void closeAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SPCoderForm.MainForm.CloseAllCodeWindows(null);
+        }
     }
 }

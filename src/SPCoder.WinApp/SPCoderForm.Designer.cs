@@ -96,6 +96,7 @@ namespace SPCoder
             this.cloneLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cloneLinesAndCommentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tmUpdateInterface = new System.Windows.Forms.Timer(this.components);
+            this.wordWrapStripButton = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iContextBindingSource)).BeginInit();
             this.toolStrip2.SuspendLayout();
@@ -412,6 +413,7 @@ namespace SPCoder
             this.cutToolStripButton,
             this.copyToolStripButton,
             this.pasteToolStripButton,
+            this.wordWrapStripButton,
             this.btInvisibleChars,
             this.toolStripSeparator8,
             this.undoStripButton,
@@ -642,6 +644,17 @@ namespace SPCoder
             this.tmUpdateInterface.Interval = 400;
             this.tmUpdateInterface.Tick += new System.EventHandler(this.tmUpdateInterface_Tick);
             // 
+            // wordWrapStripButton
+            // 
+            this.wordWrapStripButton.CheckOnClick = true;
+            this.wordWrapStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.wordWrapStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.wordWrapStripButton.Name = "wordWrapStripButton";
+            this.wordWrapStripButton.Size = new System.Drawing.Size(23, 22);
+            this.wordWrapStripButton.Text = "W";
+            this.wordWrapStripButton.ToolTipText = "Word wrap";
+            this.wordWrapStripButton.Click += new System.EventHandler(this.wordWrapStripButton_Click);
+            // 
             // SPCoderForm
             // 
             this.AllowDrop = true;
@@ -735,5 +748,6 @@ namespace SPCoder
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripButton undoStripButton;
         private System.Windows.Forms.ToolStripButton redoStripButton;
+        private System.Windows.Forms.ToolStripButton wordWrapStripButton;
     }
 }

@@ -201,6 +201,17 @@ namespace SPCoder
             }
         }
 
+        public void CloseAllCodeWindows(Form keepOpened = null)
+        {
+            foreach (Form form in MdiChildren)
+            {
+                if (form is CSharpCode && form != keepOpened)
+                {
+                    form.Close();
+                }
+            }
+        }
+
         private IDockContent FindDocument(string text)
         {
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
@@ -969,6 +980,7 @@ namespace SPCoder
                     cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
                     copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = !tb.Selection.IsEmpty;
                     printToolStripButton.Enabled = true;
+                    wordWrapStripButton.Checked = tb.WordWrap;
                 }
                 else
                 {
@@ -1001,5 +1013,21 @@ namespace SPCoder
             }
         }
 
+        private void wordWrapStripButton_Click(object sender, EventArgs e)
+        {
+            var scb = SourceCodeBox;
+            if (scb != null)// && tsFiles.Items.Count > 0)
+            {
+                if (wordWrapStripButton.Checked)
+                {
+                    scb.WordWrap = true;
+                    scb.WordWrapMode = WordWrapMode.WordWrapControlWidth;
+                }
+                else
+                {
+                    scb.WordWrap = false;
+                }
+            }
+        }
     }
 }
