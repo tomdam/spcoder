@@ -1,5 +1,4 @@
-﻿//Helper things for showing an object in gridview.
-
+﻿//Helper variable and method, used for showing an object in gridview.
 object objectForGrid = null;
 public void DoShowObjectInGrid(object item)
 {
@@ -9,17 +8,16 @@ public void DoShowObjectInGrid(object item)
     main.ShowGridWindow();
 }
 
-//execute plugin classes - make them ready to use
-List<string> pluginFiles = new List<string>();
-string pluginsDirectoryRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"Scripts\CSharp\Plugins\");
-pluginFiles.Add(pluginsDirectoryRoot + "SPSharePointListItemsGetter.csx");
-pluginFiles.Add(pluginsDirectoryRoot + "SPExcelWorksheetDataGetter.csx");
+//For new plugins to become available, they need to be saved as csx files inside the Plugins directory
 
+//execute plugin classes - make them ready to use
+string pluginsDirectoryRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"Scripts\CSharp\Plugins\");
+List<string> pluginFiles = new DirectoryInfo(pluginsDirectoryRoot)
+                                .GetFiles("*.csx")
+                                .Select(m => m.FullName)
+                                .ToList();
 
 foreach (string pluginFile in pluginFiles)
 {
-    //logger.LogInfo("Registering plugin " + pluginFile);
-    main.FilesRegisteredForExecution.Add(pluginFile);
+     main.FilesRegisteredForExecution.Add(pluginFile);
 }
-
-//listItemGetter.Execute(list);

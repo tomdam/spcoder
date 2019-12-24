@@ -516,7 +516,8 @@ namespace SPCoder
         {
             CSharpCode newCode = new CSharpCode();
             newCode.Fctb.ContextMenuStrip = cmMain;
-            
+            newCode.Fctb.Language = GetLanguageFromFileName(fullFileName);
+
             newCode.Source = source;
             newCode.Title = title;
             newCode.FullFileName = fullFileName;
@@ -525,23 +526,23 @@ namespace SPCoder
             codeWindows.Add(newCode);
         }
 
-        //void Document_ModifiedChanged(object sender, EventArgs e)
-        //{
-        //    if (sender is SyntaxDocument)
-        //    { 
-        //        SyntaxDocument doc = (SyntaxDocument)sender;                
-        //        SyntaxBoxControl sbc = doc.Tag as SyntaxBoxControl;
-        //        if (sbc != null)
-        //        { 
-        //            TabPage tab = (TabPage)sbc.Parent;
-        //            if (!tab.Text.EndsWith("*"))
-        //            {
-        //                tab.Text = tab.Text + "*";
-        //            }
-        //        }
-        //    }            
-        //}
-
+        private Language GetLanguageFromFileName(string fileName)
+        {
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                //get the extension without dot
+                string ext = Path.GetExtension(fileName).Remove(0,1);
+                foreach (Language l in (Language[])Enum.GetValues(typeof(Language)))
+                {
+                    if (l.ToString().ToUpper() == ext.ToUpper())
+                    {
+                        return l;
+                    }
+                }
+            }
+            return Language.CSharp;
+        }
+       
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             OpenFileDialog fd = new OpenFileDialog();
@@ -1027,6 +1028,232 @@ namespace SPCoder
                 {
                     scb.WordWrap = false;
                 }
+            }
+        }
+
+        private void autorunToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            m_autoRun.Show(dockPanel);
+        }
+
+        private void contextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_context.Show(dockPanel);
+        }
+
+        private void describerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_describer.Show(dockPanel);
+        }
+
+        private void explorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_explorerView.Show(dockPanel);
+        }
+
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_log.Show(dockPanel);
+        }
+
+        private void outputToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_output.Show(dockPanel);
+        }
+
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_properties.Show(dockPanel);
+        }
+
+        private void viewerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_gridviewer.Show(dockPanel);
+        }
+
+        private void newToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            toolStripButton6_Click(null, null);
+        }
+
+        private void openToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            toolStripButton2_Click(null, null);
+        }
+
+        private void saveToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            toolStripButton4_Click(null, null);
+        }
+
+        private void saveAsToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            btnSaveAs_Click(null, null);
+        }
+
+        private void saveAsAutorunToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            SaveAsAutorunScript();
+        }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            printToolStripButton_Click(null, null);
+        }
+
+        private void changeLanguage_Click(object sender, EventArgs e)
+        {
+            if (SourceCodeBox != null)
+            {
+                //set language
+                string lang = (sender as ToolStripMenuItem).Text;
+                var fctb = SourceCodeBox;
+                
+                fctb.ClearStylesBuffer();
+                fctb.Range.ClearStyle(StyleIndex.All);
+                //InitStylesPriority();
+                //fctb.AutoIndentNeeded -= fctb_AutoIndentNeeded;
+                //
+                switch (lang)
+                {
+                    case "CSharp": fctb.Language = Language.CSharp; break;
+                    case "VB": fctb.Language = Language.VB; break;
+                    case "HTML": fctb.Language = Language.HTML; break;
+                    case "XML": fctb.Language = Language.XML; break;
+                    case "SQL": fctb.Language = Language.SQL; break;
+                    case "PHP": fctb.Language = Language.PHP; break;
+                    case "JS": fctb.Language = Language.JS; break;
+                    case "JSON": fctb.Language = Language.JSON; break;
+                }
+                fctb.OnSyntaxHighlight(new TextChangedEventArgs(fctb.Range));
+            }
+        }
+        private void cSharpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void hTMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void jSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void jSONToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void vBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void xMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void pHPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void sQLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage_Click(sender, e);
+        }
+
+        private void languageToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            if (SourceCodeBox != null)
+            {
+                string lang = SourceCodeBox.Language.ToString().ToUpper();
+
+                foreach (ToolStripMenuItem mi in languageToolStripMenuItem.DropDownItems)
+                {
+                    mi.Checked = mi.Text.ToUpper() == lang;
+                }
+            }
+            else
+            {
+                foreach (ToolStripMenuItem mi in languageToolStripMenuItem.DropDownItems)
+                {
+                    mi.Checked = false;
+                }
+            }
+        }
+
+        private void formatToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            if (SourceCodeBox != null)
+            {
+                paragraphToolStripMenuItem.Checked = btInvisibleChars.Checked;
+                wordWrapToolStripMenuItem.Checked = SourceCodeBox.WordWrap;
+            }
+            else
+            {
+                foreach (ToolStripMenuItem mi in languageToolStripMenuItem.DropDownItems)
+                {
+                    mi.Checked = false;
+                }
+            }
+        }
+
+        private void paragraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btInvisibleChars.Checked = !btInvisibleChars.Checked;
+            btInvisibleChars_Click(sender, e);
+        }
+
+        private void wordWrapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            wordWrapStripButton.Checked = !wordWrapStripButton.Checked;
+            wordWrapStripButton_Click(sender, e);
+        }
+
+        private void undoToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            undoToolStripMenuItem_Click(sender, e);
+        }
+
+        private void redoToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            redoToolStripMenuItem_Click(sender, e);
+        }
+
+        private void cutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            cutToolStripMenuItem_Click(sender, e);
+        }
+
+        private void copyToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            copyToolStripMenuItem_Click(sender, e);
+        }
+
+        private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            pasteToolStripMenuItem_Click(sender, e);
+        }
+
+        private void findToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (SourceCodeBox != null)
+            {
+                SourceCodeBox.ShowFindDialog();
+            }
+        }
+
+        private void replaceToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (SourceCodeBox != null)
+            {
+                SourceCodeBox.ShowReplaceDialog();
             }
         }
     }

@@ -2,7 +2,10 @@
 using OfficeOpenXml;
 using System.IO;
 
-
+/// <summary>
+/// SPCoder plugin that reads the first sheet of an excel file and shows the data in SPCoder's viewer.
+/// This plugin can be extended by adding the popup window for setting the order of the sheet.
+/// </summary>
 public class SPExcelWorksheetDataGetter : BasePlugin
 {
     public SPExcelWorksheetDataGetter()

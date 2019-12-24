@@ -1,6 +1,8 @@
 ﻿using SPCoder.Core.Plugins;
 
-
+/// <summary>
+/// SPCoder plugin that reads the items from SharePoint list and shows the data in SPCoder's viewer.
+/// </summary>
 public class SPSharePointListItemsGetter : BasePlugin
 {
     public SPSharePointListItemsGetter()
@@ -46,8 +48,10 @@ public class SPSharePointListItemsGetter : BasePlugin
             DataRow row = dt.NewRow();
             foreach (var key in it.FieldValues.Keys)
             {
-                row[key] = it.FieldValues[key];
-
+                if (it.FieldValues[key] != null)
+                {
+                    row[key] = it.FieldValues[key];
+                }
             }
             dt.Rows.Add(row);
         }

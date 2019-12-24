@@ -24,7 +24,8 @@ namespace SPCoder.Windows
 
         public AutocompleteMenu popupMenu;
 
-        string lang = "CSharp (custom highlighter)";
+        //string lang = "CSharp (custom highlighter)";
+        string lang = "CSharp";
 
         //styles
 
@@ -107,37 +108,9 @@ namespace SPCoder.Windows
 
         private void fctb_TextChanged_delayed2(object sender, TextChangedEventArgs e)
         {
-            string trimmedText = fctb.Text.Trim();
-            if (trimmedText.StartsWith("<?xml"))
-            {
-                fctb.Language = Language.XML;
-
-                fctb.ClearStylesBuffer();
-                fctb.Range.ClearStyle(StyleIndex.All);
-                InitStylesPriority();
-                fctb.AutoIndentNeeded -= fctb_AutoIndentNeeded;
-
-                fctb.OnSyntaxHighlight(new TextChangedEventArgs(fctb.Range));
-            }
-            else
-            //
-            if (trimmedText.StartsWith("<!DOCTYPE html") || trimmedText.StartsWith("<html") || trimmedText.StartsWith("<body"))
-            {
-                fctb.Language = Language.HTML;
-
-                fctb.ClearStylesBuffer();
-                fctb.Range.ClearStyle(StyleIndex.All);
-                InitStylesPriority();
-                fctb.AutoIndentNeeded -= fctb_AutoIndentNeeded;
-
-                fctb.OnSyntaxHighlight(new TextChangedEventArgs(fctb.Range));
-            }
-
             if (errorRange != null)
             {
                 e.ChangedRange.ClearStyle(RedErrorStyle);
-                //errorRange.ClearStyle(RedErrorStyle);
-                //errorRange = null;
             }
 
             e.ChangedRange.ClearStyle(LinkStyle);
@@ -176,7 +149,7 @@ namespace SPCoder.Windows
             }*/
         }
 
-       DateTime lastNavigatedDateTime = DateTime.Now;
+        DateTime lastNavigatedDateTime = DateTime.Now;
         private void fctb_SelectionChangedDelayed(object sender, EventArgs e)
         {
             //var tb = sender as FastColoredTextBox;
