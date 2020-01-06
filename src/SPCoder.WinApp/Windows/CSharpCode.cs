@@ -152,6 +152,8 @@ namespace SPCoder.Windows
         DateTime lastNavigatedDateTime = DateTime.Now;
         private void fctb_SelectionChangedDelayed(object sender, EventArgs e)
         {
+            //update icons - enabled/disabled
+            SPCoderForm.MainForm.UpdateMenuButtons();
             //var tb = sender as FastColoredTextBox;
             //remember last visit time
             if (fctb.Selection.IsEmpty && fctb.Selection.Start.iLine < fctb.LinesCount)
@@ -461,10 +463,15 @@ namespace SPCoder.Windows
                     SPCoderForm.MainForm.AllowClose = false;
                     return;
                 }
-                else if (result == DialogResult.Yes)                
+                else if (result == DialogResult.Yes)
                 {
                     SaveCurrentCode(true);                    
                 }
+            }
+            //add to history
+            if (fctb != null && fctb.Tag != null)
+            {
+                SPCoderForm.MainForm.AddRecentMenuItem(fctb.Tag.ToString());
             }
             SPCoderForm.MainForm.RemoveCodeWindow(this);
         }
@@ -483,6 +490,13 @@ namespace SPCoder.Windows
             //}
             //show invisible chars
             HighlightInvisibleChars(e.ChangedRange);
+            SPCoderForm.MainForm.UpdateMenuButtons();
+        }
+
+       
+        private void CSharpCode_Activated_1(object sender, EventArgs e)
+        {
+            SPCoderForm.MainForm.UpdateMenuButtons();
         }
     }
 

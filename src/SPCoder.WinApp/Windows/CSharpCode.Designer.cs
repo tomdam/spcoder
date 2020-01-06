@@ -91,6 +91,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CSharpCode";
             this.Text = "CSharpCode";
+            this.Activated += new System.EventHandler(this.CSharpCode_Activated_1);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Code_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Code_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();

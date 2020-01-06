@@ -1,0 +1,41 @@
+{
+  "code": {
+    "languages": {
+      "csharp": [
+        "cs",
+        "csx"
+      ],
+      "html": [
+        "htm",
+        "html"
+      ],
+      "js": [
+        "js"
+      ],
+      "json": [
+        "json"
+      ],
+      "vb": [
+        "vb"
+      ],
+      "xml": [
+        "xml",
+        "config"
+      ],
+      "php": [
+        "php"
+      ],
+      "sql": [
+        "sql"
+      ]
+    },
+    "windows": [
+    ],
+    "history": [
+    ]
+  },
+  "explorer": {
+    "address": "c:\\",
+    "plugin": "File system"
+  }
+}

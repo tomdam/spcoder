@@ -34,5 +34,11 @@
 
         public const string SP_CODER_EXECUTE_NEXT = "__SP_CODER_EXECUTE_NEXT__";
 
+        public const string SP_SETTINGS_CODE = "code";
+        public const string SP_SETTINGS_WINDOWS = "windows";
+        public const string SP_SETTINGS_PATH = "path";
+        public const string SP_SETTINGS_LANGUAGES = "languages";
+        public const string SP_SETTINGS_HISTORY = "history";
+
     }
 }

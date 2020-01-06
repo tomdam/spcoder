@@ -1,7 +1,5 @@
 ﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-//using Microsoft.SharePoint;
-//using Microsoft.SharePoint.Client;
 using SPCoder.Config;
 using SPCoder.Core.Utils;
 using SPCoder.Utils;
@@ -92,8 +90,8 @@ namespace SPCoder.Windows
             {
                 SPCoderForm.MainForm.AppendToLog("Before connecting to: " + siteUrl);
                 Application.DoEvents();
-                BaseNode rootNode = null;
-                ObjectModelType objectModelType = ObjectModelType.LOCAL;
+                //BaseNode rootNode = null;
+                //ObjectModelType objectModelType = ObjectModelType.LOCAL;
                 BaseConnector connector = null;
 
                 string selectedType = omType;
@@ -128,13 +126,10 @@ namespace SPCoder.Windows
                 imagesUrlFolder = Path.GetFullPath(imagesUrlFolder);
 
                 //Now create tree view stuff;
-                //Ovo uradi u posebnom thread-u
                 GetSPStructureDelegate getStructureScript = new GetSPStructureDelegate(GetStructureAndDrawTree);
                 //execScript(script);                
-                //disable-uj dugme connect
-                //toolStripButton1.Enabled = false;
+                //disable connect button
                 btnConnect.Enabled = false;
-                //tsSpinnerButton.Visible = true;
                 btnSpinner.Visible = true;
                 getStructureScript.BeginInvoke(siteUrl, connector, null, null);
 
@@ -184,9 +179,7 @@ namespace SPCoder.Windows
             }
             catch (Exception exc)
             {
-                //toolStripButton1.Enabled = true;
                 btnConnect.Enabled = true;
-                //tsSpinnerButton.Visible = false;
                 btnSpinner.Visible = false;
                 SPCoderForm.MainForm.LogException(exc);
             }
@@ -205,19 +198,14 @@ namespace SPCoder.Windows
                 {
                     SPCoderForm.MainForm.AppendToLog("Creating tree view.");
                     tvSp.BeginUpdate();
-                    //CreateAllTreeViewNodes(rootNode, ObjectModelType.LOCAL);
                     CreateAllTreeViewNodes(rootNode, rootNode.OMType);
                     tvSp.EndUpdate();
-                    //toolStripButton1.Enabled = true;
                     btnConnect.Enabled = true;
-                    //tsSpinnerButton.Visible = false;
                     btnSpinner.Visible = false;
                 }
                 catch (Exception exc)
                 {
-                    //toolStripButton1.Enabled = true;
                     btnConnect.Enabled = true;
-                    //tsSpinnerButton.Visible = false;
                     btnSpinner.Visible = false;
                     SPCoderForm.MainForm.LogException(exc);
                 }
@@ -268,20 +256,8 @@ namespace SPCoder.Windows
             client.Dispose();
         }
 
-        /*private void CreateTreeViewNodeChildren(Node tvNode, BaseNode node, ObjectModelType objectModelType)
-        {
-            SPTreeViewNode myNode = CreateNode(node.Title, node.IconPath, node, objectModelType);
-            myNode.Parent = tvNode;
-
-            tvNode.Nodes.Add(myNode);
-            foreach (BaseNode child in node.Children)
-            {
-                CreateTreeViewNodeChildren(myNode, child, objectModelType);
-            }
-        }*/
-
         Dictionary<string, Bitmap> images = new Dictionary<string, Bitmap>();
-        //For image files fetching 
+        //For fetching images
         WebClient client;
 
         private SPTreeViewNode CreateNode(string tekst, string imageUrl, BaseNode o, ObjectModelType modelType)
@@ -314,8 +290,6 @@ namespace SPCoder.Windows
                             string localImagePath = Path.Combine(localImagesFolder, imageUrl);
                             if (!File.Exists(localImagePath))
                             {
-                                //string remoteImagePath = Path.Combine(o.RootNode.Url, o.RootNode.NodeConnector.ImagesPath, imageUrl);
-                                //string remoteImagePath = Path.Combine(o.RootNode.NodeConnector.ImagesPath, imageUrl);
                                 string remoteImagePath = Path.Combine(o.NodeConnector.ImagesPath, imageUrl);
                                 using (var stream = client.OpenRead(remoteImagePath))
                                 {
@@ -361,7 +335,7 @@ namespace SPCoder.Windows
                         }
                     }
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     //SPCoderForm.MainForm.LogException(exc);
                 }
@@ -395,7 +369,7 @@ namespace SPCoder.Windows
             }
             catch (Exception exc)
             {
-                //this can happen when user tries to drop object to source window
+                //this can happen when user tries to drop object to a window different than context
                 SPCoderForm.MainForm.LogException(exc);
             }
         }
@@ -492,7 +466,7 @@ namespace SPCoder.Windows
                     {
                         var oldImage = ((Node)e.Node.Tag).Image;
                         ((Node)e.Node.Tag).Image = Resources.tsSpinnerButton_Image_small; // btnSpinner.Image;
-                        SPCoderForm.MainForm.AppendToLog("Expanding " + node.Url);
+                        //SPCoderForm.MainForm.AppendToLog("Expanding " + node.Url);
                         SPCoderForm.MainForm.AppendToLog("Retrieving data " + node.Url);
                         var newNode = node.RootNode.NodeConnector.ExpandNode(node);
                         SPCoderForm.MainForm.AppendToLog("Data retrieved " + node.Url);
@@ -563,12 +537,6 @@ namespace SPCoder.Windows
                         }
 
                         tvContextMenu.Show(tvSp, p);
-                    }
-                    //string source = node.GetDefaultSource();
-                    
-                    //if (source != null)
-                    {
-                        //SPCoderForm.MainForm.GenerateNewSourceTab(node.Title, source, null);
                     }
                 }
             }
@@ -667,9 +635,7 @@ namespace SPCoder.Windows
                         {
                             action.Plugin.Execute(valueObject);
                         }
-
                         break;
-
                 }
             }
         }

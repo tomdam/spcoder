@@ -328,6 +328,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utils\ISPCoderForm.cs" />
+    <Compile Include="Utils\SPCoderSettings.cs" />
     <Compile Include="Windows\CSharpCode.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -447,6 +448,9 @@
     <EmbeddedResource Include="Resources\XML.syn" />
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Config2016\settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -583,7 +587,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)SPCoder.2016.config $(TargetDir)SPCoder.2016.exe.config /y</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

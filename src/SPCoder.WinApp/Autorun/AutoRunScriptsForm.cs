@@ -97,6 +97,7 @@ namespace SPCoder.Autorun
         {
             //Open the Config file in the New Script window on main Form
             var rows = dataGridView1.SelectedRows;
+            //TODO: Here check if any cell is selected, and not just the whole row
             if (rows != null && rows.Count == 1)
             {
                 //Get the row, calculate absolute path of the script and open it in main window

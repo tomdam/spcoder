@@ -51,6 +51,7 @@ namespace SPCoder
 
         public static SPCoderForm MainForm;
         FrmSplashScreen splashScreen;
+        public string DefaultTitle = "SPCoder";
         #endregion
 
         #region Properties
@@ -72,6 +73,7 @@ namespace SPCoder
 
             try
             {
+                //this will import the Modules/Connectors from all SPCoder dlls
                 container.ComposeParts(this);
             }
             catch (Exception exc)
@@ -101,11 +103,17 @@ namespace SPCoder
             var theme = new VS2015BlueTheme();
             //var theme = new VS2015LightTheme();
             //var theme = new VS2015DarkTheme();
-            
+
+            SPCoderSettings.ReadSettings();
+
             this.ReloadDockingSettings(theme);
 
+            AddHistoryToRecentMenu();
+            
             Application.DoEvents();
         }
+
+
 
         public void ReloadDockingSettings(ThemeBase theme)
         {
@@ -120,11 +128,108 @@ namespace SPCoder
 
             String xmlPath = System.IO.Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Config2016\CSharp\DockPanel.xml");
             dockPanel.LoadFromXml(xmlPath, m_deserializeDockContent);
+            
+            //load files that were open during the previous run
+            LoadFilesThatWerePreviouslyOpen();
+
+            dockPanel.ResumeLayout(true, true);
 
             //add new code window
             toolStripButton6_Click(null, null);
+        }
 
-            dockPanel.ResumeLayout(true, true);
+        public void LoadFilesThatWerePreviouslyOpen()
+        {
+            var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+            var windows = (System.Collections.ArrayList)codeSettings[SPCoderConstants.SP_SETTINGS_WINDOWS];
+            foreach (Dictionary<string, object> w in windows)
+            {
+                string path = w[SPCoderConstants.SP_SETTINGS_PATH].ToString();
+                if (!System.IO.Path.IsPathRooted(path))
+                {
+                    path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), path);
+                }
+                if (!System.IO.File.Exists(path))
+                {
+                    SPCoderForm.MainForm.LogError("File " + path + " does not exist");
+                    continue;
+                }
+                
+                string source = System.IO.File.ReadAllText(path);
+                string title = System.IO.Path.GetFileName(path);
+                string fullFileName = path;
+
+                GenerateNewSourceTab(title, source, fullFileName);
+            }
+        }
+
+        protected void AddHistoryToRecentMenu()
+        {
+            var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+            var history = (System.Collections.ArrayList)codeSettings[SPCoderConstants.SP_SETTINGS_HISTORY];
+            foreach (Dictionary<string, object> h in history)
+            {
+                string path = h[SPCoderConstants.SP_SETTINGS_PATH].ToString();
+                if (!System.IO.Path.IsPathRooted(path))
+                {
+                    path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), path);
+                }
+                AddRecentMenuItem(path);
+            }
+        }
+
+        public void AddRecentMenuItem(string path)
+        {
+            //check if it is already in history
+            foreach (ToolStripMenuItem it in recentToolStripMenuItem.DropDownItems)
+            {
+                if (it.Tag.ToString() == path)
+                    return;
+            }
+
+            //remove last one if there are already 15 entries
+            if (recentToolStripMenuItem.DropDownItems.Count == 15)
+            {
+                var it = recentToolStripMenuItem.DropDownItems[0];
+                //remove it from the history also
+                SPCoderSettings.RemovePathFromHistory(it.Tag.ToString());
+                recentToolStripMenuItem.DropDownItems.RemoveAt(0);
+            }
+
+            var item = recentToolStripMenuItem.DropDownItems.Add(path);
+            SPCoderSettings.AddPathToHistory(path);
+
+            item.Tag = path;
+            item.Click += RecentMenuItemClick;
+        }
+
+        private void RecentMenuItemClick(object sender, EventArgs e)
+        {
+            var item = (ToolStripItem)sender;
+            string path = item.Tag.ToString();
+            if (!System.IO.File.Exists(path))
+            {
+                LogError("File " + path + " does not exist");
+                return;
+            }
+
+            string source = System.IO.File.ReadAllText(path);
+            string title = System.IO.Path.GetFileName(path);
+            string fullFileName = path;
+
+            GenerateNewSourceTab(title, source, fullFileName);
+        }
+
+        public void SetTitle(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                this.Text = this.DefaultTitle;
+            }
+            else
+            {
+                this.Text = this.DefaultTitle + " - " + path;
+            }
         }
 
         public WeifenLuo.WinFormsUI.Docking.DockPanel DockPanel 
@@ -132,6 +237,10 @@ namespace SPCoder
             get { return this.dockPanel; }
         }
 
+        /// <summary>
+        /// Used by MEF to dynamicaly load all ModuleDescription classes from dll files stored in the same directory where
+        /// the exe application is located.
+        /// </summary>
         [ImportMany]
         public List<ModuleDescription> Modules { get; set; }
 
@@ -186,7 +295,7 @@ namespace SPCoder
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
                 foreach (Form form in MdiChildren)
-                    form.Close();
+                    CloseCodeWindow(form);
             }
             else
             {
@@ -207,9 +316,24 @@ namespace SPCoder
             {
                 if (form is CSharpCode && form != keepOpened)
                 {
-                    form.Close();
+                    CloseCodeWindow(form);
                 }
             }
+        }
+
+        protected void CloseCodeWindow(Form form)
+        {
+            //AddPathToHistory
+            if (form is CSharpCode)
+            {
+                CSharpCode f = (CSharpCode)form;
+                
+                if (f.FullFileName != null)
+                {
+                    SPCoderSettings.AddPathToHistory(f.FullFileName.ToString());
+                }
+            }
+            form.Close();
         }
 
         private IDockContent FindDocument(string text)
@@ -463,18 +587,28 @@ namespace SPCoder
             AllowClose = true;
             //Here try to close all code windows and if any of them is not closed (cancel is pressed) stop closing the app.
             //var forms = codeWindows
-
+            SPCoderSettings.ClearOpenedWindows();
             foreach (var c in codeWindows.ToArray())
-            {                
-                c.Close();
+            {
+                CSharpCode f = (CSharpCode)c;
+                if (f.FullFileName != null)
+                {
+                    SPCoderSettings.AddPathToOpenedWindows(f.FullFileName.ToString());
+                }
+
+                CloseCodeWindow(c);
+                //c.Close();
                 if (!AllowClose)
                 {
                     e.Cancel = true;
                     return;
                 }
             }
+            
             String xmlPath = System.IO.Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Config2016\CSharp\DockPanel.xml");
             dockPanel.SaveAsXml(xmlPath);
+            //save settings
+            SPCoderSettings.SaveSettings();
         }
 
         public void RemoveCodeWindow(CSharpCode code)
@@ -528,19 +662,30 @@ namespace SPCoder
 
         private Language GetLanguageFromFileName(string fileName)
         {
+            Language lang = Language.CSharp;
             if (!string.IsNullOrEmpty(fileName))
             {
                 //get the extension without dot
+                bool found = false;
                 string ext = Path.GetExtension(fileName).Remove(0,1);
                 foreach (Language l in (Language[])Enum.GetValues(typeof(Language)))
                 {
                     if (l.ToString().ToUpper() == ext.ToUpper())
                     {
-                        return l;
+                        lang = l;
+                        found = true;
+                        break;
                     }
                 }
+
+                if (!found)
+                {
+                    //try to get the extension from the settings
+                    return SPCoderSettings.GetLanguageFromExtension(ext);
+                }
             }
-            return Language.CSharp;
+
+            return lang;
         }
        
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -964,8 +1109,7 @@ namespace SPCoder
             scb.EndAutoUndo();
         }
 
-        
-        private void tmUpdateInterface_Tick(object sender, EventArgs e)
+        public void UpdateMenuButtons()
         {
             try
             {
@@ -973,27 +1117,38 @@ namespace SPCoder
                 if (scb != null)// && tsFiles.Items.Count > 0)
                 {
                     var tb = scb;
-                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = tb.UndoEnabled;
-                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = tb.RedoEnabled;
-                    saveToolStripButton.Enabled = tb.IsChanged;
-                    saveAsToolStripButton.Enabled = true;
-                    pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = true;
-                    cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
-                    copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = !tb.Selection.IsEmpty;
-                    printToolStripButton.Enabled = true;
+                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = undoToolStripMenuItem1.Enabled = tb.UndoEnabled;
+                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = redoToolStripMenuItem1.Enabled = tb.RedoEnabled;
+                    saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = tb.IsChanged;
+                    saveAsToolStripButton.Enabled = saveAsToolStripMenuItem.Enabled = true;
+                    saveAsAutorunToolStripMenuItem.Enabled = btnSaveAsAutoRunScript.Enabled = true;
+                    //pasteToolStripButton.Enabled = 
+                    pasteToolStripMenuItem.Enabled = pasteToolStripMenuItem1.Enabled = true;
+                    //cutToolStripButton.Enabled = 
+                    cutToolStripMenuItem.Enabled = cutToolStripMenuItem1.Enabled =
+                    //copyToolStripButton.Enabled = 
+                    copyToolStripMenuItem.Enabled = copyToolStripMenuItem1.Enabled = !tb.Selection.IsEmpty;
+                    printToolStripButton.Enabled = printToolStripMenuItem.Enabled = true;
                     wordWrapStripButton.Checked = tb.WordWrap;
+                    findToolStripMenuItem1.Enabled = true;
+                    replaceToolStripMenuItem1.Enabled = true;
                 }
                 else
                 {
-                    saveToolStripButton.Enabled = false;
-                    saveAsToolStripButton.Enabled = false;
-                    cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
-                    copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = false;
-                    pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = false;
-                    printToolStripButton.Enabled = false;
-                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = false;
-                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = false;
-                    
+                    saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
+                    saveAsToolStripButton.Enabled = saveAsToolStripMenuItem.Enabled = false;
+                    saveAsAutorunToolStripMenuItem.Enabled = btnSaveAsAutoRunScript.Enabled = false;
+                    //cutToolStripButton.Enabled = 
+                    cutToolStripMenuItem.Enabled = cutToolStripMenuItem1.Enabled =
+                    //copyToolStripButton.Enabled = 
+                    copyToolStripMenuItem.Enabled = copyToolStripMenuItem1.Enabled = false;
+                    //pasteToolStripButton.Enabled = 
+                    pasteToolStripMenuItem.Enabled = pasteToolStripMenuItem1.Enabled = false;
+                    printToolStripButton.Enabled = printToolStripMenuItem.Enabled = false;
+                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = undoToolStripMenuItem1.Enabled = false;
+                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = redoToolStripMenuItem1.Enabled = false;
+                    findToolStripMenuItem1.Enabled = false;
+                    replaceToolStripMenuItem1.Enabled = false;
                 }
             }
             catch (Exception ex)
@@ -1256,5 +1411,73 @@ namespace SPCoder
                 SourceCodeBox.ShowReplaceDialog();
             }
         }
+
+        private void closeAllCodeWindowsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CloseAllCodeWindows();
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ActiveMdiChild is CSharpCode)
+            {
+                ActiveMdiChild.Close();
+            }
+        }
+
+        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            //if (SourceCodeBox != null)
+            //{
+            //    foreach (ToolStripMenuItem mi in editToolStripMenuItem.DropDownItems)
+            //    {
+            //        mi.Enabled = true;
+            //    }
+            //}
+            //else
+            //{
+            //    foreach (ToolStripMenuItem mi in editToolStripMenuItem.DropDownItems)
+            //    {
+            //        mi.Enabled = false;
+            //    }
+            //}
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void SPCoderForm_MdiChildActivate(object sender, EventArgs e)
+        {
+            Form window = ((Form)sender).ActiveMdiChild;
+            if (window == null)
+            {
+                SPCoderForm.MainForm.SetTitle(null);
+                return;
+            }
+
+            if (window is CSharpCode)
+            {
+                CSharpCode w = (CSharpCode)window;
+                if (w.Fctb != null && w.Fctb.Tag != null)
+                {
+                    SPCoderForm.MainForm.SetTitle(w.Fctb.Tag.ToString());
+                }
+                else
+                {
+                    SPCoderForm.MainForm.SetTitle(window.Text);
+                }
+            }
+            else
+            {
+                SPCoderForm.MainForm.SetTitle(window.Text);
+            }
+        }
+
+        //private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    Application.Exit();
+        //}
     }
 }
