@@ -33,8 +33,6 @@
             this.tvSp = new Aga.Controls.Tree.TreeViewAdv();
             this._nodeStateIcon = new Aga.Controls.Tree.NodeControls.NodeStateIcon();
             this._nodeTextBox = new Aga.Controls.Tree.NodeControls.NodeTextBox();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.cbObjectModelType = new System.Windows.Forms.ToolStripComboBox();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.btnSpinner = new System.Windows.Forms.ToolStripButton();
             this.btnConnect = new System.Windows.Forms.ToolStripButton();
@@ -43,7 +41,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip2.SuspendLayout();
+            this.cbObjectModelType = new System.Windows.Forms.ComboBox();
             this.toolStrip3.SuspendLayout();
             this.tvContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -56,19 +54,23 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tvSp.AutoRowHeight = true;
             this.tvSp.BackColor = System.Drawing.SystemColors.Window;
+            this.tvSp.ColumnHeaderHeight = 0;
             this.tvSp.DefaultToolTipProvider = null;
             this.tvSp.DisplayDraggingNodes = true;
             this.tvSp.DragDropMarkColor = System.Drawing.Color.Black;
+            this.tvSp.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.tvSp.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
             this.tvSp.LineColor = System.Drawing.SystemColors.ControlDark;
             this.tvSp.LoadOnDemand = true;
-            this.tvSp.Location = new System.Drawing.Point(0, 78);
+            this.tvSp.Location = new System.Drawing.Point(0, 75);
             this.tvSp.Model = null;
             this.tvSp.Name = "tvSp";
             this.tvSp.NodeControls.Add(this._nodeStateIcon);
             this.tvSp.NodeControls.Add(this._nodeTextBox);
+            this.tvSp.NodeFilter = null;
             this.tvSp.SelectedNode = null;
             this.tvSp.ShowNodeToolTips = true;
-            this.tvSp.Size = new System.Drawing.Size(372, 394);
+            this.tvSp.Size = new System.Drawing.Size(372, 397);
             this.tvSp.TabIndex = 1;
             this.tvSp.Text = "tvSp";
             this.tvSp.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvSp_ItemDrag_1);
@@ -91,28 +93,12 @@
             this._nodeTextBox.LeftMargin = 3;
             this._nodeTextBox.ParentColumn = null;
             // 
-            // toolStrip2
-            // 
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cbObjectModelType});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 20);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(372, 25);
-            this.toolStrip2.TabIndex = 2;
-            this.toolStrip2.Text = "toolStrip2";
-            // 
-            // cbObjectModelType
-            // 
-            this.cbObjectModelType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbObjectModelType.Name = "cbObjectModelType";
-            this.cbObjectModelType.Size = new System.Drawing.Size(180, 25);
-            // 
             // toolStrip3
             // 
             this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnSpinner,
             this.btnConnect});
-            this.toolStrip3.Location = new System.Drawing.Point(0, 45);
+            this.toolStrip3.Location = new System.Drawing.Point(0, 47);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.Size = new System.Drawing.Size(372, 25);
             this.toolStrip3.TabIndex = 3;
@@ -141,9 +127,10 @@
             // txtUrl
             // 
             this.txtUrl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtUrl.Location = new System.Drawing.Point(0, 0);
             this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(372, 20);
+            this.txtUrl.Size = new System.Drawing.Size(372, 23);
             this.txtUrl.TabIndex = 4;
             this.txtUrl.Text = "http://localhost";
             // 
@@ -154,25 +141,39 @@
             this.downloadToolStripMenuItem,
             this.viewToolStripMenuItem});
             this.tvContextMenu.Name = "tvContextMenu";
-            this.tvContextMenu.Size = new System.Drawing.Size(153, 92);
+            this.tvContextMenu.Size = new System.Drawing.Size(129, 70);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.openToolStripMenuItem.Text = "Open";
             // 
             // downloadToolStripMenuItem
             // 
             this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
-            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.downloadToolStripMenuItem.Text = "Download";
             // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.viewToolStripMenuItem.Text = "View";
+            // 
+            // cbObjectModelType
+            // 
+            this.cbObjectModelType.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cbObjectModelType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbObjectModelType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbObjectModelType.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbObjectModelType.FormattingEnabled = true;
+            this.cbObjectModelType.ItemHeight = 16;
+            this.cbObjectModelType.Location = new System.Drawing.Point(0, 23);
+            this.cbObjectModelType.MaxDropDownItems = 20;
+            this.cbObjectModelType.Name = "cbObjectModelType";
+            this.cbObjectModelType.Size = new System.Drawing.Size(372, 24);
+            this.cbObjectModelType.TabIndex = 5;
             // 
             // ExplorerView
             // 
@@ -180,7 +181,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(372, 471);
             this.Controls.Add(this.toolStrip3);
-            this.Controls.Add(this.toolStrip2);
+            this.Controls.Add(this.cbObjectModelType);
             this.Controls.Add(this.txtUrl);
             this.Controls.Add(this.tvSp);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -189,8 +190,6 @@
             this.Name = "ExplorerView";
             this.Text = "Explorer";
             this.Load += new System.EventHandler(this.ExplorerView_Load);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
             this.tvContextMenu.ResumeLayout(false);
@@ -203,8 +202,6 @@
         private Aga.Controls.Tree.TreeViewAdv tvSp;
         private Aga.Controls.Tree.NodeControls.NodeTextBox _nodeTextBox;
         private Aga.Controls.Tree.NodeControls.NodeStateIcon _nodeStateIcon;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripComboBox cbObjectModelType;
         private System.Windows.Forms.ToolStrip toolStrip3;
         private System.Windows.Forms.ToolStripButton btnConnect;
         private System.Windows.Forms.ToolStripButton btnSpinner;
@@ -213,5 +210,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ComboBox cbObjectModelType;
     }
 }
