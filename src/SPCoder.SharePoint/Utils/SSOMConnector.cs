@@ -21,8 +21,9 @@ namespace SPCoder.Utils
         {            
             SPSite site = new SPSite(siteUrl);
             BaseNode rootNode = new SPSiteNode(site);
-            rootNode.OMType = ObjectModelType.SSOM;
+            rootNode.OMType = ObjectModelType.LOCAL;
             rootNode.SPObject = site;
+            rootNode.NodeConnector = this;
             doSPWeb(site.RootWeb, rootNode, rootNode);
             return rootNode;
         }
@@ -33,10 +34,11 @@ namespace SPCoder.Utils
             parentNode.Children.Add(myNode);
             myNode.ParentNode = parentNode;
             myNode.RootNode = rootNode;
+            myNode.NodeConnector = this;
 
             foreach (SPWeb childWeb in web.Webs)
             {
-                doSPWeb(childWeb, myNode, rootNode);
+                doSPWeb(childWeb, myNode, rootNode);                
             }
 
             foreach (SPList list in web.Lists)
@@ -45,6 +47,7 @@ namespace SPCoder.Utils
                 myNode.Children.Add(myListNode);
                 myListNode.ParentNode = myNode;
                 myListNode.RootNode = rootNode;
+                myListNode.NodeConnector = this;
             }
             web.Dispose();
         }

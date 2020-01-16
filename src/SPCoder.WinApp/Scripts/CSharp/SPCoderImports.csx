@@ -18,6 +18,11 @@
 #r "{{WorkingDirectory}}\SPCoder.Web.dll"
 #r "{{WorkingDirectory}}\SPCoder.Github.dll"
 
+//for SharePoint SSOM, uncomment the next line and change the path to Microsoft.SharePoint.dll as appropriate
+//15 - SP 2013
+//16 - SP 2016
+//#r "C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.dll"
+
 using System;
 using System.Windows.Forms;
 using System.Linq;
@@ -39,18 +44,6 @@ using OfficeOpenXml;
 
 using System.Text;
 
-//using Microsoft.SharePoint.Client.Taxonomy;
-
-
-/*
- * SharePoint server side
-try
-{   
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Administration;
-}
-catch(Exception exc)
-        {
-            Console.WriteLine(exc);
-        }
-*/
+//for SharePoint SSOM, uncomment the next two lines
+//using Microsoft.SharePoint;
+//using Microsoft.SharePoint.Administration;
