@@ -32,5 +32,15 @@ namespace SPCoder.SharePoint.Client.Properties {
                 return ((string)(this["SPCoder_SharePoint_Client_ListsWebService_Lists"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://sp2010/_vti_bin/userprofileservice.asmx")]
+        public string SPCoder_SharePoint_Client_UserProfileWebService_UserProfileService {
+            get {
+                return ((string)(this["SPCoder_SharePoint_Client_UserProfileWebService_UserProfileService"]));
+            }
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace SPCoder
     {
         #region Fields
 
-        public SPCoder.Context.Context MyContext = ContextFactory.GetCurrentContext();
+        public SPCoder.Context.Context MyContext = null;// ContextFactory.GetCurrentContext();
 
         public BaseNode DragedBaseNode;
         ObjectDescriber describer = new ObjectDescriber();
@@ -59,7 +59,7 @@ namespace SPCoder
 
         #endregion
 
-
+        public CompositionContainer container;
         public SPCoderForm(FrmSplashScreen splashScreen)
         {
             MainForm = this;
@@ -69,7 +69,7 @@ namespace SPCoder
             //Load modules (MEF)
             var path = AppDomain.CurrentDomain.BaseDirectory;
             var d = new DirectoryCatalog(path, "SPCoder.*.dll");
-            var container = new CompositionContainer(d);
+            container = new CompositionContainer(d);
 
             try
             {
@@ -109,7 +109,9 @@ namespace SPCoder
             this.ReloadDockingSettings(theme);
 
             AddHistoryToRecentMenu();
-            
+
+            MyContext = ContextFactory.GetCurrentContext();
+
             Application.DoEvents();
         }
 
@@ -394,6 +396,7 @@ namespace SPCoder
             SPCoderLogging.Logger.Info(text);
         }
         
+
         public object ExecuteScriptCSharp(string script, int timesCalled = 0)
         {
             try
@@ -408,7 +411,8 @@ namespace SPCoder
                 }
                 
             ScriptStateCSharp = ScriptStateCSharp == null ? 
-                    CSharpScript.RunAsync(script, ScriptOptions.Default.AddImports("System"), MyContext).Result : 
+                    //CSharpScript.RunAsync(script, DefaultScriptOptions(), MyContext).Result :
+                    CSharpScript.RunAsync(script, ScriptOptions.Default.AddImports("System"), this).Result :
                     ScriptStateCSharp.ContinueWithAsync(script)
                     .Result;
                 //check if this is the executeFile call
