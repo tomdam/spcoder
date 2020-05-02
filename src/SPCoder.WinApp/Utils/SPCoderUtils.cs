@@ -68,7 +68,7 @@ namespace SPCoder.Utils
             }
         }
 
-        public static IList<string> GetPropertiesAndMethods(object obj, string objName)
+        public static IList<string> GetPropertiesAndMethods(object obj, string objName, bool getExtensionMethods = false)
         {
             /*
             if (obj is IronPython.Runtime.Types.OldInstance)
@@ -81,7 +81,7 @@ namespace SPCoder.Utils
                     return AutocompleteItems[type];
             
             IList<string> all = GetProperties(obj, objName);
-            ((List<string>)all).AddRange(GetMethods(obj, objName));
+            ((List<string>)all).AddRange(GetMethods(obj, objName, getExtensionMethods));
             ((List<string>)all).Sort();
             AutocompleteItems[type] = all;
             return all;
@@ -89,7 +89,7 @@ namespace SPCoder.Utils
             return new List<string>();
         }
 
-        public static IList<string> GetPropertiesAndMethods(string[] callTrail)
+        public static IList<string> GetPropertiesAndMethods(string[] callTrail, bool getExtensionMethods = false)
         {
             string root = callTrail[0];
             Type type = typeof(void);
@@ -152,7 +152,7 @@ namespace SPCoder.Utils
                 return AutocompleteItems[type];
 
             IList<string> all = GetProperties(type);
-            ((List<string>)all).AddRange(GetMethods(type));
+            ((List<string>)all).AddRange(GetMethods(type, getExtensionMethods));
             ((List<string>)all).Sort();
             AutocompleteItems[type] = all;
             return all;
@@ -195,17 +195,17 @@ namespace SPCoder.Utils
             return properties;
         }
 
-        public static IList<string> GetMethods(object obj, string objName)
+        public static IList<string> GetMethods(object obj, string objName, bool getExtensionMethods = false)
         {
             if (obj != null)
             {
-                return GetMethods(obj.GetType());
+                return GetMethods(obj.GetType(), getExtensionMethods);
             }
             else
                 return new List<string>();
         }
 
-        public static IList<string> GetMethods(Type type)
+        public static IList<string> GetMethods(Type type, bool getExtensionMethods = false)
         {           
             IList<string> methods = new List<string>();
             //if (obj != null)
@@ -228,18 +228,40 @@ namespace SPCoder.Utils
                         //just continue if you get an exception
                     }
                 }
-                //Ovde pokusaj da uzmes i System.Linq extension metode
+                //Ovde pokusaj da uzmes i  extension metode
                
                 //var linqAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == "System.Core");
                 //if (linqAssembly != null)
                 {
-                    TypeFilter myFilter = new TypeFilter(MyInterfaceFilter);
+                    if (getExtensionMethods)
+                    {
+                        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                        foreach (var a in assemblies)
+                        {
+                            try
+                            {
+                                foreach (MethodInfo method in GetExtensionMethods(a, type))
+                                {
+                                    //Console.WriteLine(method);
+                                    methods.Add(method.Name + GetSignature(method.GetParameters()));
+                                }
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+                    }/**/
+
+                    //TypeFilter myFilter = new TypeFilter(MyInterfaceFilter);
                     //String[] myInterfaceList = new String[2]
-                      //{"System.Collections.IEnumerable", "System.Collections.ICollection"};
+                    //{"System.Collections.IEnumerable", "System.Collections.ICollection"};
                     //Type[] myInterfaces = type.FindInterfaces(myFilter, "System.Collections.IEnumerable");
+
                     Type[] myInterfaces = type.GetInterfaces();
                     if (myInterfaces.Length > 0)
                     {
+                        
                         foreach (var myInterface in myInterfaces)
                         {
                             
@@ -251,14 +273,14 @@ namespace SPCoder.Utils
                                     methods.Add(m.Name + GetSignature(m.GetParameters()));
                                 }
                             }
-                        }
+                        }/**/
                     }
                 }               
             }
             return methods;
         }
 
-        static IEnumerable<MethodInfo> GetExtensionMethods(Assembly assembly,    Type extendedType)
+        /*static IEnumerable<MethodInfo> GetExtensionMethods(Assembly assembly,    Type extendedType)
         {
             var query = from type in assembly.GetTypes()
                         //where type.IsSealed //&& !type.IsGenericType && !type.IsNested
@@ -268,6 +290,19 @@ namespace SPCoder.Utils
                         where method.IsDefined(typeof(ExtensionAttribute), true)
                         where method.GetParameters()[0].ParameterType == extendedType 
                         || extendedType.IsAssignableFrom(method.GetParameters()[0].ParameterType)
+                        select method;
+            return query;
+        }*/
+
+        static IEnumerable<MethodInfo> GetExtensionMethods(Assembly assembly, Type extendedType)
+        {
+            var query = from type in assembly.GetTypes()
+                        where type.IsSealed && !type.IsGenericType && !type.IsNested
+                        from method in type.GetMethods(BindingFlags.Static
+                            | BindingFlags.Public | BindingFlags.NonPublic)
+                        where method.IsDefined(typeof(ExtensionAttribute), false)
+
+                        where method.GetParameters()[0].ParameterType == extendedType
                         select method;
             return query;
         }

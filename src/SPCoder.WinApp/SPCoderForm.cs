@@ -52,6 +52,8 @@ namespace SPCoder
         public static SPCoderForm MainForm;
         FrmSplashScreen splashScreen;
         public string DefaultTitle = "SPCoder";
+
+        public bool PutExtensionMethodsToAutocomplete = false;
         #endregion
 
         #region Properties
@@ -81,6 +83,7 @@ namespace SPCoder
                 //Log
             }
 
+            SPCoderSettings.ReadSettings();
 
             //Create all windows
             m_output = new Windows.Output();
@@ -104,7 +107,7 @@ namespace SPCoder
             //var theme = new VS2015LightTheme();
             //var theme = new VS2015DarkTheme();
 
-            SPCoderSettings.ReadSettings();
+            
 
             this.ReloadDockingSettings(theme);
 

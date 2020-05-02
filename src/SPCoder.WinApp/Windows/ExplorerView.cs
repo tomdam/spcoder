@@ -70,6 +70,46 @@ namespace SPCoder.Windows
             }
 
             tvContextMenuEvent += tvContextMenuClicked;
+            //Load last selected connector and url
+            LoadSettings();
+        }
+
+        private void LoadSettings()
+        {
+            var explorerSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_EXPLORER];                        
+            if (explorerSettings[SPCoderConstants.SP_SETTINGS_ADDRESS] != null)
+            {
+                string address = explorerSettings[SPCoderConstants.SP_SETTINGS_ADDRESS].ToString();
+                this.txtUrl.Text = address;
+            }
+
+            if (explorerSettings[SPCoderConstants.SP_SETTINGS_CONNECTOR] != null)
+            {
+                string connector = explorerSettings[SPCoderConstants.SP_SETTINGS_CONNECTOR].ToString();
+                int ind = cbObjectModelType.FindStringExact(connector);
+                if (ind > -1)
+                {
+                    cbObjectModelType.SelectedIndex = ind;
+                }
+            }
+        }
+
+        private void SetAddress(string address)
+        {
+            var explorerSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_EXPLORER];
+            this.txtUrl.Text = address;
+            explorerSettings[SPCoderConstants.SP_SETTINGS_ADDRESS] = address;
+        }
+
+        private void SetConnector(string connector)
+        {
+            var explorerSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_EXPLORER];
+            int ind = cbObjectModelType.FindStringExact(connector);
+            if (ind > -1)
+            {
+                explorerSettings[SPCoderConstants.SP_SETTINGS_CONNECTOR] = connector;
+                cbObjectModelType.SelectedIndex = ind;
+            }
         }
 
         private string imagesUrlFolder = "";
@@ -115,6 +155,14 @@ namespace SPCoder.Windows
                     return;
                 }
 
+                //write details to form
+                //this.txtUrl.Text = siteUrl;
+                this.SetAddress(siteUrl);
+                //cbObjectModelType.SelectedValue = omType;
+                //cbObjectModelType.SelectedIndex = cbObjectModelType.FindStringExact(omType);
+                this.SetConnector(omType);
+                //write details to form
+
                 connector.Username = username;
                 connector.Password = password;
                 connector.Endpoint = siteUrl;
@@ -157,6 +205,9 @@ namespace SPCoder.Windows
                 SPCoderForm.MainForm.AppendToLog("Retrieved data.");
                 if (rootNode == null)
                 {
+                    //hide spinner
+                    btnConnect.Enabled = true;
+                    btnSpinner.Visible = false;
                     return;
                 }
                 DrawTreeView(rootNode, siteUrl);
@@ -221,7 +272,7 @@ namespace SPCoder.Windows
 
         public void Connect(string siteUrl)
         {
-            Connect(siteUrl, "SSOM");
+            Connect(siteUrl, "SharePoint Server Side");
         }
 
         private void CreateAllTreeViewNodes(BaseNode rootNode, ObjectModelType objectModelType)
@@ -415,8 +466,8 @@ namespace SPCoder.Windows
 
         private void ExplorerView_Load(object sender, EventArgs e)
         {
-            if (cbObjectModelType != null && cbObjectModelType.Items.Count > 1)
-                cbObjectModelType.SelectedIndex = 0;
+            //if (cbObjectModelType != null && cbObjectModelType.Items.Count > 1)
+              //  cbObjectModelType.SelectedIndex = 0;
         }
 
         private void tvSp_Expanding(object sender, TreeViewAdvEventArgs e)

@@ -76,7 +76,14 @@ namespace SPCoder.Utils.Nodes
                     web.Context.ExecuteQuery();
                     realObject = web;
                     return this;
-
+                //for plugins always return the real object
+                case NodeActions.Plugin:
+                    if (realObj != null)
+                    {
+                        return realObj;
+                    }
+                    else
+                        return null;
                 default:
                     return null;
             }

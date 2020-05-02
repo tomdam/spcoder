@@ -40,5 +40,12 @@
         public const string SP_SETTINGS_LANGUAGES = "languages";
         public const string SP_SETTINGS_HISTORY = "history";
 
+        public const string SP_SETTINGS_EXPLORER = "explorer";
+        public const string SP_SETTINGS_ADDRESS = "address";
+        public const string SP_SETTINGS_CONNECTOR = "connector";
+
+        public const string SP_SETTINGS_GRID_VIEWER = "gridViewer";
+        public const string SP_SETTINGS_EXPRESSION = "expression";
+        public const string SP_SETTINGS_DESCRIBER = "describer";
     }
 }

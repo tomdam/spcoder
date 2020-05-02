@@ -40,7 +40,7 @@ namespace SPCoder.Utils.Nodes
                     //check this - in sp2010 DefaultView doesn't exist
                     //use DefaultViewUrl instead in externalopen and copy link
                     list.Context.Load(list.DefaultView);
-                    list.Context.ExecuteQuery();
+                    //list.Context.ExecuteQuery();
                     realObject = list;
                     return list;
                 }

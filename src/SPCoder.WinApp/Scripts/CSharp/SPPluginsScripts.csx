@@ -8,6 +8,11 @@ public void DoShowObjectInGrid(object item)
     main.ShowGridWindow();
 }
 
+public void GenerateNewSourceTab(object item)
+{
+    main.GenerateNewSourceTab("PnPProvisioningSource.xml", item.ToString(), null);
+}
+
 //For new plugins to become available, they need to be saved as csx files inside the Plugins directory
 
 //execute plugin classes - make them ready to use
@@ -19,5 +24,5 @@ List<string> pluginFiles = new DirectoryInfo(pluginsDirectoryRoot)
 
 foreach (string pluginFile in pluginFiles)
 {
-     main.FilesRegisteredForExecution.Add(pluginFile);
+    main.FilesRegisteredForExecution.Add(pluginFile);
 }

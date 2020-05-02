@@ -223,6 +223,8 @@
             // 
             // cmbSortByWhat
             // 
+            this.cmbSortByWhat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSortByWhat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cmbSortByWhat.Items.AddRange(new object[] {
             "Names",
             "Values"});
@@ -230,7 +232,6 @@
             this.cmbSortByWhat.Name = "cmbSortByWhat";
             this.cmbSortByWhat.Size = new System.Drawing.Size(64, 21);
             this.cmbSortByWhat.TabIndex = 3;
-            this.cmbSortByWhat.Text = "Names";
             // 
             // btnDoSortDesc
             // 
@@ -255,6 +256,8 @@
         '\"',
         '\'',
         '\''};
+            this.fctb.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
+    "(?<range>:)\\s*(?<range>[^;]+);";
             this.fctb.AutoScrollMinSize = new System.Drawing.Size(27, 14);
             this.fctb.BackBrush = null;
             this.fctb.CharHeight = 14;
@@ -262,7 +265,6 @@
             this.fctb.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fctb.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.fctb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fctb.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fctb.IsReplaceMode = false;
             this.fctb.Location = new System.Drawing.Point(0, 0);
             this.fctb.Name = "fctb";

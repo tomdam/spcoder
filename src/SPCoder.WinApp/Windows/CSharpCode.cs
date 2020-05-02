@@ -554,7 +554,7 @@ namespace SPCoder.Windows
                 if (contextVariable != null)  
                 {
                     object variable = ((Microsoft.CodeAnalysis.Scripting.ScriptVariable)contextVariable).Value;
-                    IList<string> all = SPCoderUtils.GetPropertiesAndMethods(variable, myVar);
+                    IList<string> all = SPCoderUtils.GetPropertiesAndMethods(variable, myVar, SPCoderForm.MainForm.PutExtensionMethodsToAutocomplete);
 
                     foreach (string propMeth in all)
                     {
@@ -599,7 +599,7 @@ namespace SPCoder.Windows
             else
             {
                 //Here try to find properties/methods from expression
-                IList<string> all = SPCoderUtils.GetPropertiesAndMethods(parts);
+                IList<string> all = SPCoderUtils.GetPropertiesAndMethods(parts, SPCoderForm.MainForm.PutExtensionMethodsToAutocomplete);
                 if (all.Count > 0)
                 {
                     foreach (string propMeth in all)

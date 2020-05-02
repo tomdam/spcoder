@@ -1,4 +1,5 @@
 ﻿using SPCoder.Context;
+using SPCoder.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,11 +18,35 @@ namespace SPCoder.Windows
         public GridViewer()
         {
             InitializeComponent();
+            LoadDefaultExpression();
         }
 
         public object GridSource { get; set; }
 
         private bool gridAddedToContext = false;
+
+        private void LoadDefaultExpression()
+        {
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_GRID_VIEWER] != null)
+            {
+                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_GRID_VIEWER];
+                if (gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                {
+                    string expression = gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION].ToString();
+                    txtCode.Text = expression;
+                }
+            }
+        }
+
+        private void SetExpression(string expression)
+        {
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_GRID_VIEWER] != null)
+            {
+                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_GRID_VIEWER];
+                txtCode.Text = expression;
+                gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] = expression;
+            }
+        }
 
         public void ShowExpressionInGrid(string expression)
         {
@@ -51,6 +76,7 @@ namespace SPCoder.Windows
                 grid.DataSource = source;
 
                 //grid.DataSource = this.GridSource;
+                
 
             }
             catch (Exception exc)
@@ -65,6 +91,7 @@ namespace SPCoder.Windows
         private void btnView_Click(object sender, EventArgs e)
         {            
             showDataInGrid();
+            SetExpression(txtCode.Text);
         }
 
         private void grid_DataError(object sender, DataGridViewDataErrorEventArgs e)

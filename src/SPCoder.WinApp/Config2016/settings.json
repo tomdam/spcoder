@@ -36,6 +36,12 @@
   },
   "explorer": {
     "address": "c:\\",
-    "plugin": "File system"
+    "connector": "File system"
+  },
+  "describer": {
+    "expression": "main"    
+  },
+  "gridViewer": {
+    "expression": ""
   }
 }

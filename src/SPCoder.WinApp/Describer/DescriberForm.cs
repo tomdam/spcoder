@@ -7,6 +7,8 @@ using SPCoder.Context;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Text.RegularExpressions;
 using FastColoredTextBoxNS;
+using SPCoder.Utils;
+using System.Collections.Generic;
 
 namespace SPCoder.Describer
 {
@@ -48,9 +50,35 @@ namespace SPCoder.Describer
                 fctb.WordWrap = true;
                 fctb.WordWrapMode = WordWrapMode.WordWrapControlWidth;
             }
+
+            LoadDefaultExpression();
+            cmbSortByWhat.SelectedIndex = 0;
         }
 
-     
+        private void LoadDefaultExpression()
+        {
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
+            {
+                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+                if (gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                {
+                    string expression = gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION].ToString();
+                    this.txtDescribeObject.Text = expression;
+                }
+            }
+        }
+
+        private void SetExpression(string expression)
+        {
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
+            {
+                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+                this.txtDescribeObject.Text = expression;
+                gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] = expression;
+            }
+        }
+
+
 
         bool CharIsHyperlink(Place place)
         {
@@ -149,6 +177,7 @@ namespace SPCoder.Describer
                 addedToContext = true;
             }
             string sourceObject = this.txtDescribeObject.Text.Trim();
+            SetExpression(sourceObject);
             CallDoLocalDescribe(sourceObject);
         }
 
@@ -210,6 +239,7 @@ namespace SPCoder.Describer
             string codeToDescribe = label.Tag.ToString();
             this.txtDescribeObject.Text = codeToDescribe;
             //DoLocalDescribe(codeToDescribe);
+            SetExpression(codeToDescribe);
             CallDoLocalDescribe(codeToDescribe);
         }
 
