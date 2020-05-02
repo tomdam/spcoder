@@ -228,7 +228,7 @@ namespace SPCoder.Windows
         {
             if (e.Action == FCTBAction.CustomAction1)
             {
-                this.ExecuteSelectionCSharp();
+                this.ExecuteSelectionCSharp(true);
             } 
             else if (e.Action == FCTBAction.CustomAction2)
                 {
@@ -296,7 +296,7 @@ namespace SPCoder.Windows
                 range.SetStyle(invisibleCharsStyle, @".$|.\r\n|\s");
         }
 
-        public void ExecuteSelectionCSharp(bool async = false)
+        public void ExecuteSelectionCSharp(bool isasync = false)
         {
             string text = null;
             try
@@ -315,7 +315,15 @@ namespace SPCoder.Windows
                     errorRange.ClearStyle(RedErrorStyle);
                     errorRange = null;
                 }
-                SPCoderForm.MainForm.ExecuteScriptCSharp(text);
+                if (!isasync)
+                {
+                    SPCoderForm.MainForm.ExecuteScriptCSharp(text);
+                }
+                else
+                {
+                    SPCoderForm.MainForm.ExecuteScriptAsync(text);
+                }
+                
             }
             catch (Exception ex)
             {

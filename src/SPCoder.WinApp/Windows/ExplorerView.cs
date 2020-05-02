@@ -201,6 +201,7 @@ namespace SPCoder.Windows
         {
             try
             {
+                SPCoderForm.MainForm.SetAppStatus("Connecting to: " + siteUrl);
                 BaseNode rootNode = connector.GetSPStructure(siteUrl);
                 SPCoderForm.MainForm.AppendToLog("Retrieved data.");
                 if (rootNode == null)
@@ -233,6 +234,10 @@ namespace SPCoder.Windows
                 btnConnect.Enabled = true;
                 btnSpinner.Visible = false;
                 SPCoderForm.MainForm.LogException(exc);
+            }
+            finally
+            {
+                SPCoderForm.MainForm.SetAppStatus("Ready");
             }
         }
 
@@ -594,7 +599,28 @@ namespace SPCoder.Windows
         }
         public event EventHandler tvContextMenuEvent;
         //public 
+
+        delegate void ExecutePluginDelegate(object sender, EventArgs param);
+
+        //public void ExecutePlugin(object sender, EventArgs param)
+        //{
+        //    tvContextMenuClickedAsync(sender, param);
+        //}
         public void tvContextMenuClicked(object sender, EventArgs param)
+        {
+            //ExecutePlugin(sender, param);
+            try
+            {
+                ExecutePluginDelegate execScript = new ExecutePluginDelegate(tvContextMenuClickedAsync);
+                //execScript(script);
+                execScript.BeginInvoke(sender, param, null, null);
+            }
+            catch (Exception exc)
+            {
+                throw exc;
+            }
+        }
+        public void tvContextMenuClickedAsync(object sender, EventArgs param)
         {
             if (this.tvContextMenuEvent != null && ((ToolStripItem)sender).Tag != null)
             {
@@ -675,7 +701,18 @@ namespace SPCoder.Windows
                         object value = action.Node.ExecuteAction(action);
                         if (value != null)
                         {
-                            Clipboard.SetText(value.ToString());
+                            
+                            if (this.InvokeRequired)
+                            {
+                                this.BeginInvoke((MethodInvoker)delegate ()
+                                {
+                                    Clipboard.SetText(value.ToString());
+                                });
+                            }
+                            else
+                            {
+                                Clipboard.SetText(value.ToString());
+                            }
                         }
 
                         break;

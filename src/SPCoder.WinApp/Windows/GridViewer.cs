@@ -1,4 +1,5 @@
 ﻿using SPCoder.Context;
+using SPCoder.Core.Utils;
 using SPCoder.Utils;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -50,8 +52,19 @@ namespace SPCoder.Windows
 
         public void ShowExpressionInGrid(string expression)
         {
-            txtCode.Text = expression;
-            showDataInGrid();
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    txtCode.Text = expression;
+                    showDataInGrid();
+                });
+            }
+            else
+            {
+                txtCode.Text = expression;
+                showDataInGrid();
+            }
         }
 
         private void showDataInGrid()

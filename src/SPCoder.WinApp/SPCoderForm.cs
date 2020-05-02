@@ -20,6 +20,7 @@ using SPCoder.Core.Utils;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using SPCoder.Utils;
+using System.Runtime.Remoting.Messaging;
 
 namespace SPCoder
 {
@@ -67,7 +68,7 @@ namespace SPCoder
             MainForm = this;
             InitializeComponent();
             this.splashScreen = splashScreen;
-
+            toolStripStatusLabel.Text = "Starting";
             //Load modules (MEF)
             var path = AppDomain.CurrentDomain.BaseDirectory;
             var d = new DirectoryCatalog(path, "SPCoder.*.dll");
@@ -114,10 +115,26 @@ namespace SPCoder
             AddHistoryToRecentMenu();
 
             MyContext = ContextFactory.GetCurrentContext();
-
+            toolStripStatusLabel.Text = "Ready";
             Application.DoEvents();
         }
 
+
+        public void SetAppStatus(string statusText)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    toolStripStatusLabel.Text = statusText;
+                });
+            }
+            else
+            {
+                toolStripStatusLabel.Text = statusText;
+            }
+            
+        }
 
 
         public void ReloadDockingSettings(ThemeBase theme)
@@ -170,16 +187,23 @@ namespace SPCoder
 
         protected void AddHistoryToRecentMenu()
         {
-            var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
-            var history = (System.Collections.ArrayList)codeSettings[SPCoderConstants.SP_SETTINGS_HISTORY];
-            foreach (Dictionary<string, object> h in history)
+            try
             {
-                string path = h[SPCoderConstants.SP_SETTINGS_PATH].ToString();
-                if (!System.IO.Path.IsPathRooted(path))
+                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                var history = (System.Collections.ArrayList)codeSettings[SPCoderConstants.SP_SETTINGS_HISTORY];
+                foreach (Dictionary<string, object> h in history)
                 {
-                    path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), path);
+                    string path = h[SPCoderConstants.SP_SETTINGS_PATH].ToString();
+                    if (!System.IO.Path.IsPathRooted(path))
+                    {
+                        path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), path);
+                    }
+                    AddRecentMenuItem(path);
                 }
-                AddRecentMenuItem(path);
+            }
+            catch (Exception exc)
+            {
+                SPCoderLogging.Logger.Error(exc);
             }
         }
 
@@ -398,9 +422,10 @@ namespace SPCoder
             m_log.AppendToLog(text);
             SPCoderLogging.Logger.Info(text);
         }
-        
 
-        public object ExecuteScriptCSharp(string script, int timesCalled = 0)
+        public static ScriptState<object> ScriptStateCSharp = null;
+
+        public void ExecuteScriptCSharp(string script, int timesCalled = 0)
         {
             try
             {
@@ -412,12 +437,21 @@ namespace SPCoder
                 {
                     m_output.ClearOutputIfChecked();
                 }
-                
-            ScriptStateCSharp = ScriptStateCSharp == null ? 
+
+                //if (ScriptStateCSharp == null)
+                //{
+                //    ScriptStateCSharp = CSharpScript.RunAsync(script, ScriptOptions.Default.AddImports("System"), this).Result;
+                //}
+                //else
+                //{
+                    ScriptStateCSharp = ScriptStateCSharp.ContinueWithAsync(script).Result;
+                    //Console.WriteLine(DateTime.Now);
+                //}
+            //ScriptStateCSharp = ScriptStateCSharp == null ? 
                     //CSharpScript.RunAsync(script, DefaultScriptOptions(), MyContext).Result :
-                    CSharpScript.RunAsync(script, ScriptOptions.Default.AddImports("System"), this).Result :
-                    ScriptStateCSharp.ContinueWithAsync(script)
-                    .Result;
+              //       :
+                    
+                
                 //check if this is the executeFile call
                 var execNext = ScriptStateCSharp.GetVariable(SPCoderConstants.SP_CODER_EXECUTE_NEXT);
                 if (execNext != null && execNext.Value != null)
@@ -432,7 +466,7 @@ namespace SPCoder
                     }
                     
                 }
-                return ScriptStateCSharp;
+                //return ScriptStateCSharp;
             }
             catch (Exception exc)
             {
@@ -442,11 +476,52 @@ namespace SPCoder
                     throw exc;
             }
         }
-        
-        delegate object ExecuteScriptDelegate(string script);
 
-     
-        public static ScriptState<object> ScriptStateCSharp = null;
+        public delegate void ExecuteScriptDelegate(string script);
+
+        public void ExecuteScript(string script)
+        {
+            ExecuteScriptCSharp(script, 0);
+            //SetAppStatus("Ready");
+        }
+        public object ExecuteScriptAsync(string script)
+        {
+            try
+            {
+                ExecuteScriptDelegate execScript = new ExecuteScriptDelegate(ExecuteScript);
+                SetAppStatus("Executing script...");
+                var r = execScript.BeginInvoke(script, new AsyncCallback(ExecuteScriptEndInvoke), null);
+                //execScript.BeginInvoke(script, null, null);
+                //execScript.Invoke(script);
+                //SetAppStatus("Ready1");
+
+                return null;
+            }
+            catch (Exception exc)
+            {
+                SPCoderLogging.Logger.Error(exc);
+                throw exc;
+            }
+        }
+
+
+        public void ExecuteScriptEndInvoke(IAsyncResult asyncResult)
+        {
+            try
+            {
+                AsyncResult res = (AsyncResult)asyncResult;
+                ExecuteScriptDelegate del = (ExecuteScriptDelegate)res.AsyncDelegate;
+                del.EndInvoke(asyncResult);
+                //Console.WriteLine(obj);
+                //Console.WriteLine(DateTime.Now);
+                SetAppStatus("Ready");
+            }
+            catch (Exception exc)
+            {
+                //SetAppStatus("Ready3");
+                SPCoderLogging.Logger.Error(exc);
+            }
+        }
 
         private void AddItemToContext(object item)
         {            
@@ -655,6 +730,21 @@ namespace SPCoder
         /// <param name="fullFileName">Full file path</param>
         public void GenerateNewSourceTab(string title, string source, string fullFileName)
         {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    GenerateNewSourceTabPrivate(title, source, fullFileName);
+                });
+            }
+            else
+            {
+                GenerateNewSourceTabPrivate(title, source, fullFileName);
+            }            
+        }
+
+        private void GenerateNewSourceTabPrivate(string title, string source, string fullFileName)
+        {
             CSharpCode newCode = new CSharpCode();
             newCode.Fctb.ContextMenuStrip = cmMain;
             newCode.Fctb.Language = GetLanguageFromFileName(fullFileName);
@@ -666,6 +756,8 @@ namespace SPCoder
             newCode.Show(dockPanel, DockState.Document);
             codeWindows.Add(newCode);
         }
+
+
 
         private Language GetLanguageFromFileName(string fileName)
         {
@@ -890,7 +982,7 @@ namespace SPCoder
             var a = ActiveDocument;
             if (a != null)
             {
-                a.ExecuteSelectionCSharp();
+                a.ExecuteSelectionCSharp(true);
             }
         }
 
@@ -1000,7 +1092,17 @@ namespace SPCoder
 
         public void ShowGridWindow()
         {
-            m_gridviewer.Show(dockPanel, DockState.Document);
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    m_gridviewer.Show(dockPanel, DockState.Document);
+                });
+            }
+            else
+            {
+                m_gridviewer.Show(dockPanel, DockState.Document);
+            }
         }
 
         private void tsExecuteAsync_Click(object sender, EventArgs e)
@@ -1480,6 +1582,16 @@ namespace SPCoder
             {
                 SPCoderForm.MainForm.SetTitle(window.Text);
             }
+        }
+
+        private void toolStripButton1_Click_2(object sender, EventArgs e)
+        {
+            var a = ActiveDocument;
+            if (a != null)
+            {
+                a.ExecuteSelectionCSharp(true);
+            }
+
         }
 
         //private void exitToolStripMenuItem_Click(object sender, EventArgs e)
