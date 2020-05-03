@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using FastColoredTextBoxNS;
 using SPCoder.Utils;
 using System.Collections.Generic;
+using SPCoder.Core.Utils;
 
 namespace SPCoder.Describer
 {
@@ -51,20 +52,67 @@ namespace SPCoder.Describer
                 fctb.WordWrapMode = WordWrapMode.WordWrapControlWidth;
             }
 
-            LoadDefaultExpression();
+            LoadSettings();
             cmbSortByWhat.SelectedIndex = 0;
         }
 
-        private void LoadDefaultExpression()
+        string msdnLinkFormat = "";
+
+        private void LoadSettings()
         {
-            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
+            try
             {
-                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
-                if (gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
                 {
-                    string expression = gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION].ToString();
-                    this.txtDescribeObject.Text = expression;
+                    var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+                    if (gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                    {
+                        string expression = gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION].ToString();
+                        this.txtDescribeObject.Text = expression;
+                    }
+
+                    if (gridSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS] != null)
+                    {
+                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS].ToString();
+                        //objectDescription.DescribedValueMaxLength = Int32.Parse(value);
+                        txtMaxDisplaySize.Text = value;
+                    }
+
+                    if (gridSettings[SPCoderConstants.SP_SETTINGS_EDITABLE] != null)
+                    {
+                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_EDITABLE].ToString();
+                        bool editable = bool.Parse(value);
+                        this.chkIsEditable.Checked = editable;
+                        fctb.ReadOnly = !editable;
+                    }
+
+                    if (gridSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP] != null)
+                    {
+                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP].ToString();
+                        bool wordwrap = bool.Parse(value);
+                        //this.cb_wordwrap_CheckedChanged
+                        this.cb_wordwrap.Checked = wordwrap;
+                        if (wordwrap)
+                        {
+                            fctb.WordWrap = true;
+                            fctb.WordWrapMode = WordWrapMode.WordWrapControlWidth;
+                        }
+                        else
+                        {
+                            fctb.WordWrap = false;
+                        }
+                    }
+
+                    if (gridSettings[SPCoderConstants.SP_SETTINGS_LINK_FORMAT] != null)
+                    {
+                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_LINK_FORMAT].ToString();
+                        msdnLinkFormat = value;
+                    }
                 }
+            }
+            catch (Exception exc)
+            {
+                SPCoderLogging.Logger.Error("Error while loading describer properties from settings.json", exc);
             }
         }
 
@@ -264,7 +312,10 @@ namespace SPCoder.Describer
         private void chkIsEditable_CheckedChanged(object sender, EventArgs e)
         {
             bool isChecked = this.chkIsEditable.Checked;
-            describerPropertiesData.IsEditable = isChecked;
+            //describerPropertiesData.IsEditable = isChecked;
+            var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+            gridSettings[SPCoderConstants.SP_SETTINGS_EDITABLE] = isChecked;
+
             fctb.ReadOnly = !isChecked;
         }
 
@@ -273,7 +324,9 @@ namespace SPCoder.Describer
             try
             {
                 int enteredValue = Convert.ToInt32(this.txtMaxDisplaySize.Text);
-                describerPropertiesData.MaxDisplayedSize = enteredValue;
+                //describerPropertiesData.MaxDisplayedSize = enteredValue;
+                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+                gridSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS] = enteredValue;
                 objectDescription.DescribedValueMaxLength = enteredValue;
             }
             catch (Exception)
@@ -303,7 +356,8 @@ namespace SPCoder.Describer
 
         private string GenerateLinkToMsdn(string type)
         {
-            string url = string.Format(describerPropertiesData.MsdnLinkFormat, type.ToLower()); //"http://msdn.microsoft.com/en-us/library/" + type.ToLower() + ".aspx";            
+            //string url = string.Format(describerPropertiesData.MsdnLinkFormat, type.ToLower()); //"http://msdn.microsoft.com/en-us/library/" + type.ToLower() + ".aspx";
+            string url = string.Format(msdnLinkFormat, type.ToLower());
             return url;
         }
 
@@ -361,7 +415,9 @@ namespace SPCoder.Describer
         private void cb_wordwrap_CheckedChanged(object sender, EventArgs e)
         {
             bool isChecked = this.cb_wordwrap.Checked;
-            describerPropertiesData.WordWrap = isChecked;
+            //describerPropertiesData.WordWrap = isChecked;
+            var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+            gridSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP] = isChecked;
 
             if (describerPropertiesData.WordWrap)
             {

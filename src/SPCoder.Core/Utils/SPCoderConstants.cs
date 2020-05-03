@@ -47,5 +47,18 @@
         public const string SP_SETTINGS_GRID_VIEWER = "gridViewer";
         public const string SP_SETTINGS_EXPRESSION = "expression";
         public const string SP_SETTINGS_DESCRIBER = "describer";
+
+        public const string SP_SETTINGS_LINK_FORMAT = "linkFormat";
+        public const string SP_SETTINGS_EDITABLE = "editable";
+        public const string SP_SETTINGS_MAX_CHARACTERS = "maxCharacters";
+        public const string SP_SETTINGS_WORD_WRAP = "wordWrap";
+
+        public const string SP_SETTINGS_OUTPUT = "output";
+        
+        public const string SP_SETTINGS_CLEAR_BEFORE_NEXT_EXECUTION = "clearBeforeNextExecution";
+
+        public const string SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS = "autocompleteShowExtensionMethods";
+        
+
     }
 }

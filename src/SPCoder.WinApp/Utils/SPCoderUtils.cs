@@ -161,6 +161,10 @@ namespace SPCoder.Utils
 
         public static IDictionary<Type, IList<string>> AutocompleteItems = new Dictionary<Type, IList<string>>();
 
+        public static void ResetAutocompleteItemsCache()
+        {
+            AutocompleteItems.Clear();
+        }
         public static IList<string> GetProperties(object obj, string objName)
         {
             if (obj != null)

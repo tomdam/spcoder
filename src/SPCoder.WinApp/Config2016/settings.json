@@ -32,16 +32,24 @@
     "windows": [
     ],
     "history": [
-    ]
+    ],
+    "autocompleteShowExtensionMethods": false
   },
   "explorer": {
     "address": "c:\\",
     "connector": "File system"
   },
   "describer": {
-    "expression": "main"    
+    "expression": "main",
+    "linkFormat": "https://docs.microsoft.com/en-us/dotnet/api/{0}",
+    "editable": false,
+    "maxCharacters": 512,
+    "wordWrap": false
   },
   "gridViewer": {
     "expression": ""
+  },
+  "output": {
+    "clearBeforeNextExecution": true
   }
 }

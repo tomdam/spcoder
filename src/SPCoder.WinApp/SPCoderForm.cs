@@ -249,6 +249,22 @@ namespace SPCoder
             GenerateNewSourceTab(title, source, fullFileName);
         }
 
+        private void LoadOtherSettings()
+        {
+            //
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE] != null)
+            {
+                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                if (codeSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                {
+                    string value = codeSettings[SPCoderConstants.SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS].ToString();
+                    bool isChecked = bool.Parse(value);
+                    toolStripMenuItemAutocompleteExtensionMethods.Checked = isChecked;
+                    PutExtensionMethodsToAutocomplete = isChecked;
+                }
+            }
+        }
+
         public void SetTitle(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -1592,6 +1608,21 @@ namespace SPCoder
                 a.ExecuteSelectionCSharp(true);
             }
 
+        }
+
+        private void toolStripMenuItemAutocompleteExtensionMethods_Click(object sender, EventArgs e)
+        {
+            //toolStripMenuItemAutocompleteExtensionMethods
+            bool isChecked = !toolStripMenuItemAutocompleteExtensionMethods.Checked;
+            toolStripMenuItemAutocompleteExtensionMethods.Checked = isChecked;
+            PutExtensionMethodsToAutocomplete = isChecked;
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE] != null)
+            {
+                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                codeSettings[SPCoderConstants.SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS] = isChecked;
+            }
+            //reset the cache
+            SPCoderUtils.ResetAutocompleteItemsCache();
         }
 
         //private void exitToolStripMenuItem_Click(object sender, EventArgs e)

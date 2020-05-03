@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SPCoder.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,7 @@ namespace SPCoder.Windows
             InitializeComponent();
             RtOutput = rtOutput;
             cw = new ControlWriter(RtOutput);
+            LoadDefaultSettings();
             cw.ClearBeforeExecution = cbClear.Checked;
             Console.SetOut(cw);
         }
@@ -36,7 +38,29 @@ namespace SPCoder.Windows
 
         public RichTextBox RtOutput { get; private set; }
 
-        
+        private void LoadDefaultSettings()
+        {
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_OUTPUT] != null)
+            {
+                var outputSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_OUTPUT];
+                if (outputSettings[SPCoderConstants.SP_SETTINGS_CLEAR_BEFORE_NEXT_EXECUTION] != null)
+                {
+                    string value = outputSettings[SPCoderConstants.SP_SETTINGS_CLEAR_BEFORE_NEXT_EXECUTION].ToString();
+                    bool isChecked = bool.Parse(value);
+                    cbClear.Checked = isChecked;
+                }
+            }
+        }
+
+        private void SaveSettings()
+        {
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_OUTPUT] != null)
+            {
+                var outputSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_OUTPUT];
+                outputSettings[SPCoderConstants.SP_SETTINGS_CLEAR_BEFORE_NEXT_EXECUTION] = cbClear.Checked;
+            }
+        }
+
         public static string GetRtfTable(DataTable pDt)
         {
             string rtf = "";
@@ -92,6 +116,7 @@ namespace SPCoder.Windows
         private void cbClear_CheckedChanged(object sender, EventArgs e)
         {
             cw.ClearBeforeExecution = cbClear.Checked;
+            SaveSettings();
         }
     }
 
