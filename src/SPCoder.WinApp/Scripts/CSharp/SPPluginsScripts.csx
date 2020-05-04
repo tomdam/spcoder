@@ -8,6 +8,8 @@ public void DoShowObjectInGrid(object item)
     main.ShowGridWindow();
 }
 
+//Opens new code window (tab)
+//Used by one of the plugins
 public void GenerateNewSourceTab(object item)
 {
     main.GenerateNewSourceTab("PnPProvisioningSource.xml", item.ToString(), "PnPProvisioningSource.xml");

@@ -9,7 +9,8 @@ using System.Net;
 using System.Security;
 using System.Threading;
 /// <summary>
-/// SPCoder plugin that reads the items from SharePoint list and shows the data in SPCoder's viewer.
+/// SPCoder plugin that uses Pnp library to get the xml template from Web object.
+/// After getting the xml, the plugin opens a new tab with xml template.
 /// </summary>
 public class SPSharePointWebPnpTemplateGetter : BasePlugin
 {
@@ -21,9 +22,9 @@ public class SPSharePointWebPnpTemplateGetter : BasePlugin
 
     public override void Execute(Object target)
     {
-        String dt = this.GetTemplate((Microsoft.SharePoint.Client.Web)target);
-        Result    = dt;
-        ExecuteCallback(dt);
+        String xmlSource = this.GetTemplate((Microsoft.SharePoint.Client.Web)target);
+        Result    = xmlSource;
+        ExecuteCallback(xmlSource);
     }
     
     public String GetTemplate(Microsoft.SharePoint.Client.Web web)
@@ -49,3 +50,5 @@ webPnPTemplateGetter.Callback += GenerateNewSourceTab;
 PluginContainer.Register(webPnPTemplateGetter);
 
 logger.LogInfo("Registered plugin SPSharePointWebPnpTemplateGetter");
+
+//webPnPTemplateGetter.Execute(web);

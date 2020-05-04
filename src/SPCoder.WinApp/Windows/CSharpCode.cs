@@ -332,6 +332,21 @@ namespace SPCoder.Windows
             }
         }
 
+        public void HighlightErrorLineInvoke(string message, string code)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    HighlightErrorLine(message, code);
+                });
+            }
+            else
+            {
+                HighlightErrorLine(message, code);
+            }
+        }
+
         public Range errorRange;
         public void HighlightErrorLine(string message, string code)
         {

@@ -402,14 +402,14 @@ namespace SPCoder
         }
 
   
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            CSharpCode c = ActiveDocument;
-            if (c != null)
-            {
-                c.ExecuteSelectionCSharp();
-            }            
-        }
+        //private void toolStripButton1_Click(object sender, EventArgs e)
+        //{
+        //    CSharpCode c = ActiveDocument;
+        //    if (c != null)
+        //    {
+        //        c.ExecuteSelectionCSharp();
+        //    }            
+        //}
 
      
         public void LogException(Exception ex)
@@ -420,8 +420,19 @@ namespace SPCoder
             {
                 m_log.LogError(ex.StackTrace);
             }
+
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    m_log.Show(dockPanel);
+                });
+            }
+            else
+            {
+                m_log.Show(dockPanel);
+            }
             
-            m_log.Show(dockPanel);
             //MessageBox.Show("An error has occurred during execution of the script:" + ex.Message);
         }
 
@@ -480,7 +491,6 @@ namespace SPCoder
                     {
                         ExecuteScriptCSharp(codeToExecute, 1);
                     }
-                    
                 }
                 //return ScriptStateCSharp;
             }
@@ -506,7 +516,7 @@ namespace SPCoder
             {
                 ExecuteScriptDelegate execScript = new ExecuteScriptDelegate(ExecuteScript);
                 SetAppStatus("Executing script...");
-                var r = execScript.BeginInvoke(script, new AsyncCallback(ExecuteScriptEndInvoke), null);
+                var r = execScript.BeginInvoke(script, new AsyncCallback(ExecuteScriptEndInvoke), new ScriptExecutionErrorHelper { Script = script, CodeWindow = ActiveDocument });
                 //execScript.BeginInvoke(script, null, null);
                 //execScript.Invoke(script);
                 //SetAppStatus("Ready1");
@@ -521,12 +531,15 @@ namespace SPCoder
         }
 
 
+
+
         public void ExecuteScriptEndInvoke(IAsyncResult asyncResult)
         {
             try
             {
                 AsyncResult res = (AsyncResult)asyncResult;
                 ExecuteScriptDelegate del = (ExecuteScriptDelegate)res.AsyncDelegate;
+                
                 del.EndInvoke(asyncResult);
                 //Console.WriteLine(obj);
                 //Console.WriteLine(DateTime.Now);
@@ -534,8 +547,46 @@ namespace SPCoder
             }
             catch (Exception exc)
             {
+                SetAppStatus("Error");
                 //SetAppStatus("Ready3");
                 SPCoderLogging.Logger.Error(exc);
+                SPCoderForm.MainForm.LogException(exc);
+                ScriptExecutionErrorHelper state = (ScriptExecutionErrorHelper)asyncResult.AsyncState;
+                state.CodeWindow.HighlightErrorLineInvoke(exc.Message, state.Script);
+
+                //this.Invoke((MethodInvoker)delegate ()
+                //{
+                    
+                //    var ad = ActiveDocument;
+                //    if (ad != null)
+                //    {
+                //        if (asyncResult.AsyncState != null)
+                //        {
+                //            ad.HighlightErrorLineInvoke(exc.Message, asyncResult.AsyncState.ToString());
+                //        }
+                //    }
+                //});
+                //var ad = ActiveDocument;
+                //if (ad != null)
+                {
+                  //  if (asyncResult.AsyncState != null)
+                    {
+                    //    ad.HighlightErrorLineInvoke(exc.Message, asyncResult.AsyncState.ToString());
+
+                        //if (this.InvokeRequired)
+                        //{
+                        //    this.BeginInvoke((MethodInvoker)delegate ()
+                        //    {
+                        //        ad.HighlightErrorLine(exc.Message, asyncResult.AsyncState.ToString());
+                        //    });
+                        //}
+                        //else
+                        //{
+                        //    ad.HighlightErrorLine(exc.Message, asyncResult.AsyncState.ToString());
+                        //}
+                    }
+                }
+                
             }
         }
 
@@ -1121,23 +1172,23 @@ namespace SPCoder
             }
         }
 
-        private void tsExecuteAsync_Click(object sender, EventArgs e)
-        {
-            var a = ActiveDocument;
-            if (a != null)
-            {
-                a.ExecuteSelectionCSharp(true);
-            }
-        }
+        //private void tsExecuteAsync_Click(object sender, EventArgs e)
+        //{
+        //    var a = ActiveDocument;
+        //    if (a != null)
+        //    {
+        //        a.ExecuteSelectionCSharp(true);
+        //    }
+        //}
 
-        private void toolStripButton8_Click(object sender, EventArgs e)
-        {
-            var a = ActiveDocument;
-            if (a != null)
-            {
-                a.ExecuteSelectionCSharp(true);
-            }
-        }
+        //private void toolStripButton8_Click(object sender, EventArgs e)
+        //{
+        //    var a = ActiveDocument;
+        //    if (a != null)
+        //    {
+        //        a.ExecuteSelectionCSharp(true);
+        //    }
+        //}
 
         private void toolStripButton8_Click_1(object sender, EventArgs e)
         {
@@ -1600,15 +1651,15 @@ namespace SPCoder
             }
         }
 
-        private void toolStripButton1_Click_2(object sender, EventArgs e)
-        {
-            var a = ActiveDocument;
-            if (a != null)
-            {
-                a.ExecuteSelectionCSharp(true);
-            }
+        //private void toolStripButton1_Click_2(object sender, EventArgs e)
+        //{
+        //    var a = ActiveDocument;
+        //    if (a != null)
+        //    {
+        //        a.ExecuteSelectionCSharp(true);
+        //    }
 
-        }
+        //}
 
         private void toolStripMenuItemAutocompleteExtensionMethods_Click(object sender, EventArgs e)
         {

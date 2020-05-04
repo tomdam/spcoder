@@ -358,4 +358,12 @@ namespace SPCoder.Utils
             return sb.ToString();
         }
     }
+
+    public class ScriptExecutionErrorHelper
+    {
+        public string Script { get; set; }
+
+        public Windows.CSharpCode CodeWindow { get; set; }
+
+    }
 }
