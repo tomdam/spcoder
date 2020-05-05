@@ -289,6 +289,12 @@
     <Compile Include="Context\Context.cs" />
     <Compile Include="Context\IContextItem.cs" />
     <Compile Include="Describer\ObjectDescriber.cs" />
+    <Compile Include="HelperWindows\CryptoHelperWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HelperWindows\CryptoHelperWindow.Designer.cs">
+      <DependentUpon>CryptoHelperWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="HelperWindows\LoginWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -308,6 +314,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\ISPCoderForm.cs" />
     <Compile Include="Utils\SPCoderSettings.cs" />
     <Compile Include="Windows\CSharpCode.cs">
@@ -376,6 +383,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="HelperWindows\ContextItemRenamer.resx">
       <DependentUpon>ContextItemRenamer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HelperWindows\CryptoHelperWindow.resx">
+      <DependentUpon>CryptoHelperWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HelperWindows\LoginWindow.resx">
       <DependentUpon>LoginWindow.cs</DependentUpon>

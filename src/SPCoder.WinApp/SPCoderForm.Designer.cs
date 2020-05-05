@@ -123,6 +123,8 @@ namespace SPCoder
             this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.paragraphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordWrapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItemAutocompleteExtensionMethods = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cSharpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hTMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,8 +143,8 @@ namespace SPCoder
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItemAutocompleteExtensionMethods = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.cryptoHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.statusBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iContextBindingSource)).BeginInit();
@@ -885,16 +887,28 @@ namespace SPCoder
             // paragraphToolStripMenuItem
             // 
             this.paragraphToolStripMenuItem.Name = "paragraphToolStripMenuItem";
-            this.paragraphToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.paragraphToolStripMenuItem.Size = new System.Drawing.Size(292, 22);
             this.paragraphToolStripMenuItem.Text = "Paragraph";
             this.paragraphToolStripMenuItem.Click += new System.EventHandler(this.paragraphToolStripMenuItem_Click);
             // 
             // wordWrapToolStripMenuItem
             // 
             this.wordWrapToolStripMenuItem.Name = "wordWrapToolStripMenuItem";
-            this.wordWrapToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.wordWrapToolStripMenuItem.Size = new System.Drawing.Size(292, 22);
             this.wordWrapToolStripMenuItem.Text = "Word wrap";
             this.wordWrapToolStripMenuItem.Click += new System.EventHandler(this.wordWrapToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(289, 6);
+            // 
+            // toolStripMenuItemAutocompleteExtensionMethods
+            // 
+            this.toolStripMenuItemAutocompleteExtensionMethods.Name = "toolStripMenuItemAutocompleteExtensionMethods";
+            this.toolStripMenuItemAutocompleteExtensionMethods.Size = new System.Drawing.Size(292, 22);
+            this.toolStripMenuItemAutocompleteExtensionMethods.Text = "Autocomplete - show extension methods";
+            this.toolStripMenuItemAutocompleteExtensionMethods.Click += new System.EventHandler(this.toolStripMenuItemAutocompleteExtensionMethods_Click);
             // 
             // languageToolStripMenuItem
             // 
@@ -915,56 +929,56 @@ namespace SPCoder
             // cSharpToolStripMenuItem
             // 
             this.cSharpToolStripMenuItem.Name = "cSharpToolStripMenuItem";
-            this.cSharpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cSharpToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.cSharpToolStripMenuItem.Text = "CSharp";
             this.cSharpToolStripMenuItem.Click += new System.EventHandler(this.cSharpToolStripMenuItem_Click);
             // 
             // hTMLToolStripMenuItem
             // 
             this.hTMLToolStripMenuItem.Name = "hTMLToolStripMenuItem";
-            this.hTMLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hTMLToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.hTMLToolStripMenuItem.Text = "HTML";
             this.hTMLToolStripMenuItem.Click += new System.EventHandler(this.hTMLToolStripMenuItem_Click);
             // 
             // jSToolStripMenuItem
             // 
             this.jSToolStripMenuItem.Name = "jSToolStripMenuItem";
-            this.jSToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.jSToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.jSToolStripMenuItem.Text = "JS";
             this.jSToolStripMenuItem.Click += new System.EventHandler(this.jSToolStripMenuItem_Click);
             // 
             // jSONToolStripMenuItem
             // 
             this.jSONToolStripMenuItem.Name = "jSONToolStripMenuItem";
-            this.jSONToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.jSONToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.jSONToolStripMenuItem.Text = "JSON";
             this.jSONToolStripMenuItem.Click += new System.EventHandler(this.jSONToolStripMenuItem_Click);
             // 
             // vBToolStripMenuItem
             // 
             this.vBToolStripMenuItem.Name = "vBToolStripMenuItem";
-            this.vBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.vBToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.vBToolStripMenuItem.Text = "VB";
             this.vBToolStripMenuItem.Click += new System.EventHandler(this.vBToolStripMenuItem_Click);
             // 
             // xMLToolStripMenuItem
             // 
             this.xMLToolStripMenuItem.Name = "xMLToolStripMenuItem";
-            this.xMLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.xMLToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.xMLToolStripMenuItem.Text = "XML";
             this.xMLToolStripMenuItem.Click += new System.EventHandler(this.xMLToolStripMenuItem_Click);
             // 
             // pHPToolStripMenuItem
             // 
             this.pHPToolStripMenuItem.Name = "pHPToolStripMenuItem";
-            this.pHPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pHPToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.pHPToolStripMenuItem.Text = "PHP";
             this.pHPToolStripMenuItem.Click += new System.EventHandler(this.pHPToolStripMenuItem_Click);
             // 
             // sQLToolStripMenuItem
             // 
             this.sQLToolStripMenuItem.Name = "sQLToolStripMenuItem";
-            this.sQLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sQLToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.sQLToolStripMenuItem.Text = "SQL";
             this.sQLToolStripMenuItem.Click += new System.EventHandler(this.sQLToolStripMenuItem_Click);
             // 
@@ -978,7 +992,9 @@ namespace SPCoder
             this.viewerToolStripMenuItem,
             this.logToolStripMenuItem,
             this.outputToolStripMenuItem,
-            this.propertiesToolStripMenuItem});
+            this.propertiesToolStripMenuItem,
+            this.toolStripSeparator16,
+            this.cryptoHelperToolStripMenuItem});
             this.windowsToolStripMenuItem.Name = "windowsToolStripMenuItem";
             this.windowsToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
             this.windowsToolStripMenuItem.Text = "Windows";
@@ -1039,17 +1055,17 @@ namespace SPCoder
             this.propertiesToolStripMenuItem.Text = "Properties";
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
             // 
-            // toolStripSeparator15
+            // toolStripSeparator16
             // 
-            this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(250, 6);
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(149, 6);
             // 
-            // toolStripMenuItemAutocompleteExtensionMethods
+            // cryptoHelperToolStripMenuItem
             // 
-            this.toolStripMenuItemAutocompleteExtensionMethods.Name = "toolStripMenuItemAutocompleteExtensionMethods";
-            this.toolStripMenuItemAutocompleteExtensionMethods.Size = new System.Drawing.Size(292, 22);
-            this.toolStripMenuItemAutocompleteExtensionMethods.Text = "Autocomplete - show extension methods";
-            this.toolStripMenuItemAutocompleteExtensionMethods.Click += new System.EventHandler(this.toolStripMenuItemAutocompleteExtensionMethods_Click);
+            this.cryptoHelperToolStripMenuItem.Name = "cryptoHelperToolStripMenuItem";
+            this.cryptoHelperToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cryptoHelperToolStripMenuItem.Text = "Crypto helper";
+            this.cryptoHelperToolStripMenuItem.Click += new System.EventHandler(this.cryptoHelperToolStripMenuItem_Click);
             // 
             // SPCoderForm
             // 
@@ -1198,5 +1214,7 @@ namespace SPCoder
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAutocompleteExtensionMethods;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
+        private System.Windows.Forms.ToolStripMenuItem cryptoHelperToolStripMenuItem;
     }
 }

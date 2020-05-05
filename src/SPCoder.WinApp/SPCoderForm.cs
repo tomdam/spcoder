@@ -1676,9 +1676,36 @@ namespace SPCoder
             SPCoderUtils.ResetAutocompleteItemsCache();
         }
 
-        //private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    Application.Exit();
-        //}
+        private void cryptoHelperToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CryptoHelperWindow window = new CryptoHelperWindow();
+            window.Show(this);
+        }
+
+        public string Encrypt(string text)
+        {
+            try
+            {
+                return CryptoHelper.Encrypt(SPCoderConstants.SP_CODER_CONTAINER_KEY_NAME, text);
+            }
+            catch (Exception exc)
+            {
+                MainForm.LogException(exc);                
+                return "";
+            }
+        }
+
+        public string Decrypt(string text)
+        {
+            try
+            {
+                return CryptoHelper.Decrypt(SPCoderConstants.SP_CODER_CONTAINER_KEY_NAME, text);
+            }
+            catch (Exception exc)
+            {
+                MainForm.LogException(exc);
+                return "";
+            }
+        }
     }
 }

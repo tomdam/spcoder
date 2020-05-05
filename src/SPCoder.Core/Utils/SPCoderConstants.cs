@@ -58,7 +58,8 @@
         public const string SP_SETTINGS_CLEAR_BEFORE_NEXT_EXECUTION = "clearBeforeNextExecution";
 
         public const string SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS = "autocompleteShowExtensionMethods";
-        
 
+
+        public const string SP_CODER_CONTAINER_KEY_NAME = "SPCoderContainer";
     }
 }
