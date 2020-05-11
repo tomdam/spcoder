@@ -91,7 +91,7 @@ namespace SPCoder.Windows
             if (lbContext.SelectedItem != null)
             {
                 ContextItem item = (ContextItem)lbContext.SelectedItem;
-                SPCoderForm.MainForm.ShowProperties(item.Data);
+                SPCoderForm.MainForm.ShowProperties(item.Data, item.Name);
             } 
         }
 

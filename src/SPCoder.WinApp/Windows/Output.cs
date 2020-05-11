@@ -28,12 +28,22 @@ namespace SPCoder.Windows
         public ControlWriter ConsoleWindow { get { return cw; } }
         public void ClearOutput()
         {
-            rtOutput.Clear();
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    rtOutput.Clear();
+                });
+            }
+            else
+            {
+                rtOutput.Clear();
+            }
         }
 
         public void ClearOutputIfChecked()
         {
-            if (cbClear.Checked) rtOutput.Clear();
+            if (cbClear.Checked) ClearOutput(); // rtOutput.Clear();
         }
 
         public RichTextBox RtOutput { get; private set; }

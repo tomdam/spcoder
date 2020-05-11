@@ -251,18 +251,11 @@
     <Compile Include="Config\Code\SPCoderConfig.cs" />
     <Compile Include="Context\ContextFactory.cs" />
     <Compile Include="Context\CSharpContext.cs" />
-    <Compile Include="Describer\DescriberPropertiesData.cs" />
     <Compile Include="Describer\DescriberForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Describer\DescriberForm.Designer.cs">
       <DependentUpon>DescriberForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Describer\DescriberProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Describer\DescriberProperties.Designer.cs">
-      <DependentUpon>DescriberProperties.cs</DependentUpon>
     </Compile>
     <Compile Include="Describer\DescriberUtils.cs" />
     <Compile Include="Describer\ObjectDescription.cs" />
@@ -371,9 +364,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Describer\DescriberForm.resx">
       <DependentUpon>DescriberForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Describer\DescriberProperties.resx">
-      <DependentUpon>DescriberProperties.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSplashScreen.resx">
       <DependentUpon>FrmSplashScreen.cs</DependentUpon>

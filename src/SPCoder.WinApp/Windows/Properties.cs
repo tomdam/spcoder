@@ -72,14 +72,15 @@ namespace SPCoder.Windows
             {
                 SPCoderForm.MainForm.MyContext.AddOrUpdateItem(new ContextItem { Data = this, Name = GetMyNameForScriptContext(), Type = this.GetType().ToString() });
                 addedToContext = true;
-            }
+            }                        
+            PgEditor.SelectedObject = item;
             
-            {
-                PgEditor.SelectedObject = item;
-            }
-
-
             //ShowProperties();
+        }
+
+        public void SetTextProperty(string name)
+        {
+            this.txtPropertiesObject.Text = name;
         }
 
         private void numCounter_ValueChanged(object sender, EventArgs e)

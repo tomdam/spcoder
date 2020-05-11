@@ -22,7 +22,7 @@ namespace SPCoder.Describer
         public static int DescriberCount = 0;
 
         private int myDescriberCount;
-        protected DescriberPropertiesData describerPropertiesData;
+        //protected DescriberPropertiesData describerPropertiesData;
         protected ObjectDescription objectDescription = new ObjectDescription();
 
         private bool addedToContext = false;
@@ -38,19 +38,19 @@ namespace SPCoder.Describer
             InitializeComponent();
             myDescriberCount = ++DescriberCount;
             
-            describerPropertiesData = DescriberUtils.GetValuesFromConfig();
-            objectDescription.DescribedValueMaxLength = describerPropertiesData.MaxDisplayedSize;
+            //describerPropertiesData = DescriberUtils.GetValuesFromConfig();
+            //objectDescription.DescribedValueMaxLength = describerPropertiesData.MaxDisplayedSize;
 
             //SPCoderForm.ironPythonEngine.SetVariable(GetMyNameForScriptContext(), this);
             //SPCoderForm.MainForm.MyContext.AddItem(new ContextItem { Data = this, Name = GetMyNameForScriptContext(), Type = this.GetType().ToString() });
 
-            cb_wordwrap.Checked = describerPropertiesData.WordWrap;
+            /*cb_wordwrap.Checked = describerPropertiesData.WordWrap;
 
             if (describerPropertiesData.WordWrap)
             {
                 fctb.WordWrap = true;
                 fctb.WordWrapMode = WordWrapMode.WordWrapControlWidth;
-            }
+            }*/
 
             LoadSettings();
             cmbSortByWhat.SelectedIndex = 0;
@@ -419,7 +419,7 @@ namespace SPCoder.Describer
             var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
             gridSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP] = isChecked;
 
-            if (describerPropertiesData.WordWrap)
+            if (isChecked)
             {
                 fctb.WordWrap = true;
                 fctb.WordWrapMode = WordWrapMode.WordWrapControlWidth;

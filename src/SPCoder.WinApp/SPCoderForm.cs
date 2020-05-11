@@ -1058,9 +1058,25 @@ namespace SPCoder
             m_explorerView.Connect(url);
         }
 
+        public void Connect(string url, string omType)
+        {
+            this.Connect(url, omType, null, null);
+        }
+
         public void Connect(string url, string omType, string username, string password)
         {
-            m_explorerView.Connect(url, omType, username, password);
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    m_explorerView.Connect(url, omType, username, password);
+                });
+            }
+            else
+            {
+                m_explorerView.Connect(url, omType, username, password);
+            }
+            
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)
@@ -1078,8 +1094,12 @@ namespace SPCoder
             m_context.Show(dockPanel);
         }
 
-        public void ShowProperties(object obj)
+        public void ShowProperties(object obj, string name)
         {
+            if (!string.IsNullOrEmpty(name))
+            {
+                m_properties.SetTextProperty(name);
+            }
             m_properties.PgEditor.SelectedObject = obj;
             m_properties.Show(dockPanel);
         }

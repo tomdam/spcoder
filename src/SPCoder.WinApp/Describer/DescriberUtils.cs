@@ -44,7 +44,7 @@ namespace SPCoder.Describer
 //            return autoRunScripts;
 //        }
 
-        public static DescriberPropertiesData GetValuesFromConfig()
+        /*public static DescriberPropertiesData GetValuesFromConfig()
         {
             Config.Config config = ConfigUtils.GetActiveConfig();
             ConfigFile configFile = config.GetConfigFileByName("Describer");
@@ -65,6 +65,6 @@ namespace SPCoder.Describer
             describerPropertiesData.MaxDisplayedSize = Convert.ToInt32(value);
 
             return describerPropertiesData;
-        }
+        }*/
     }
 }

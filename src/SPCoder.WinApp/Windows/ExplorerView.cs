@@ -523,9 +523,9 @@ namespace SPCoder.Windows
                         var oldImage = ((Node)e.Node.Tag).Image;
                         ((Node)e.Node.Tag).Image = Resources.tsSpinnerButton_Image_small; // btnSpinner.Image;
                         //SPCoderForm.MainForm.AppendToLog("Expanding " + node.Url);
-                        SPCoderForm.MainForm.AppendToLog("Retrieving data " + node.Url);
+                        //SPCoderForm.MainForm.AppendToLog("Retrieving data " + node.Url);
                         var newNode = node.RootNode.NodeConnector.ExpandNode(node);
-                        SPCoderForm.MainForm.AppendToLog("Data retrieved " + node.Url);
+                        //SPCoderForm.MainForm.AppendToLog("Data retrieved " + node.Url);
                         
                         CreateTreeViewNode2((Node)e.Node.Tag, newNode, newNode.RootNode.OMType);
                         
