@@ -437,7 +437,7 @@ namespace SPCoder.Describer
 
         private void txtDescribeObject_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter || e.KeyChar == (char)Keys.Space)
             {
                 e.Handled = true;
                 btnDescribe_Click(sender, null);

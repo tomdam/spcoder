@@ -137,5 +137,14 @@ namespace SPCoder.Windows
                 Paste();
             }*/
         }
+
+        private void btnView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //If space is pressed, show the grid
+            if (e.KeyChar == (char)Keys.Space)
+            {
+                btnView_Click(sender, e);
+            }
+        }
     }
 }
