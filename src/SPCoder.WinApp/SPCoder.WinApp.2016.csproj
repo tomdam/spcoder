@@ -438,6 +438,12 @@
     </None>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\DataSources\SPCoder.Autorun.AutorunScriptConfigItem.datasource" />
+    <None Include="Scripts\CSharp\Examples\Corona\Corona save page.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\CSharp\Examples\Corona\Corona.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\CSharp\Plugins\SPExcelWorksheetDataGetter.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -445,6 +451,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\CSharp\Plugins\SPSharePointWebPnpTemplateGetter.csx" />
+    <None Include="Scripts\CSharp\SharePoint\Utils.csx" />
     <None Include="Scripts\CSharp\SPPluginsScripts.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -568,6 +575,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
