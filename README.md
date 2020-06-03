@@ -34,4 +34,4 @@ SPCoder contains different connectors (modules), so you can easily connect to th
 
 Other connectors can be created and added to SPCoder. For instance one could easily create the Facebook connector using Facebook .net sdk, which could be used to connect to Facebook account, get the list of friends, posts, images, etc.
 
-Best way to learn more about SPCoder is through our examples which you can open using the appropriate links in the menu.
+Best way to learn more about SPCoder is through our examples which you can find in wiki pages.
