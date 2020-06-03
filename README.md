@@ -8,7 +8,7 @@ SPCoder can be extended by creating new _modules_, _plugins_ or _autorun scripts
 Some of the standard cases for using SPCoder are:
 * 	Testing and learning C# language features
 * 	Creating project prototypes
-* 	Retreiving the data from various data sources
+* 	Retreiving and updating the data from various data sources
 * 	Cleaning the data
 * 	Doing data migrations
 * 	...
