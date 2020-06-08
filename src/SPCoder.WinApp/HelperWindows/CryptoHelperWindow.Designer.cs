@@ -118,7 +118,9 @@
             this.Controls.Add(this.lblEncrypted);
             this.Controls.Add(this.lblText);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "CryptoHelperWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Crypto Helper";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -11,7 +11,7 @@
 #r "{{WorkingDirectory}}\OfficeDevPnP.Core.dll"
 #r "{{WorkingDirectory}}\Camlex.Client.dll"
 #r "{{WorkingDirectory}}\EPPlus.dll"
-#r "{{WorkingDirectory}}\SPCoder.2016.exe"
+
 */
 
 using System;

@@ -36,7 +36,6 @@
             this.tEstToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,45 +60,37 @@
             this.tsDescribe,
             this.tEstToolStripMenuItem,
             this.deleteToolStripMenuItem,
-            this.renameToolStripMenuItem,
-            this.pluginsToolStripMenuItem});
+            this.renameToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(124, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
             // 
             // tsDescribe
             // 
             this.tsDescribe.Name = "tsDescribe";
-            this.tsDescribe.Size = new System.Drawing.Size(123, 22);
+            this.tsDescribe.Size = new System.Drawing.Size(152, 22);
             this.tsDescribe.Text = "Describe";
             this.tsDescribe.Click += new System.EventHandler(this.tsDescribe_Click);
             // 
             // tEstToolStripMenuItem
             // 
             this.tEstToolStripMenuItem.Name = "tEstToolStripMenuItem";
-            this.tEstToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.tEstToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.tEstToolStripMenuItem.Text = "Properties";
             this.tEstToolStripMenuItem.Click += new System.EventHandler(this.tEstToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
-            // 
-            // pluginsToolStripMenuItem
-            // 
-            this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
-            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
-            this.pluginsToolStripMenuItem.Text = "Plugins";
-            this.pluginsToolStripMenuItem.Click += new System.EventHandler(this.pluginsToolStripMenuItem_Click);
             // 
             // Context
             // 
@@ -125,6 +116,5 @@
         private System.Windows.Forms.ToolStripMenuItem tEstToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
     }
 }

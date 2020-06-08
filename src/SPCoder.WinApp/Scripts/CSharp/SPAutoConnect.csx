@@ -25,4 +25,4 @@
 //main.Connect("SP-Online-site-url", "SharePoint Client O365 APP", main.Decrypt("encryptedclientid"), main.Decrypt("encryptedclientsecret"));
 
 
-main.Connect(@"{{WorkingDirectory}}\Scripts\CSharp", "File system");
+//main.Connect(@"{{WorkingDirectory}}\Scripts\CSharp", "File system");

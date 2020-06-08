@@ -10,7 +10,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SPCoder</RootNamespace>
-    <AssemblyName>SPCoder.2016</AssemblyName>
+    <AssemblyName>SPCoder</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -450,8 +450,12 @@
     <None Include="Scripts\CSharp\Plugins\SPSharePointListItemsGetter.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scripts\CSharp\Plugins\SPSharePointWebPnpTemplateGetter.csx" />
-    <None Include="Scripts\CSharp\SharePoint\Utils.csx" />
+    <None Include="Scripts\CSharp\Plugins\SPSharePointWebPnpTemplateGetter.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\CSharp\SharePoint\Utils.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\CSharp\SPPluginsScripts.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

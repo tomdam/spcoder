@@ -35,7 +35,7 @@
             this.labelCopyright = new System.Windows.Forms.Label();
             this.textBoxDescription = new System.Windows.Forms.TextBox();
             this.okButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.linkedinLink = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.SuspendLayout();
@@ -51,7 +51,7 @@
             this.tableLayoutPanel.Controls.Add(this.labelCopyright, 1, 2);
             this.tableLayoutPanel.Controls.Add(this.textBoxDescription, 1, 4);
             this.tableLayoutPanel.Controls.Add(this.okButton, 1, 5);
-            this.tableLayoutPanel.Controls.Add(this.label1, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.linkedinLink, 1, 3);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(9, 9);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -98,7 +98,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(271, 17);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "2.1.0.0";
+            this.labelVersion.Text = "2.2.0.0";
             this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // labelCopyright
@@ -110,7 +110,7 @@
             this.labelCopyright.Name = "labelCopyright";
             this.labelCopyright.Size = new System.Drawing.Size(271, 17);
             this.labelCopyright.TabIndex = 21;
-            this.labelCopyright.Text = "Damjan Tomic";
+            this.labelCopyright.Text = "Author: Damjan Tomic";
             this.labelCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // textBoxDescription
@@ -125,7 +125,7 @@
             this.textBoxDescription.Size = new System.Drawing.Size(271, 126);
             this.textBoxDescription.TabIndex = 23;
             this.textBoxDescription.TabStop = false;
-            this.textBoxDescription.Text = "http://spcoder.com\r\nhttps://github.com/tomdam/spcoder";
+            this.textBoxDescription.Text = "https://spcoder.com\r\nhttps://github.com/tomdam/spcoder";
             // 
             // okButton
             // 
@@ -137,15 +137,21 @@
             this.okButton.TabIndex = 24;
             this.okButton.Text = "&OK";
             // 
-            // label1
+            // linkedinLink
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(143, 78);
-            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(271, 26);
-            this.label1.TabIndex = 25;
-            this.label1.Text = "tomdam@gmail.com";
+            this.linkedinLink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkedinLink.AutoSize = true;
+            this.linkedinLink.Location = new System.Drawing.Point(143, 78);
+            this.linkedinLink.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.linkedinLink.Name = "linkedinLink";
+            this.linkedinLink.Size = new System.Drawing.Size(271, 26);
+            this.linkedinLink.TabIndex = 25;
+            this.linkedinLink.TabStop = true;
+            this.linkedinLink.Text = "https://www.linkedin.com/in/damjantomic/";
+            this.linkedinLink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.linkedinLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkedinLink_LinkClicked);
             // 
             // AboutBox
             // 
@@ -180,6 +186,6 @@
         private System.Windows.Forms.Label labelCopyright;
         private System.Windows.Forms.TextBox textBoxDescription;
         private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.LinkLabel linkedinLink;
     }
 }

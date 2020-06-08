@@ -795,26 +795,33 @@ namespace SPCoder
         /// <param name="title">Title of the window</param>
         /// <param name="source">Source code</param>
         /// <param name="fullFileName">Full file path</param>
-        public void GenerateNewSourceTab(string title, string source, string fullFileName)
+        public void GenerateNewSourceTab(string title, string source, string fullFileName, string extension = null)
         {
             if (this.InvokeRequired)
             {
                 this.BeginInvoke((MethodInvoker)delegate ()
                 {
-                    GenerateNewSourceTabPrivate(title, source, fullFileName);
+                    GenerateNewSourceTabPrivate(title, source, fullFileName, extension);
                 });
             }
             else
             {
-                GenerateNewSourceTabPrivate(title, source, fullFileName);
+                GenerateNewSourceTabPrivate(title, source, fullFileName, extension);
             }            
         }
 
-        private void GenerateNewSourceTabPrivate(string title, string source, string fullFileName)
+        private void GenerateNewSourceTabPrivate(string title, string source, string fullFileName, string extension = null)
         {
             CSharpCode newCode = new CSharpCode();
             newCode.Fctb.ContextMenuStrip = cmMain;
-            newCode.Fctb.Language = GetLanguageFromFileName(fullFileName);
+            if (string.IsNullOrEmpty(extension))
+            {
+                newCode.Fctb.Language = GetLanguageFromFileName(fullFileName);
+            }
+            else
+            {
+                newCode.Fctb.Language = SPCoderSettings.GetLanguageFromExtension(extension);
+            }
 
             newCode.Source = source;
             newCode.Title = title;

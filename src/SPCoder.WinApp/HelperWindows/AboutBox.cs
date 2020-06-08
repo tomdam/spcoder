@@ -99,5 +99,10 @@ namespace SPCoder.HelperWindows
             }
         }
         #endregion
+
+        private void linkedinLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkedinLink.Text);
+        }
     }
 }
