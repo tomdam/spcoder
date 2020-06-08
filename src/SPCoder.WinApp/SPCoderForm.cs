@@ -1103,6 +1103,21 @@ namespace SPCoder
 
         public void ShowProperties(object obj, string name)
         {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    this.ShowPropertiesInternal(obj, name);
+                });
+            }
+            else
+            {
+                this.ShowPropertiesInternal(obj, name);
+            }            
+        }
+
+        private void ShowPropertiesInternal(object obj, string name)
+        {
             if (!string.IsNullOrEmpty(name))
             {
                 m_properties.SetTextProperty(name);

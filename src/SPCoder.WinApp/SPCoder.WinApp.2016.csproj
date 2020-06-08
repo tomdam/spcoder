@@ -444,6 +444,9 @@
     <None Include="Scripts\CSharp\Examples\Corona\Corona.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scripts\CSharp\Examples\Welcome\Welcome.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\CSharp\Plugins\SPExcelWorksheetDataGetter.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

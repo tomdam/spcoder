@@ -12,7 +12,7 @@ public void DoShowObjectInGrid(object item)
 //Used by one of the plugins
 public void GenerateNewSourceTab(object item)
 {
-    main.GenerateNewSourceTab("PnPProvisioningSource.xml", item.ToString(), "PnPProvisioningSource.xml", "xml");
+    main.GenerateNewSourceTab("PnPProvisioningSource.xml", item.ToString(), null, "xml");
 }
 
 //For new plugins to become available, they need to be saved as csx files inside the Plugins directory

@@ -100,4 +100,4 @@ foreach(System.Data.DataRow row in table.Rows)
 
 context.ExecuteQuery();
 //------------
-
+//For the rest of the example please check the "Corona save page.csx" file
