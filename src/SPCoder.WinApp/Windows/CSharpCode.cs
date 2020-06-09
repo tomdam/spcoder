@@ -228,7 +228,8 @@ namespace SPCoder.Windows
         {
             if (e.Action == FCTBAction.CustomAction1)
             {
-                this.ExecuteSelectionCSharp(true);
+                //this.ExecuteSelectionCSharp(true);
+                this.ExecuteSelectionCSharp(SPCoderForm.AsynchronousExecution);
             } 
             else if (e.Action == FCTBAction.CustomAction2)
                 {

@@ -59,6 +59,8 @@
 
         public const string SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS = "autocompleteShowExtensionMethods";
 
+        public const string SP_SETTINGS_ASYNC_EXECUTION = "asyncExecution";
+
 
         public const string SP_CODER_CONTAINER_KEY_NAME = "SPCoderContainer";
     }

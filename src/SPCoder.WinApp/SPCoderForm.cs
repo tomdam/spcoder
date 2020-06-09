@@ -114,6 +114,8 @@ namespace SPCoder
 
             AddHistoryToRecentMenu();
 
+            LoadOtherSettings();
+
             MyContext = ContextFactory.GetCurrentContext();
             toolStripStatusLabel.Text = "Ready";
             Application.DoEvents();
@@ -184,7 +186,7 @@ namespace SPCoder
                 GenerateNewSourceTab(title, source, fullFileName);
             }
         }
-
+       
         protected void AddHistoryToRecentMenu()
         {
             try
@@ -249,19 +251,30 @@ namespace SPCoder
             GenerateNewSourceTab(title, source, fullFileName);
         }
 
+       
         private void LoadOtherSettings()
         {
             //
-            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE] != null)
+            try
             {
-                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
-                if (codeSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE] != null)
                 {
-                    string value = codeSettings[SPCoderConstants.SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS].ToString();
-                    bool isChecked = bool.Parse(value);
-                    toolStripMenuItemAutocompleteExtensionMethods.Checked = isChecked;
-                    PutExtensionMethodsToAutocomplete = isChecked;
+                    var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                    if (codeSettings.ContainsKey(SPCoderConstants.SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS))
+                    {
+                        string value = codeSettings[SPCoderConstants.SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS].ToString();
+                        bool isChecked = bool.Parse(value);
+                        toolStripMenuItemAutocompleteExtensionMethods.Checked = isChecked;
+                        PutExtensionMethodsToAutocomplete = isChecked;                        
+                    }
+                    var asyncExecution = (bool)codeSettings[SPCoderConstants.SP_SETTINGS_ASYNC_EXECUTION];
+                    SPCoderForm.AsynchronousExecution = asyncExecution;
+                    asynchronousCodeExecutionToolStripMenuItem.Checked = asyncExecution;
                 }
+            }
+            catch (Exception exc)
+            {
+                SPCoderLogging.Logger.Error("Error while reading settings", exc);
             }
         }
 
@@ -451,6 +464,7 @@ namespace SPCoder
         }
 
         public static ScriptState<object> ScriptStateCSharp = null;
+        public static bool AsynchronousExecution { get; set; }
 
         public void ExecuteScriptCSharp(string script, int timesCalled = 0)
         {
@@ -1056,7 +1070,8 @@ namespace SPCoder
             var a = ActiveDocument;
             if (a != null)
             {
-                a.ExecuteSelectionCSharp(true);
+                //a.ExecuteSelectionCSharp(true);
+                a.ExecuteSelectionCSharp(SPCoderForm.AsynchronousExecution);
             }
         }
 
@@ -1748,6 +1763,12 @@ namespace SPCoder
                 MainForm.LogException(exc);
                 return "";
             }
+        }
+
+        private void asynchronousCodeExecutionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SPCoderForm.AsynchronousExecution = !SPCoderForm.AsynchronousExecution;
+            this.asynchronousCodeExecutionToolStripMenuItem.Checked = SPCoderForm.AsynchronousExecution;
         }
     }
 }
