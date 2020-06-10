@@ -25,7 +25,7 @@ namespace SPCoder.Windows
 
         public object GridSource { get; set; }
 
-        private bool gridAddedToContext = false;
+        public bool gridAddedToContext = false;
 
         private void LoadDefaultExpression()
         {

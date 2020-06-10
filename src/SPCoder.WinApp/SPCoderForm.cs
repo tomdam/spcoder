@@ -639,6 +639,9 @@ namespace SPCoder
 
             ExecuteAutorunScripts();
 
+            //add gridviewer to context 
+            ExecuteAdditionalOnStartScripts();
+
             //This has been moved to run after the first autorun script, inside the ExecuteAutorunScripts() method
             //because the main.Connect must be available in the autorun scripts that run after the first one
             /*
@@ -736,6 +739,13 @@ namespace SPCoder
             {
                 LogException(ex);                
             }
+        }
+
+        private void ExecuteAdditionalOnStartScripts()
+        {
+            var gridObj = m_gridviewer;
+            SPCoderForm.MainForm.MyContext.AddItem(new ContextItem { Data = gridObj, Name = "myGridViewer", Type = gridObj.GetType().ToString() });
+            gridObj.gridAddedToContext = true;
         }
 
         public Log SpLog { get; set; }
