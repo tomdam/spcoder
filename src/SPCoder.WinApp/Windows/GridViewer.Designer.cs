@@ -91,7 +91,7 @@
             // btnView
             // 
             this.btnView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnView.Location = new System.Drawing.Point(621, 8);
+            this.btnView.Location = new System.Drawing.Point(621, 4);
             this.btnView.Name = "btnView";
             this.btnView.Size = new System.Drawing.Size(60, 23);
             this.btnView.TabIndex = 12;
@@ -104,7 +104,7 @@
             // 
             this.txtCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCode.Location = new System.Drawing.Point(5, 9);
+            this.txtCode.Location = new System.Drawing.Point(5, 6);
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(611, 20);
             this.txtCode.TabIndex = 11;

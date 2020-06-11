@@ -96,12 +96,11 @@ namespace SPCoder.Autorun
         private void btnView_Click(object sender, System.EventArgs e)
         {
             //Open the Config file in the New Script window on main Form
-            var rows = dataGridView1.SelectedRows;
-            //TODO: Here check if any cell is selected, and not just the whole row
-            if (rows != null && rows.Count == 1)
+            if (dataGridView1.SelectedCells.Count > 0)
             {
+                var rowIndex = dataGridView1.SelectedCells[0].RowIndex;
                 //Get the row, calculate absolute path of the script and open it in main window
-                AutorunScriptConfigItem item = (AutorunScriptConfigItem) rows[0].DataBoundItem;
+                AutorunScriptConfigItem item = (AutorunScriptConfigItem)dataGridView1.Rows[rowIndex].DataBoundItem;
                 string fullPath = ConfigUtils.GetFullPathToConfigFile(item.Path);
                 SPCoderForm.MainForm.GenerateNewSourceTab(item.Title, item.Source, fullPath);
             }

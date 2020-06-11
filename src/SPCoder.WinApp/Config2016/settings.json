@@ -1,6 +1,6 @@
 {
   "code": {
-    "asyncExecution": false,
+    "asyncExecution": true,
     "languages": {
       "csharp": [
         "cs",
@@ -31,6 +31,7 @@
       ]
     },
     "windows": [
+      { "path": "Scripts\\CSharp\\Examples\\Welcome\\Welcome.csx" }
     ],
     "history": [
     ],
