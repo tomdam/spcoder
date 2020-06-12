@@ -1177,6 +1177,11 @@ namespace SPCoder
             return btInvisibleChars.Checked;
         }
 
+        public bool ShouldWordwrapBeActivated()
+        {
+            return wordWrapStripButton.Checked;
+        }
+
         private void btInvisibleChars_Click(object sender, EventArgs e)
         {
             foreach (CSharpCode tab in codeWindows)
@@ -1372,7 +1377,7 @@ namespace SPCoder
                     //copyToolStripButton.Enabled = 
                     copyToolStripMenuItem.Enabled = copyToolStripMenuItem1.Enabled = !tb.Selection.IsEmpty;
                     printToolStripButton.Enabled = printToolStripMenuItem.Enabled = true;
-                    wordWrapStripButton.Checked = tb.WordWrap;
+                    //wordWrapStripButton.Checked = tb.WordWrap;
                     findToolStripMenuItem1.Enabled = true;
                     replaceToolStripMenuItem1.Enabled = true;
                 }
@@ -1414,7 +1419,7 @@ namespace SPCoder
 
         private void wordWrapStripButton_Click(object sender, EventArgs e)
         {
-            var scb = SourceCodeBox;
+            /*var scb = SourceCodeBox;
             if (scb != null)// && tsFiles.Items.Count > 0)
             {
                 if (wordWrapStripButton.Checked)
@@ -1427,6 +1432,14 @@ namespace SPCoder
                     scb.WordWrap = false;
                 }
             }
+            */
+
+            foreach (CSharpCode tab in codeWindows)
+            {
+                tab.ChangeWordWrap(wordWrapStripButton.Checked);
+            }
+            if (SourceCodeBox != null)
+                SourceCodeBox.Invalidate();
         }
 
         private void autorunToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -1591,7 +1604,7 @@ namespace SPCoder
             if (SourceCodeBox != null)
             {
                 paragraphToolStripMenuItem.Checked = btInvisibleChars.Checked;
-                wordWrapToolStripMenuItem.Checked = SourceCodeBox.WordWrap;
+                wordWrapToolStripMenuItem.Checked = wordWrapStripButton.Checked; //SourceCodeBox.WordWrap;
             }
             else
             {

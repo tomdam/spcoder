@@ -290,6 +290,11 @@ namespace SPCoder.Windows
             HighlightInvisibleChars(range);
         }
 
+        public void ChangeWordWrap(bool val)
+        {
+            this.fctb.WordWrap = val;
+        }
+
         public void HighlightInvisibleChars(Range range)
         {             
             range.ClearStyle(invisibleCharsStyle);
@@ -521,6 +526,7 @@ namespace SPCoder.Windows
         private void CSharpCode_Activated_1(object sender, EventArgs e)
         {
             SPCoderForm.MainForm.UpdateMenuButtons();
+            fctb.WordWrap = SPCoderForm.MainForm.ShouldWordwrapBeActivated();
         }
     }
 
