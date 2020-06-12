@@ -14,7 +14,7 @@ namespace SPCoder.Github.Utils.Nodes
             base.Title = file.name;
             base.SPObjectType = file.GetType().Name;
             base.Url = file.download_url;
-            base.IconPath = "";
+            //base.IconPath = "";
             this._file = file;
         }
 

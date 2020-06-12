@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace SPCoder.FileSystem.Utils
 {
+    
     public class FSConnector : BaseConnector
     {
         DirectoryInfo Folder { get; set; }
@@ -94,12 +95,20 @@ namespace SPCoder.FileSystem.Utils
                     myNode.Children.Add(myFileNode);
                     myFileNode.ParentNode = myNode;
                     myFileNode.RootNode = rootNode;
-                    Icon icon = Icon.ExtractAssociatedIcon(file.FullName);
-                    myFileNode.IconObject = icon.ToBitmap();
-                    if (myFileNode.IconObject.Width != 16)
+                    try
                     {
-                        myFileNode.IconObject = new Bitmap(myFileNode.IconObject, 16, 16);
-                    }                    
+                        //Icon icon = Icon.ExtractAssociatedIcon(file.FullName);
+                        Icon icon = ShellIcon.GetSmallIconFromExtension(file.Extension);
+                        myFileNode.IconObject = icon.ToBitmap();
+                        if (myFileNode.IconObject.Width != 16)
+                        {
+                            myFileNode.IconObject = new Bitmap(myFileNode.IconObject, 16, 16);
+                        }/**/
+                    }
+                    catch (Exception exc)
+                    {
+                        //skip if exception happens here... the default icon will be shown
+                    }                  
                 }
                 return myNode;
             }

@@ -5,6 +5,7 @@ using SPCoder.Utils.Nodes;
 using System;
 using System.Linq;
 using SPCoder.Github.Utils.Nodes;
+using System.Drawing;
 
 namespace SPCoder.Github.Utils
 {
@@ -114,6 +115,28 @@ namespace SPCoder.Github.Utils
                 childNode.RootNode = rootNode;
                 childNode.ParentNode = my;
                 childNode.SPObject = node;
+
+                try
+                {
+                    //
+                    if (node.name != null && node.name.Contains("."))
+                    {
+                        var els = node.name.Split('.');
+                        string extension = "." + els[els.Length - 1];
+                        //Icon icon = Icon.ExtractAssociatedIcon(file.FullName);
+                        Icon icon = ShellIcon.GetSmallIconFromExtension(extension);
+                        childNode.IconObject = icon.ToBitmap();
+                        if (childNode.IconObject.Width != 16)
+                        {
+                            childNode.IconObject = new Bitmap(childNode.IconObject, 16, 16);
+                        }/**/
+                    }
+                }
+                catch (Exception exc)
+                {
+                    //skip if exception happens here... the default icon will be shown
+                }
+
                 my.Children.Add(childNode);
             }
             
@@ -195,6 +218,27 @@ namespace SPCoder.Github.Utils
                     else //dir
                     {
                         childNode = new GithubDirectoryNode(node);
+                    }
+
+                    try
+                    {
+                        //
+                        if (node.name != null && node.name.Contains("."))
+                        {
+                            var els = node.name.Split('.');
+                            string extension = "." + els[els.Length - 1];
+                            //Icon icon = Icon.ExtractAssociatedIcon(file.FullName);
+                            Icon icon = ShellIcon.GetSmallIconFromExtension(extension);
+                            childNode.IconObject = icon.ToBitmap();
+                            if (childNode.IconObject.Width != 16)
+                            {
+                                childNode.IconObject = new Bitmap(childNode.IconObject, 16, 16);
+                            }/**/
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        //skip if exception happens here... the default icon will be shown
                     }
                     childNode.NodeConnector = this;
                     childNode.OMType = ObjectModelType.REMOTE;
