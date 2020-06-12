@@ -21,7 +21,9 @@
       ],
       "xml": [
         "xml",
-        "config"
+        "config",
+        "csproj",
+        "resx"
       ],
       "php": [
         "php"

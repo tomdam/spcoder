@@ -118,6 +118,7 @@
     <Compile Include="Utils\Nodes\BaseActionItem.cs" />
     <Compile Include="Utils\Nodes\BaseNode.cs" />
     <Compile Include="Utils\Nodes\LeafNode.cs" />
+    <Compile Include="Utils\Nodes\OpenActionResult.cs" />
     <Compile Include="Utils\ObjectModelType.cs" />
     <Compile Include="Utils\ShellIcon.cs" />
     <Compile Include="Utils\SPCoderConstants.cs" />

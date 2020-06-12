@@ -16,6 +16,7 @@ namespace SPCoder.Github.Utils.Nodes
             base.SPObjectType = folder.GetType().Name;
             base.Url = folder.download_url;
             base.IconPath = "";
+            
             this._folder = folder;
         }
 
@@ -56,5 +57,7 @@ namespace SPCoder.Github.Utils.Nodes
             }
 
         }
+
+        public override string LocalImagesSubfolder { get { return "Github"; } }
     }
 }

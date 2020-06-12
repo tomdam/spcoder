@@ -43,8 +43,11 @@ namespace SPCoder.Github.Utils.Nodes
             switch (actionItem.Action)
             {
                 case NodeActions.Open:
-                    
-                    return connector.GetSource(this.Url);
+                    OpenActionResult oar = new OpenActionResult();
+                    oar.Source = connector.GetSource(this.Url);
+                    var els = this.Url.Split('.');                    
+                    oar.Language = els[els.Length - 1];
+                    return oar;
                     
                 case NodeActions.Save:
                     

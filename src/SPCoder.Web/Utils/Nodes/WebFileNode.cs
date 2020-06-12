@@ -2,11 +2,7 @@
 using SPCoder.Core.Utils;
 using SPCoder.Core.Utils.Nodes;
 using SPCoder.Utils.Nodes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SPCoder.Web.Utils.Nodes
 {
@@ -21,6 +17,10 @@ namespace SPCoder.Web.Utils.Nodes
         public PageLeafNode(HtmlNode node) : this()
         {
             base.Title = node.Name;
+            if (!string.IsNullOrEmpty(node.Id))
+            {
+                base.Title = node.Name + " (id=" + node.Id + ")";
+            }
             base.SPObjectType = node.GetType().Name;
             base.Url = node.XPath;
             base.SPObject = node;
@@ -34,7 +34,10 @@ namespace SPCoder.Web.Utils.Nodes
                     if (base.SPObject != null)
                     {
                         HtmlNode node = (HtmlNode)base.SPObject;
-                        return node.OuterHtml;
+                        OpenActionResult oar = new OpenActionResult();
+                        oar.Source = node.OuterHtml;
+                        oar.Language = "html";
+                        return oar;
                     }
                     else
                         return null;
@@ -50,5 +53,7 @@ namespace SPCoder.Web.Utils.Nodes
             actions.Add(new BaseActionItem { Node = this, Name = "View source", Action = Core.Utils.NodeActions.Open });
             return actions;
         }
+
+        public override string LocalImagesSubfolder { get { return "Web"; } }
     }
 }

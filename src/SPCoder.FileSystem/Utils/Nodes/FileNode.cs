@@ -34,8 +34,12 @@ namespace SPCoder.FileSystem.Utils.Nodes
             switch (actionItem.Action)
             {
                 case NodeActions.Open:
-                    return File.ReadAllText(this.Url);
-
+                    OpenActionResult oar = new OpenActionResult();
+                    oar.Source = File.ReadAllText(this.Url);
+                    var els = this.Url.Split('.');
+                    oar.Language = els[els.Length - 1];
+                    return oar;
+                    
                 case NodeActions.ExternalOpen:
                     //for this we only need the path
                     return this.Url;

@@ -633,7 +633,16 @@ namespace SPCoder.Windows
                         object source = action.Node.ExecuteAction(action);
                         if (source != null)
                         {
-                            SPCoderForm.MainForm.GenerateNewSourceTab(action.Node.Title, source.ToString(), null);
+                            //
+                            if (source is OpenActionResult)
+                            {
+                                var _source = source as OpenActionResult;
+                                SPCoderForm.MainForm.GenerateNewSourceTab(action.Node.Title, _source.Source.ToString(), null, _source.Language);
+                            }
+                            else
+                            {
+                                SPCoderForm.MainForm.GenerateNewSourceTab(action.Node.Title, source.ToString(), null);
+                            }
                         }
                         break;
                     case NodeActions.Save:

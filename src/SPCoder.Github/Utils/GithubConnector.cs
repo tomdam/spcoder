@@ -88,7 +88,8 @@ namespace SPCoder.Github.Utils
             rootNode.NodeConnector = this;
             rootNode.OMType = ObjectModelType.REMOTE;
             rootNode.LoadedData = true;
-            
+            rootNode.IconPath = "github.png";
+
             BaseNode my = new GithubDirectoryNode(rootFolder);
             my.NodeConnector = this;
             my.OMType = ObjectModelType.REMOTE;
@@ -119,7 +120,7 @@ namespace SPCoder.Github.Utils
                 try
                 {
                     //
-                    if (node.name != null && node.name.Contains("."))
+                    if (node.type == "file" && node.name != null && node.name.Contains("."))
                     {
                         var els = node.name.Split('.');
                         string extension = "." + els[els.Length - 1];
@@ -223,7 +224,7 @@ namespace SPCoder.Github.Utils
                     try
                     {
                         //
-                        if (node.name != null && node.name.Contains("."))
+                        if (node.type == "file" && node.name != null && node.name.Contains("."))
                         {
                             var els = node.name.Split('.');
                             string extension = "." + els[els.Length - 1];

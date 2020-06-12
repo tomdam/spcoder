@@ -30,7 +30,7 @@ namespace SPCoder.Web.Utils
             page.Get(siteUrl, "/");
 
             rootNode.Title = RootNodeTitle + page.ResponseUri.Host.ToString();
-
+            rootNode.IconPath = "html.png";
 
             BaseNode my = new PageNode(Document.DocumentNode);
             my.RootNode = rootNode;

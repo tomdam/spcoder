@@ -1,0 +1,8 @@
+﻿namespace SPCoder.Core.Utils.Nodes
+{
+    public class OpenActionResult
+    {
+        public string Language { get; set; }
+        public string Source { get; set; }
+    }
+}
