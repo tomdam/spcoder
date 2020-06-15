@@ -12,6 +12,7 @@
 #r "{{WorkingDirectory}}\Camlex.Client.dll"
 #r "{{WorkingDirectory}}\EPPlus.dll"
 
+#r "Microsoft.SharePoint.WorkflowServicesBase"
 */
 
 using System;

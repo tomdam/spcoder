@@ -66,6 +66,8 @@ namespace SPCoder.Windows
             //fctb.OnTextChangedDelayed(fctb.Range);
             fctb.CurrentLineColor = Color.FromArgb(200, 200, 255);
 
+            fctb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
+
             fctb.CustomAction += fctb_CustomAction;
             
             fctb.HotkeysMapping.Add(Keys.F5, FCTBAction.CustomAction1);
@@ -104,6 +106,16 @@ namespace SPCoder.Windows
             {
                 this.Text += "*";
             }
+
+            if (this.fctb.Language == Language.CSharp)
+            {
+                //fixing the issue with arrow syntax where default regex splits the = and the >
+                this.fctb.AutoIndentCharsPatterns
+                = @"
+^\s*[\w\.]+(\s\w+)?\s*(?<range>=)\s*(?<range>[^=>;]+);
+^\s*(case|default)\s*[^:]*(?<range>:)\s*(?<range>[^;]+);
+";
+            }
         }
 
         private void fctb_TextChanged_delayed2(object sender, TextChangedEventArgs e)
@@ -115,6 +127,7 @@ namespace SPCoder.Windows
 
             e.ChangedRange.ClearStyle(LinkStyle);
             e.ChangedRange.SetStyle(LinkStyle, @"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
+            
         }
 
         bool CharIsHyperlink(Place place)
@@ -215,12 +228,12 @@ namespace SPCoder.Windows
                 return;
             }
             //is unclosed operator in previous line ?
-            if (Regex.IsMatch(args.PrevLineText, @"^\s*(if|for|foreach|while|[\}\s]*else)\b[^{]*$"))
-                if (!Regex.IsMatch(args.PrevLineText, @"(;\s*$)|(;\s*//)"))//operator is unclosed
-                {
-                    args.Shift = args.TabLength;
-                    return;
-                }
+            //if (Regex.IsMatch(args.PrevLineText, @"^\s*(if|for|foreach|while|[\}\s]*else)\b[^{]*$"))
+            //    if (!Regex.IsMatch(args.PrevLineText, @"(;\s*$)|(;\s*//)"))//operator is unclosed
+            //    {
+            //        args.Shift = args.TabLength;
+            //        return;
+            //    }
         }
         
 
@@ -562,6 +575,11 @@ namespace SPCoder.Windows
             foreach (var item in keywords)
                 yield return new AutocompleteItem(item);
 
+            //get the variables from context also
+            var variables = SPCoderForm.ScriptStateCSharp.Variables.Select(m => m.Name).ToList();
+            foreach (var item in variables)
+                yield return new AutocompleteItem(item);
+
             //IList<AutocompleteItem> items = new List<AutocompleteItem>();
             //get current fragment of the text
             var text = menu.Fragment.Text;
@@ -570,8 +588,14 @@ namespace SPCoder.Windows
                 text = text.Substring(text.LastIndexOf(' ')).Trim();
             }
 
+            //get the parameter from the function call
+            if (text.Contains('('))
+            {
+                text = text.Substring(text.LastIndexOf('(') + 1).Trim();
+            }
+
             //extract class name (part before dot)
-            var parts = text.Split('.');
+           var parts = text.Split('.');
             if (parts.Length < 2)
                 yield break;
             var myVar = parts[parts.Length - 2];

@@ -13,7 +13,7 @@
 //You should never save the password in clear text. Use SPCoder encription mechanizm instead.
 //main.Connect("SP-Online-site-url", "SharePoint Client O365", "sponlineemail", "sponlinepass");
 
-//Instead of "sponlinepass", use the "Crypto helper" window to decrypt the password, and then use the encripted value, like this:
+//Instead of "sponlinepass", use the "Crypto helper" window to encrypt the password, and then use the encripted value, like this:
 //main.Connect("SP-Online-site-url", "SharePoint Client O365", "sponlineemail", main.Decrypt("encryptedsponlinepass"));
 
 
