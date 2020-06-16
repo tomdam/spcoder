@@ -541,6 +541,28 @@ namespace SPCoder.Windows
             SPCoderForm.MainForm.UpdateMenuButtons();
             fctb.WordWrap = SPCoderForm.MainForm.ShouldWordwrapBeActivated();
         }
+
+        private void CSharpCode_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            SPCoderForm.MainForm.GenerateNewSourceTabsFromPaths(files);
+        }
+
+        private void CSharpCode_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void fctb_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            SPCoderForm.MainForm.GenerateNewSourceTabsFromPaths(files);
+        }
+
+        private void fctb_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
     }
 
     internal class DynamicCollection : IEnumerable<AutocompleteItem>

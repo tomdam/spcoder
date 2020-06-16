@@ -1,6 +1,5 @@
 {
   "code": {
-    "asyncExecution": true,
     "languages": {
       "csharp": [
         "cs",
@@ -37,7 +36,10 @@
     ],
     "history": [
     ],
-    "autocompleteShowExtensionMethods": false
+    "asyncExecution": true,
+    "autocompleteShowExtensionMethods": false,
+    "wordWrap": true,
+    "paragraph": false
   },
   "explorer": {
     "address": "c:\\",

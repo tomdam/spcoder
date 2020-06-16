@@ -53,6 +53,8 @@
         public const string SP_SETTINGS_MAX_CHARACTERS = "maxCharacters";
         public const string SP_SETTINGS_WORD_WRAP = "wordWrap";
 
+        public const string SP_SETTINGS_PARAGRAPH = "paragraph";
+
         public const string SP_SETTINGS_OUTPUT = "output";
         
         public const string SP_SETTINGS_CLEAR_BEFORE_NEXT_EXECUTION = "clearBeforeNextExecution";

@@ -64,31 +64,31 @@ namespace SPCoder.Describer
             {
                 if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
                 {
-                    var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
-                    if (gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
+                    var describerSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+                    if (describerSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] != null)
                     {
-                        string expression = gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION].ToString();
+                        string expression = describerSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION].ToString();
                         this.txtDescribeObject.Text = expression;
                     }
 
-                    if (gridSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS] != null)
+                    if (describerSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS] != null)
                     {
-                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS].ToString();
+                        string value = describerSettings[SPCoderConstants.SP_SETTINGS_MAX_CHARACTERS].ToString();
                         //objectDescription.DescribedValueMaxLength = Int32.Parse(value);
                         txtMaxDisplaySize.Text = value;
                     }
 
-                    if (gridSettings[SPCoderConstants.SP_SETTINGS_EDITABLE] != null)
+                    if (describerSettings[SPCoderConstants.SP_SETTINGS_EDITABLE] != null)
                     {
-                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_EDITABLE].ToString();
+                        string value = describerSettings[SPCoderConstants.SP_SETTINGS_EDITABLE].ToString();
                         bool editable = bool.Parse(value);
                         this.chkIsEditable.Checked = editable;
                         fctb.ReadOnly = !editable;
                     }
 
-                    if (gridSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP] != null)
+                    if (describerSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP] != null)
                     {
-                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP].ToString();
+                        string value = describerSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP].ToString();
                         bool wordwrap = bool.Parse(value);
                         //this.cb_wordwrap_CheckedChanged
                         this.cb_wordwrap.Checked = wordwrap;
@@ -103,9 +103,9 @@ namespace SPCoder.Describer
                         }
                     }
 
-                    if (gridSettings[SPCoderConstants.SP_SETTINGS_LINK_FORMAT] != null)
+                    if (describerSettings[SPCoderConstants.SP_SETTINGS_LINK_FORMAT] != null)
                     {
-                        string value = gridSettings[SPCoderConstants.SP_SETTINGS_LINK_FORMAT].ToString();
+                        string value = describerSettings[SPCoderConstants.SP_SETTINGS_LINK_FORMAT].ToString();
                         msdnLinkFormat = value;
                     }
                 }
@@ -116,14 +116,17 @@ namespace SPCoder.Describer
             }
         }
 
-        private void SetExpression(string expression)
+        public void SetExpression(string expression, bool updateSettings = true)
         {
-            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
+            if (updateSettings)
             {
-                var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
-                this.txtDescribeObject.Text = expression;
-                gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] = expression;
+                if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER] != null)
+                {
+                    var gridSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_DESCRIBER];
+                    gridSettings[SPCoderConstants.SP_SETTINGS_EXPRESSION] = expression;
+                }
             }
+            this.txtDescribeObject.Text = expression;
         }
 
 
@@ -206,6 +209,11 @@ namespace SPCoder.Describer
             }
         }
 
+        public void DescribeVariable(string name)
+        {
+            SetExpression(name, false);
+            CallDoLocalDescribe(name);
+        }
         private void rtDescriber_DoubleClick(object sender, EventArgs e)
         {
             //int charPosition = fctb.GetCharIndexFromPosition(((MouseEventArgs)e).Location);
@@ -292,7 +300,7 @@ namespace SPCoder.Describer
         }
 
         
-        private string GetMyNameForScriptContext()
+        public string GetMyNameForScriptContext()
         {
             return "describerForm_" + myDescriberCount;
         }
@@ -448,6 +456,15 @@ namespace SPCoder.Describer
         private void txtDescribeObject_VisibleChanged(object sender, EventArgs e)
         {
             txtDescribeObject.Focus();
+        }
+
+        private void btnDescribe_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter || e.KeyChar == (char)Keys.Space)
+            {
+                e.Handled = true;
+                btnDescribe_Click(sender, null);
+            }
         }
     }
 }

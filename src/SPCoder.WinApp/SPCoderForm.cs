@@ -108,13 +108,13 @@ namespace SPCoder
             //var theme = new VS2015LightTheme();
             //var theme = new VS2015DarkTheme();
 
-            
+            LoadOtherSettings();
 
             this.ReloadDockingSettings(theme);
 
             AddHistoryToRecentMenu();
 
-            LoadOtherSettings();
+            
 
             MyContext = ContextFactory.GetCurrentContext();
             toolStripStatusLabel.Text = "Ready";
@@ -265,7 +265,24 @@ namespace SPCoder
                         string value = codeSettings[SPCoderConstants.SP_SETTINGS_AUTOCOMPLETE_SHOW_EXTENSION_METHODS].ToString();
                         bool isChecked = bool.Parse(value);
                         toolStripMenuItemAutocompleteExtensionMethods.Checked = isChecked;
-                        PutExtensionMethodsToAutocomplete = isChecked;                        
+                        PutExtensionMethodsToAutocomplete = isChecked;
+                    }
+                    if (codeSettings.ContainsKey(SPCoderConstants.SP_SETTINGS_WORD_WRAP))
+                    {
+                        //wordwrap
+                        string value = codeSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP].ToString();
+                        bool isChecked = bool.Parse(value);
+                        wordWrapStripButton.Checked = isChecked;
+                        wordWrapToolStripMenuItem.Checked = isChecked;
+                    }
+
+                    if (codeSettings.ContainsKey(SPCoderConstants.SP_SETTINGS_PARAGRAPH))
+                    {
+                        //paragraph
+                        string value = codeSettings[SPCoderConstants.SP_SETTINGS_PARAGRAPH].ToString();
+                        bool isChecked = bool.Parse(value);
+                        paragraphToolStripMenuItem.Checked = isChecked;
+                        btInvisibleChars.Checked = isChecked;
                     }
                     var asyncExecution = (bool)codeSettings[SPCoderConstants.SP_SETTINGS_ASYNC_EXECUTION];
                     SPCoderForm.AsynchronousExecution = asyncExecution;
@@ -745,6 +762,8 @@ namespace SPCoder
         {
             var gridObj = m_gridviewer;
             SPCoderForm.MainForm.MyContext.AddItem(new ContextItem { Data = gridObj, Name = "myGridViewer", Type = gridObj.GetType().ToString() });
+            var describerObj = m_describer;
+            SPCoderForm.MainForm.MyContext.AddOrUpdateItem(new ContextItem { Data = describerObj, Name = describerObj.GetMyNameForScriptContext(), Type = describerObj.GetType().ToString() });
             gridObj.gridAddedToContext = true;
         }
 
@@ -1151,6 +1170,27 @@ namespace SPCoder
             m_properties.Show(dockPanel);
         }
 
+        public void ShowDescriber(string name)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    this.ShowDescriberInternal(name);
+                });
+            }
+            else
+            {
+                this.ShowDescriberInternal(name);
+            }
+        }
+
+        private void ShowDescriberInternal(string name)
+        {
+            m_describer.Show(dockPanel);
+            m_describer.DescribeVariable(name);
+        }
+
         internal void ClearOutput()
         {
             m_output.RtOutput.PerformSafely2<RichTextBox> (m => m.Clear(), m_output.RtOutput);
@@ -1190,7 +1230,17 @@ namespace SPCoder
                 tab.HighlightInvisibleChars();
             }
             if (SourceCodeBox != null)
+            {
                 SourceCodeBox.Invalidate();
+            }
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE] != null)
+            {
+                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                if (codeSettings.ContainsKey(SPCoderConstants.SP_SETTINGS_PARAGRAPH))
+                {
+                    codeSettings[SPCoderConstants.SP_SETTINGS_PARAGRAPH] = btInvisibleChars.Checked;
+                }
+            }
         }
 
         internal void CodeFormClosed(CSharpCode code)
@@ -1439,7 +1489,18 @@ namespace SPCoder
                 tab.ChangeWordWrap(wordWrapStripButton.Checked);
             }
             if (SourceCodeBox != null)
+            {
                 SourceCodeBox.Invalidate();
+            }
+
+            if (SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE] != null)
+            {
+                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                if (codeSettings.ContainsKey(SPCoderConstants.SP_SETTINGS_WORD_WRAP))
+                {
+                    codeSettings[SPCoderConstants.SP_SETTINGS_WORD_WRAP] = wordWrapStripButton.Checked;
+                }
+            }
         }
 
         private void autorunToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -1792,6 +1853,37 @@ namespace SPCoder
         {
             SPCoderForm.AsynchronousExecution = !SPCoderForm.AsynchronousExecution;
             this.asynchronousCodeExecutionToolStripMenuItem.Checked = SPCoderForm.AsynchronousExecution;
+        }
+
+        private void SPCoderForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void SPCoderForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            GenerateNewSourceTabsFromPaths(files);
+        }
+
+        public void GenerateNewSourceTabsFromPaths(string[] files)
+        {
+            foreach (string file in files)
+            {
+                if (File.Exists(file))
+                {
+                    try
+                    {
+                        var f = new FileInfo(file);
+                        var ft = File.ReadAllText(file);
+                        MainForm.GenerateNewSourceTab(f.Name, ft, file);
+                    }
+                    catch (Exception exc)
+                    {
+                        //
+                    }
+                }
+            }
         }
     }
 }

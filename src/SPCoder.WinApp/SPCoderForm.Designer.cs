@@ -125,6 +125,8 @@ namespace SPCoder
             this.wordWrapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItemAutocompleteExtensionMethods = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
+            this.asynchronousCodeExecutionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cSharpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hTMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -145,8 +147,6 @@ namespace SPCoder
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.cryptoHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
-            this.asynchronousCodeExecutionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.statusBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iContextBindingSource)).BeginInit();
@@ -921,6 +921,18 @@ namespace SPCoder
             this.toolStripMenuItemAutocompleteExtensionMethods.Text = "Autocomplete - show extension methods";
             this.toolStripMenuItemAutocompleteExtensionMethods.Click += new System.EventHandler(this.toolStripMenuItemAutocompleteExtensionMethods_Click);
             // 
+            // toolStripSeparator17
+            // 
+            this.toolStripSeparator17.Name = "toolStripSeparator17";
+            this.toolStripSeparator17.Size = new System.Drawing.Size(289, 6);
+            // 
+            // asynchronousCodeExecutionToolStripMenuItem
+            // 
+            this.asynchronousCodeExecutionToolStripMenuItem.Name = "asynchronousCodeExecutionToolStripMenuItem";
+            this.asynchronousCodeExecutionToolStripMenuItem.Size = new System.Drawing.Size(292, 22);
+            this.asynchronousCodeExecutionToolStripMenuItem.Text = "Asynchronous code execution";
+            this.asynchronousCodeExecutionToolStripMenuItem.Click += new System.EventHandler(this.asynchronousCodeExecutionToolStripMenuItem_Click);
+            // 
             // languageToolStripMenuItem
             // 
             this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -940,56 +952,56 @@ namespace SPCoder
             // cSharpToolStripMenuItem
             // 
             this.cSharpToolStripMenuItem.Name = "cSharpToolStripMenuItem";
-            this.cSharpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cSharpToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.cSharpToolStripMenuItem.Text = "CSharp";
             this.cSharpToolStripMenuItem.Click += new System.EventHandler(this.cSharpToolStripMenuItem_Click);
             // 
             // hTMLToolStripMenuItem
             // 
             this.hTMLToolStripMenuItem.Name = "hTMLToolStripMenuItem";
-            this.hTMLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hTMLToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.hTMLToolStripMenuItem.Text = "HTML";
             this.hTMLToolStripMenuItem.Click += new System.EventHandler(this.hTMLToolStripMenuItem_Click);
             // 
             // jSToolStripMenuItem
             // 
             this.jSToolStripMenuItem.Name = "jSToolStripMenuItem";
-            this.jSToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.jSToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.jSToolStripMenuItem.Text = "JS";
             this.jSToolStripMenuItem.Click += new System.EventHandler(this.jSToolStripMenuItem_Click);
             // 
             // jSONToolStripMenuItem
             // 
             this.jSONToolStripMenuItem.Name = "jSONToolStripMenuItem";
-            this.jSONToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.jSONToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.jSONToolStripMenuItem.Text = "JSON";
             this.jSONToolStripMenuItem.Click += new System.EventHandler(this.jSONToolStripMenuItem_Click);
             // 
             // vBToolStripMenuItem
             // 
             this.vBToolStripMenuItem.Name = "vBToolStripMenuItem";
-            this.vBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.vBToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.vBToolStripMenuItem.Text = "VB";
             this.vBToolStripMenuItem.Click += new System.EventHandler(this.vBToolStripMenuItem_Click);
             // 
             // xMLToolStripMenuItem
             // 
             this.xMLToolStripMenuItem.Name = "xMLToolStripMenuItem";
-            this.xMLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.xMLToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.xMLToolStripMenuItem.Text = "XML";
             this.xMLToolStripMenuItem.Click += new System.EventHandler(this.xMLToolStripMenuItem_Click);
             // 
             // pHPToolStripMenuItem
             // 
             this.pHPToolStripMenuItem.Name = "pHPToolStripMenuItem";
-            this.pHPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pHPToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.pHPToolStripMenuItem.Text = "PHP";
             this.pHPToolStripMenuItem.Click += new System.EventHandler(this.pHPToolStripMenuItem_Click);
             // 
             // sQLToolStripMenuItem
             // 
             this.sQLToolStripMenuItem.Name = "sQLToolStripMenuItem";
-            this.sQLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sQLToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.sQLToolStripMenuItem.Text = "SQL";
             this.sQLToolStripMenuItem.Click += new System.EventHandler(this.sQLToolStripMenuItem_Click);
             // 
@@ -1078,18 +1090,6 @@ namespace SPCoder
             this.cryptoHelperToolStripMenuItem.Text = "Crypto helper";
             this.cryptoHelperToolStripMenuItem.Click += new System.EventHandler(this.cryptoHelperToolStripMenuItem_Click);
             // 
-            // toolStripSeparator17
-            // 
-            this.toolStripSeparator17.Name = "toolStripSeparator17";
-            this.toolStripSeparator17.Size = new System.Drawing.Size(289, 6);
-            // 
-            // asynchronousCodeExecutionToolStripMenuItem
-            // 
-            this.asynchronousCodeExecutionToolStripMenuItem.Name = "asynchronousCodeExecutionToolStripMenuItem";
-            this.asynchronousCodeExecutionToolStripMenuItem.Size = new System.Drawing.Size(292, 22);
-            this.asynchronousCodeExecutionToolStripMenuItem.Text = "Asynchronous code execution";
-            this.asynchronousCodeExecutionToolStripMenuItem.Click += new System.EventHandler(this.asynchronousCodeExecutionToolStripMenuItem_Click);
-            // 
             // SPCoderForm
             // 
             this.AllowDrop = true;
@@ -1109,6 +1109,8 @@ namespace SPCoder
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SPCoderForm_FormClosed);
             this.Load += new System.EventHandler(this.Main_Load);
             this.MdiChildActivate += new System.EventHandler(this.SPCoderForm_MdiChildActivate);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.SPCoderForm_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.SPCoderForm_DragEnter);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.statusBar.ResumeLayout(false);

@@ -146,5 +146,14 @@ namespace SPCoder.Windows
                 btnView_Click(sender, e);
             }
         }
+
+        private void txtCode_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                btnView_Click(sender, e);
+            }
+            e.Handled = true;
+        }
     }
 }

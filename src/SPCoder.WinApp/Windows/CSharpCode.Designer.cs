@@ -78,6 +78,8 @@
             this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.fctb_TextChangedDelayed);
             this.fctb.SelectionChangedDelayed += new System.EventHandler(this.fctb_SelectionChangedDelayed);
             this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.AutoIndentEventArgs>(this.fctb_AutoIndentNeeded);
+            this.fctb.DragDrop += new System.Windows.Forms.DragEventHandler(this.fctb_DragDrop);
+            this.fctb.DragEnter += new System.Windows.Forms.DragEventHandler(this.fctb_DragEnter);
             this.fctb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fctb_KeyDown);
             this.fctb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.fctb_MouseDown);
             this.fctb.MouseMove += new System.Windows.Forms.MouseEventHandler(this.fctb_MouseMove);
@@ -94,6 +96,8 @@
             this.Activated += new System.EventHandler(this.CSharpCode_Activated_1);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Code_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Code_FormClosed);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.CSharpCode_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.CSharpCode_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();
             this.ResumeLayout(false);
 

@@ -1,11 +1,11 @@
 ﻿//Welcome to SPCoder - This file contains some basic examples with which you can get familiar with SPCoder
 
 //You can select any part of code from this file and execute it by pressing F5 on 
-//keyboard or clicking the "Execute (F5) button"
+//keyboard or clicking the "Execute (F5)" button
 
 Console.WriteLine("Hello from SPCoder!");
 
-//Note that the string "Hello from SPCoder!" is written to Output window
+//Note that the string "Hello from SPCoder!" is written to Output window (located on bottom-right part of the main window)
 
 //You can change the title of the main window by executing the following line:
 
@@ -26,8 +26,8 @@ println(this);
 //Now we will see how Explorer window can be used. Execute this line:
 main.Connect("C:\\", "File system");
 
-//After running that line, Explorer window should contain the tree view with files and folders
-//from C: drive
+//After running that line, Explorer window (located on left part of the main window) 
+//should contain the tree view with files and folders from C: drive
 //Also, the Context window contains the directoryinfo variable, which is the root (C:\) object
 println( directoryinfo.FullName);
 
@@ -35,11 +35,14 @@ println( directoryinfo.FullName);
 var folders = directoryinfo.GetDirectories();
 foreach(var f in folders)
 {
-    println( f.FullName);
+    println(f.FullName);
 }
 
 //We can also view the variable folders in Properties viewer with this code
-main.ShowProperties( folders, "folders");
+main.ShowProperties(folders, "folders");
+
+//We can view the variable folders in Describer window with this code
+main.ShowDescriber("folders");
 
 //Or we can display the same variable in Grid Viewer:
 main.SpGrid.ShowExpressionInGrid("folders");
@@ -52,5 +55,3 @@ main.GenerateNewSourceTab("newCode.csx", sourceCode, null, "csx");
 
 //You can check out the "Corona" example, for more complex code samples that involve 
 //the use of multiple SPCoder connectors and external libraries
-
-

@@ -100,7 +100,7 @@
             this.groupBox4.Controls.Add(this.label1);
             this.groupBox4.Location = new System.Drawing.Point(201, 5);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(373, 46);
+            this.groupBox4.Size = new System.Drawing.Size(364, 46);
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Misc";
@@ -108,7 +108,7 @@
             // cb_wordwrap
             // 
             this.cb_wordwrap.AutoSize = true;
-            this.cb_wordwrap.Location = new System.Drawing.Point(215, 13);
+            this.cb_wordwrap.Location = new System.Drawing.Point(215, 16);
             this.cb_wordwrap.Name = "cb_wordwrap";
             this.cb_wordwrap.Size = new System.Drawing.Size(78, 17);
             this.cb_wordwrap.TabIndex = 6;
@@ -119,7 +119,7 @@
             // linkMsdn
             // 
             this.linkMsdn.AutoSize = true;
-            this.linkMsdn.Location = new System.Drawing.Point(328, 18);
+            this.linkMsdn.Location = new System.Drawing.Point(299, 17);
             this.linkMsdn.Name = "linkMsdn";
             this.linkMsdn.Size = new System.Drawing.Size(39, 13);
             this.linkMsdn.TabIndex = 5;
@@ -130,7 +130,7 @@
             // chkIsEditable
             // 
             this.chkIsEditable.AutoSize = true;
-            this.chkIsEditable.Location = new System.Drawing.Point(145, 14);
+            this.chkIsEditable.Location = new System.Drawing.Point(145, 16);
             this.chkIsEditable.Name = "chkIsEditable";
             this.chkIsEditable.Size = new System.Drawing.Size(64, 17);
             this.chkIsEditable.TabIndex = 4;
@@ -186,6 +186,7 @@
             this.btnDescribe.Text = "Describe";
             this.btnDescribe.UseVisualStyleBackColor = true;
             this.btnDescribe.Click += new System.EventHandler(this.btnDescribe_Click);
+            this.btnDescribe.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.btnDescribe_KeyPress);
             // 
             // txtDescribeObject
             // 

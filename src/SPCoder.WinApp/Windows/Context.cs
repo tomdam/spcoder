@@ -28,7 +28,17 @@ namespace SPCoder.Windows
             SPCoderForm.MainForm.MyContext.AddItem(item);
             //SPCoderForm.MainForm.CSharpContext.AddItem(item);
 
-            lbContext.Items.Add(item);
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    lbContext.Items.Add(item);
+                });
+            }
+            else
+            {
+                lbContext.Items.Add(item);
+            }
         }
 
         public void AddToContext(object item)

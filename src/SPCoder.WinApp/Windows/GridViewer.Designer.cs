@@ -108,6 +108,7 @@
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(611, 20);
             this.txtCode.TabIndex = 11;
+            this.txtCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCode_KeyPress);
             // 
             // GridViewer
             // 
