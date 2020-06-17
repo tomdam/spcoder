@@ -17,7 +17,7 @@ p.AddControl(helloWp, cs.Columns[0]);
 p.PageTitle = "Corona Stats page 2";
 p.LayoutType = ClientSidePageLayoutType.Article;
 p.Save("CoronaStats2.aspx");
-
+//After the code executes, you can open your SharePoint site and look for the CoronaStats2.aspx in SitePages library
 
 //ClientSidePage page1 = ClientSidePage.Load(context, "Stats.aspx");
 //var components1      = page1.AvailableClientSideComponents();

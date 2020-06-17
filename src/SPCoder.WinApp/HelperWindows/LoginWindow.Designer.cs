@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginWindow));
             this.btnLogin = new System.Windows.Forms.Button();
             this.txtPortalUrl = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -108,6 +109,7 @@
             this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.txtPortalUrl);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LoginWindow";
             this.Text = "LoginWindow";
             this.ResumeLayout(false);

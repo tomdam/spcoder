@@ -72,6 +72,8 @@ namespace SPCoder.Utils
                     loginWindow.lblUsername.Text = "Client Id";
                     loginWindow.lblPassword.Text = "Client Secret";
                 }
+
+                loginWindow.StartPosition = FormStartPosition.CenterParent;
                 var rez = loginWindow.ShowDialog();
                 if (rez == DialogResult.OK)
                 {
