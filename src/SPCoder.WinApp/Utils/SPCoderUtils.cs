@@ -117,7 +117,7 @@ namespace SPCoder.Utils
                             type = ((MethodInfo)type.GetMember(current)[0]).ReturnType;
                             variable = null;
                         }
-                        catch (Exception exc)
+                        catch (Exception)
                         {
                         }
                     }
@@ -136,7 +136,7 @@ namespace SPCoder.Utils
                                 type = variable.GetType();
                             }
                         }
-                        catch (Exception exc)
+                        catch (Exception)
                         {
                             //check for Non static property requires the target
                         }
@@ -250,7 +250,7 @@ namespace SPCoder.Utils
                                     methods.Add(method.Name + GetSignature(method.GetParameters()));
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
 
                             }

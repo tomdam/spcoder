@@ -79,7 +79,7 @@ namespace SPCoder
                 //this will import the Modules/Connectors from all SPCoder dlls
                 container.ComposeParts(this);
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 //Log
             }
@@ -159,31 +159,45 @@ namespace SPCoder
             dockPanel.ResumeLayout(true, true);
 
             //add new code window
-            toolStripButton6_Click(null, null);
+            //toolStripButton6_Click(null, null);
         }
 
         public void LoadFilesThatWerePreviouslyOpen()
         {
-            var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
-            var windows = (System.Collections.ArrayList)codeSettings[SPCoderConstants.SP_SETTINGS_WINDOWS];
-            foreach (Dictionary<string, object> w in windows)
+            try
             {
-                string path = w[SPCoderConstants.SP_SETTINGS_PATH].ToString();
-                if (!System.IO.Path.IsPathRooted(path))
+                int cnt = 0;
+                var codeSettings = (Dictionary<string, object>)SPCoderSettings.Settings[SPCoderConstants.SP_SETTINGS_CODE];
+                var windows = (System.Collections.ArrayList)codeSettings[SPCoderConstants.SP_SETTINGS_WINDOWS];
+                foreach (Dictionary<string, object> w in windows)
                 {
-                    path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), path);
-                }
-                if (!System.IO.File.Exists(path))
-                {
-                    SPCoderForm.MainForm.LogError("File " + path + " does not exist");
-                    continue;
-                }
-                
-                string source = System.IO.File.ReadAllText(path);
-                string title = System.IO.Path.GetFileName(path);
-                string fullFileName = path;
+                    string path = w[SPCoderConstants.SP_SETTINGS_PATH].ToString();
+                    if (!System.IO.Path.IsPathRooted(path))
+                    {
+                        path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), path);
+                    }
+                    if (!System.IO.File.Exists(path))
+                    {
+                        SPCoderForm.MainForm.LogError("File " + path + " does not exist");
+                        continue;
+                    }
 
-                GenerateNewSourceTab(title, source, fullFileName);
+                    string source = System.IO.File.ReadAllText(path);
+                    string title = System.IO.Path.GetFileName(path);
+                    string fullFileName = path;
+
+                    GenerateNewSourceTab(title, source, fullFileName);
+                    cnt++;
+                }
+                //if there were no previously opened tabs, open the new one
+                if (cnt == 0)
+                {
+                    toolStripButton6_Click(null, null);
+                }
+            }
+            catch (Exception exc)
+            {
+                SPCoderLogging.Logger.Error("Error while loading previously opened windows", exc);
             }
         }
        
@@ -873,9 +887,7 @@ namespace SPCoder
             newCode.Show(dockPanel, DockState.Document);
             codeWindows.Add(newCode);
         }
-
-
-
+        
         private Language GetLanguageFromFileName(string fileName)
         {
             Language lang = Language.CSharp;
@@ -1187,7 +1199,7 @@ namespace SPCoder
 
         private void ShowDescriberInternal(string name)
         {
-            m_describer.Show(dockPanel);
+            m_describer.Show(dockPanel, DockState.Document);
             m_describer.DescribeVariable(name);
         }
 
@@ -1866,6 +1878,15 @@ namespace SPCoder
             GenerateNewSourceTabsFromPaths(files);
         }
 
+        public void GenerateNewSourceTabsFromPath(string file)
+        {
+            if (!String.IsNullOrEmpty(file))
+            {
+                string[] files = new string[1] { file };
+                GenerateNewSourceTabsFromPaths(files);
+            }
+        }
+
         public void GenerateNewSourceTabsFromPaths(string[] files)
         {
             foreach (string file in files)
@@ -1878,7 +1899,7 @@ namespace SPCoder
                         var ft = File.ReadAllText(file);
                         MainForm.GenerateNewSourceTab(f.Name, ft, file);
                     }
-                    catch (Exception exc)
+                    catch (Exception)
                     {
                         //
                     }

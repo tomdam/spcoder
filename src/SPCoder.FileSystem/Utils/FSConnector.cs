@@ -83,7 +83,7 @@ namespace SPCoder.FileSystem.Utils
                         myFolderNode.RootNode = rootNode;
                     }
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     //SPCoderForm.MainForm.LogException(exc);
                 }
@@ -105,7 +105,7 @@ namespace SPCoder.FileSystem.Utils
                             myFileNode.IconObject = new Bitmap(myFileNode.IconObject, 16, 16);
                         }/**/
                     }
-                    catch (Exception exc)
+                    catch (Exception)
                     {
                         //skip if exception happens here... the default icon will be shown
                     }                  

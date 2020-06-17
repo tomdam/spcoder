@@ -16,7 +16,7 @@ main.Text = "Setting title from code";
 println(main.GetType())
 
 //Notice that there is no ; at the end of previous line, but it was executed without an error.
-//SPCoder checks the the "one liners" before execution, and appends semicolon if necessary
+//SPCoder checks the "one liners" before execution, and appends semicolon if necessary
 
 //If you try to execute the following line, you will get an error stating
 //error CS0027: Keyword 'this' is not available in the current context
@@ -55,3 +55,7 @@ main.GenerateNewSourceTab("newCode.csx", sourceCode, null, "csx");
 
 //You can check out the "Corona" example, for more complex code samples that involve 
 //the use of multiple SPCoder connectors and external libraries
+
+//Corona example is located in Scripts\CSharp\Examples\Corona\ folder
+
+main.GenerateNewSourceTabsFromPath("Scripts\\CSharp\\Examples\\Corona\\Corona.csx");

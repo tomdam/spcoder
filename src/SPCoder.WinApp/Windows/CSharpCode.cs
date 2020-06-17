@@ -25,7 +25,7 @@ namespace SPCoder.Windows
         public AutocompleteMenu popupMenu;
 
         //string lang = "CSharp (custom highlighter)";
-        string lang = "CSharp";
+        //string lang = "CSharp";
 
         //styles
 
@@ -757,7 +757,7 @@ namespace SPCoder.Windows
         public override string GetTextForReplace()
         {
             return base.GetTextForReplace();
-            string rez = base.GetTextForReplace();
+            /*string rez = base.GetTextForReplace();
             Match match = Regex.Match(rez, @"\((.+?)\)", RegexOptions.IgnoreCase);
             if (match.Success)
             {
@@ -789,6 +789,7 @@ namespace SPCoder.Windows
                 }
             }
             return rez;
+            */
             //return base.GetTextForReplace();
         }
     }

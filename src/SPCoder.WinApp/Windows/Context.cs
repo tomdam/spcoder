@@ -125,10 +125,8 @@ namespace SPCoder.Windows
                     lbContext.Items.Remove(item);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //TODO: Call new method
-                //LogException(ex);
             }
         }
 
@@ -168,10 +166,8 @@ namespace SPCoder.Windows
                 renamer.Rename += DoRenameContextItem;
                 renamer.ShowDialog(this);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //TODO: Call new method
-                //LogException(ex);
             }
         }
 

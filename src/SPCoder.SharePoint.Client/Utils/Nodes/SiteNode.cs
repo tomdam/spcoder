@@ -25,7 +25,7 @@ namespace SPCoder.Utils.Nodes
             base.ParentNode = null;
         }
 
-        string RootNodeTitle = "SharePoint site: ";
+        //string RootNodeTitle = "SharePoint site: ";
 
         private Site realObject;
         public override object ExecuteAction(BaseActionItem actionItem)

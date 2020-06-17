@@ -167,7 +167,7 @@ namespace SPCoder.Utils
                         childNode.NodeConnector = this;
                     }
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     return myNode;
                 }
@@ -182,7 +182,7 @@ namespace SPCoder.Utils
                 }
                 return myNode;
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return myNode;
             }

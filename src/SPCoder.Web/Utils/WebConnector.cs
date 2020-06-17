@@ -84,11 +84,11 @@ namespace SPCoder.Web.Utils
                         }
                     }
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                 }
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 //SPCoderForm.MainForm.LogException(exc);
             }

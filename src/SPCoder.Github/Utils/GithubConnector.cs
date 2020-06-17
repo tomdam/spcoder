@@ -45,7 +45,7 @@ namespace SPCoder.Github.Utils
                 var ghRoot = ser.Deserialize<GithubObject[]>(githubObject.Result);
                 return ghRoot;
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return null;
             }
@@ -133,7 +133,7 @@ namespace SPCoder.Github.Utils
                         }/**/
                     }
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     //skip if exception happens here... the default icon will be shown
                 }
@@ -237,7 +237,7 @@ namespace SPCoder.Github.Utils
                             }/**/
                         }
                     }
-                    catch (Exception exc)
+                    catch (Exception)
                     {
                         //skip if exception happens here... the default icon will be shown
                     }
@@ -250,7 +250,7 @@ namespace SPCoder.Github.Utils
                 }
                 return my;
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 //SPCoderForm.MainForm.LogException(exc);
                 return parentNode;

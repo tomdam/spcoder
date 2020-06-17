@@ -600,6 +600,23 @@
         cJWw3xX9u6JfoPW7on9X9Ku1flf074p+tdbviv5d0a/S+r//+/8BPTxUq6Ub7iwAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="textBoxDescription.Text" xml:space="preserve">
+    <value>https://github.com/tomdam/spcoder
+
+SPCoder makes use of the following libraries/projects:
+
+Roslyn - https://github.com/dotnet/roslyn
+Fast Colored TextBox - https://github.com/PavelTorgashov/FastColoredTextBox
+DockPanel Suite - https://github.com/dockpanelsuite/dockpanelsuite
+HtmlAgilityPack - https://github.com/zzzprojects/html-agility-pack
+treeviewadv - https://github.com/AdamsLair/treeviewadv
+log4net - https://logging.apache.org/log4net/
+
+EPPlus - https://github.com/EPPlusSoftware/EPPlus
+SharePoint CSOM - https://www.nuget.org/packages/Microsoft.SharePointOnline.CSOM/
+Camlex - https://github.com/sadomovalex/camlex
+SharePointPnPCoreOnline - https://github.com/pnp/PnP-Sites-Core</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAICAAAAEAIACoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA

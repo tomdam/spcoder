@@ -117,7 +117,7 @@ namespace SPCoder.Windows
         //public SPSite Site;
         private TreeModel _model;
         private Font _childFont;
-        private string _currentSiteUrl;
+        //private string _currentSiteUrl;
 
         public void Connect(string siteUrl, string omType)
         {
