@@ -45,3 +45,5 @@ SPCoder has been successfully used in different scenarios, to list some:
 * ...
 
 Best way to learn more about SPCoder is through our examples. Once you start SPCoder, the [Welcome example](Welcome-example) will be displayed, and for more complex stuff you should check the [Corona example](Corona-example).
+
+Please check [Wiki](https://github.com/tomdam/spcoder/wiki) pages for more detailed documentation.
