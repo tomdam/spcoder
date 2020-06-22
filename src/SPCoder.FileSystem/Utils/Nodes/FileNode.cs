@@ -36,6 +36,7 @@ namespace SPCoder.FileSystem.Utils.Nodes
                 case NodeActions.Open:
                     OpenActionResult oar = new OpenActionResult();
                     oar.Source = File.ReadAllText(this.Url);
+                    oar.Url = this.Url;
                     var els = this.Url.Split('.');
                     oar.Language = els[els.Length - 1];
                     return oar;

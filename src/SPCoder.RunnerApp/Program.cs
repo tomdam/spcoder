@@ -56,6 +56,12 @@ namespace SPCoder.RunnerApp
                 //check to see if it is the one liner script and if it ends with ;
                 if (!string.IsNullOrEmpty(script) && script.IndexOf("\n") == -1 && !script.EndsWith(";"))
                     script += ";";
+                string workingDirectoryPath = ConfigurationManager.AppSettings["WorkingDirectoryPath"];
+
+                if (!string.IsNullOrEmpty(script) && script.Contains(workingDirectoryPath))
+                {
+                    script = script.Replace(workingDirectoryPath, Environment.CurrentDirectory);
+                }
 
                 ScriptStateCSharp = ScriptStateCSharp == null ?
                         CSharpScript.RunAsync(script, ScriptOptions.Default.AddImports("System"), this).Result :

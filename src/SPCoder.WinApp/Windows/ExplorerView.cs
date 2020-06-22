@@ -637,7 +637,7 @@ namespace SPCoder.Windows
                             if (source is OpenActionResult)
                             {
                                 var _source = source as OpenActionResult;
-                                SPCoderForm.MainForm.GenerateNewSourceTab(action.Node.Title, _source.Source.ToString(), null, _source.Language);
+                                SPCoderForm.MainForm.GenerateNewSourceTab(action.Node.Title, _source.Source.ToString(), _source.Url, _source.Language);
                             }
                             else
                             {

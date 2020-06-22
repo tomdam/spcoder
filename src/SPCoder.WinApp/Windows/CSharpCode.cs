@@ -66,7 +66,7 @@ namespace SPCoder.Windows
             //fctb.OnTextChangedDelayed(fctb.Range);
             fctb.CurrentLineColor = Color.FromArgb(200, 200, 255);
 
-            fctb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
+            //fctb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
 
             fctb.CustomAction += fctb_CustomAction;
             
