@@ -29,6 +29,8 @@ namespace SPCoder.Context
             typeNameMappings.Add("SPDocumentLibrary", "list");
 
             typeNameMappings.Add("ClientContext", "context");
+
+            typeNameMappings.Add("String", "str");
         } 
         #endregion
 

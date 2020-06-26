@@ -147,6 +147,8 @@ namespace SPCoder
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.cryptoHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
+            this.addSelectedTextToContextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.statusBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iContextBindingSource)).BeginInit();
@@ -563,48 +565,50 @@ namespace SPCoder
             this.commentSelectedToolStripMenuItem,
             this.uncommentSelectedToolStripMenuItem,
             this.cloneLinesToolStripMenuItem,
-            this.cloneLinesAndCommentToolStripMenuItem});
+            this.cloneLinesAndCommentToolStripMenuItem,
+            this.toolStripSeparator18,
+            this.addSelectedTextToContextToolStripMenuItem});
             this.cmMain.Name = "cmMain";
-            this.cmMain.Size = new System.Drawing.Size(219, 308);
+            this.cmMain.Size = new System.Drawing.Size(221, 358);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.selectAllToolStripMenuItem.Text = "Select all";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(215, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(217, 6);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Image = global::SPCoder.Properties.Resources.undo_16x16;
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.undoToolStripMenuItem.Text = "Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
@@ -612,66 +616,66 @@ namespace SPCoder
             // 
             this.redoToolStripMenuItem.Image = global::SPCoder.Properties.Resources.redo_16x16;
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.redoToolStripMenuItem.Text = "Redo";
             this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(215, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(217, 6);
             // 
             // findToolStripMenuItem
             // 
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.findToolStripMenuItem.Text = "Find";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
             // replaceToolStripMenuItem
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.replaceToolStripMenuItem.Text = "Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(215, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(217, 6);
             // 
             // autoIndentSelectedTextToolStripMenuItem
             // 
             this.autoIndentSelectedTextToolStripMenuItem.Name = "autoIndentSelectedTextToolStripMenuItem";
-            this.autoIndentSelectedTextToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.autoIndentSelectedTextToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.autoIndentSelectedTextToolStripMenuItem.Text = "AutoIndent selected text";
             this.autoIndentSelectedTextToolStripMenuItem.Click += new System.EventHandler(this.autoIndentSelectedTextToolStripMenuItem_Click);
             // 
             // commentSelectedToolStripMenuItem
             // 
             this.commentSelectedToolStripMenuItem.Name = "commentSelectedToolStripMenuItem";
-            this.commentSelectedToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.commentSelectedToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.commentSelectedToolStripMenuItem.Text = "Comment selected";
             this.commentSelectedToolStripMenuItem.Click += new System.EventHandler(this.commentSelectedToolStripMenuItem_Click);
             // 
             // uncommentSelectedToolStripMenuItem
             // 
             this.uncommentSelectedToolStripMenuItem.Name = "uncommentSelectedToolStripMenuItem";
-            this.uncommentSelectedToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.uncommentSelectedToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.uncommentSelectedToolStripMenuItem.Text = "Uncomment selected";
             this.uncommentSelectedToolStripMenuItem.Click += new System.EventHandler(this.uncommentSelectedToolStripMenuItem_Click);
             // 
             // cloneLinesToolStripMenuItem
             // 
             this.cloneLinesToolStripMenuItem.Name = "cloneLinesToolStripMenuItem";
-            this.cloneLinesToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.cloneLinesToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.cloneLinesToolStripMenuItem.Text = "Clone line(s)";
             this.cloneLinesToolStripMenuItem.Click += new System.EventHandler(this.cloneLinesToolStripMenuItem_Click);
             // 
             // cloneLinesAndCommentToolStripMenuItem
             // 
             this.cloneLinesAndCommentToolStripMenuItem.Name = "cloneLinesAndCommentToolStripMenuItem";
-            this.cloneLinesAndCommentToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.cloneLinesAndCommentToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.cloneLinesAndCommentToolStripMenuItem.Text = "Clone line(s) and comment";
             this.cloneLinesAndCommentToolStripMenuItem.Click += new System.EventHandler(this.cloneLinesAndCommentToolStripMenuItem_Click);
             // 
@@ -1090,6 +1094,18 @@ namespace SPCoder
             this.cryptoHelperToolStripMenuItem.Text = "Crypto helper";
             this.cryptoHelperToolStripMenuItem.Click += new System.EventHandler(this.cryptoHelperToolStripMenuItem_Click);
             // 
+            // toolStripSeparator18
+            // 
+            this.toolStripSeparator18.Name = "toolStripSeparator18";
+            this.toolStripSeparator18.Size = new System.Drawing.Size(217, 6);
+            // 
+            // addSelectedTextToContextToolStripMenuItem
+            // 
+            this.addSelectedTextToContextToolStripMenuItem.Name = "addSelectedTextToContextToolStripMenuItem";
+            this.addSelectedTextToContextToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.addSelectedTextToContextToolStripMenuItem.Text = "Add selected text to context";
+            this.addSelectedTextToContextToolStripMenuItem.Click += new System.EventHandler(this.addSelectedTextToContextToolStripMenuItem_Click);
+            // 
             // SPCoderForm
             // 
             this.AllowDrop = true;
@@ -1243,5 +1259,7 @@ namespace SPCoder
         private System.Windows.Forms.ToolStripMenuItem cryptoHelperToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
         private System.Windows.Forms.ToolStripMenuItem asynchronousCodeExecutionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator18;
+        private System.Windows.Forms.ToolStripMenuItem addSelectedTextToContextToolStripMenuItem;
     }
 }

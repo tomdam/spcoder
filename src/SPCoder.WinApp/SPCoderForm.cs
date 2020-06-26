@@ -1906,5 +1906,18 @@ namespace SPCoder
                 }
             }
         }
+
+        private void addSelectedTextToContextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var scb = SourceCodeBox;
+            string text = scb.Selection.Text;
+            if (!string.IsNullOrEmpty(text))
+            {
+                ContextItem contextItem = new ContextItem { Data = text, Type = text.GetType().ToString() };
+                m_context.AddToContext(contextItem);
+                                
+                m_log.LogInfo("Added text to context as string variable");
+            }
+        }
     }
 }

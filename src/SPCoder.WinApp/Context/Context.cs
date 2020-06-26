@@ -35,9 +35,11 @@ namespace SPCoder.Context
         public virtual void AddItem(ContextItem item)
         {
             if (item.Name == null)
+            {
                 item.Name = GenerateObjectName(item);
-            context.Add(item.Name, item);
+            }
             
+            context.Add(item.Name, item);
         }
 
         public virtual void AddOrUpdateItem(ContextItem item)
