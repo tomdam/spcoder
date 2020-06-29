@@ -22,6 +22,8 @@ namespace SPCoder.DotNetPerls.Utils
 
 
         List<string> notcsharp = new List<string>(new string[] { "-go", "-java", "-vbnet", "-js", "-python", "-ruby", "-scala", "-swift", "-wpf", "-fs", "." });
+
+        List<string> skipcsharppages = new List<string>(new string[] { "button", "colordialog", "controls", "openfiledialog", "progressbar", "textbox", "treeview" });
         HtmlWeb page = new HtmlWeb();
         List<DnpPage> links = new List<DnpPage>();
 
@@ -119,12 +121,21 @@ namespace SPCoder.DotNetPerls.Utils
                     {
                         if (href.EndsWith(s))
                         {
-                            {
-                                exists = true;
-                                break;
-                            }
+                            exists = true;
+                            break;
                         }
                     }
+
+                    foreach (string s in skipcsharppages)
+                    {
+                        if (href.Equals(s))
+                        {
+                            exists = true;
+                            break;                            
+                        }
+                    }
+
+                    
                     //skip external links, skip "s" link
                     if (href.Contains("https://") || href.Contains("http://") || href == "s")
                     {
@@ -178,7 +189,20 @@ namespace SPCoder.DotNetPerls.Utils
                 {
                     StringBuilder sb = new StringBuilder();
                     var prog = htmla[i];
+
+                    //check if this is an example using a Form and skip it
+                    if (prog.InnerText.Contains("public partial class Form1 : Form"))
+                    {
+                        continue;
+                    }
+
+                    bool containsPublicStaticMain = false;
+                    if (prog.InnerText.Contains("public static void Main()"))
+                    {
+                        containsPublicStaticMain = true;
+                    }
                     string title = "";
+                    bool containsProgram = false;
                     for (int j = 0; j < prog.ChildNodes.Count; j++)
                     {
                         var div = prog.ChildNodes[j];
@@ -195,6 +219,10 @@ namespace SPCoder.DotNetPerls.Utils
                         }
 
                         sb.Append(System.Web.HttpUtility.HtmlDecode(div.InnerText));
+                        if (div.InnerHtml.Contains("static void Main()"))
+                        {
+                            containsProgram = true;
+                        }
                     }
 
                     if (string.IsNullOrEmpty(title))
@@ -202,10 +230,15 @@ namespace SPCoder.DotNetPerls.Utils
                         //skip if there is no title
                         continue;
                     }
-
-                    sb.Replace("static void Main()", "public static void Main()");
-                    sb.AppendLine("Program.Main();");
-
+                    if (!containsPublicStaticMain)
+                    {
+                        sb.Replace("static void Main()", "public static void Main()");
+                    }
+                    if (containsProgram)
+                    {
+                        sb.AppendLine("Program.Main();");
+                    }
+                    
                     BaseNode mySourceCodeNode = new PageLeafNode(sb.ToString());
                     mySourceCodeNode.Url = pageNode.Url;
                     mySourceCodeNode.Title = title;
