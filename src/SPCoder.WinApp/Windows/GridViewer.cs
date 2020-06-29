@@ -152,8 +152,8 @@ namespace SPCoder.Windows
             if (e.KeyChar == (char)Keys.Enter)
             {
                 btnView_Click(sender, e);
+                e.Handled = true;
             }
-            e.Handled = true;
         }
     }
 }

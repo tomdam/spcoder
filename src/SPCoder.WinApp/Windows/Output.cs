@@ -140,25 +140,58 @@ namespace SPCoder.Windows
             this.textbox = (RichTextBox)textbox;
         }
         
-
         public override void Write(char value)
         {            
-            textbox.Text += value; 
+            //textbox.Text += value;
+            AppendChar(value);
         }
 
         public override void Write(string value)
         {            
-            textbox.Text += value;
+            //textbox.Text += value;
+            AppendText(value);
         }
 
         public override void WriteLine(string value)
         {            
-            textbox.Text += value + Environment.NewLine;
+            //textbox.Text += value + Environment.NewLine;
+            AppendText(value + Environment.NewLine);
         }
 
         public override void WriteLine(int value)
         {
-            textbox.Text += value + Environment.NewLine;
+            //textbox.Text += value + Environment.NewLine;
+            AppendText(value + Environment.NewLine);
+        }
+
+        private void AppendText(string text)
+        {            
+            if (this.textbox.InvokeRequired)
+            {
+                this.textbox.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    textbox.Text += text;
+                });
+            }
+            else
+            {
+                textbox.Text += text;
+            }
+        }
+
+        private void AppendChar(char text)
+        {
+            if (this.textbox.InvokeRequired)
+            {
+                this.textbox.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    textbox.Text += text;
+                });
+            }
+            else
+            {
+                textbox.Text += text;
+            }
         }
         public override Encoding Encoding
         {

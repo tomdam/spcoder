@@ -231,8 +231,20 @@ namespace SPCoder.Windows
             }
             catch (Exception exc)
             {
-                btnConnect.Enabled = true;
-                btnSpinner.Visible = false;
+                if (this.InvokeRequired)
+                {
+                    this.BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        btnConnect.Enabled = true;
+                        btnSpinner.Visible = false;
+                    });
+                }
+                else
+                {
+                    btnConnect.Enabled = true;
+                    btnSpinner.Visible = false;
+                }
+                
                 SPCoderForm.MainForm.LogException(exc);
             }
             finally
