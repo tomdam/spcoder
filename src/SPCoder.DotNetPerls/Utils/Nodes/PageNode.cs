@@ -14,7 +14,7 @@ namespace SPCoder.DotNetPerls.Utils.Nodes
     {
         public PageNode()
         {
-            //default icon for web
+            //default icon for dnp
             base.IconPath = null;
         }
 
@@ -62,6 +62,6 @@ namespace SPCoder.DotNetPerls.Utils.Nodes
             return actions;
         }
 
-        public override string LocalImagesSubfolder { get { return "Web"; } }
+        public override string LocalImagesSubfolder { get { return "DNP"; } }
     }
 }

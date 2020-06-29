@@ -48,7 +48,7 @@ namespace SPCoder.DotNetPerls.Utils
             
             BaseNode rootNode = new PageNode();
             rootNode.NodeConnector = this;
-
+            rootNode.IconPath = "dnp.png";
             rootNode.Title = RootNodeTitle;
             rootNode.LoadedData = true;
             
@@ -109,7 +109,8 @@ namespace SPCoder.DotNetPerls.Utils
                 }
             }
 
-            var htmla = htmlnode.SelectNodes("//a");
+            //var htmla = htmlnode.SelectNodes("//a");
+            var htmla = htmlnode.SelectNodes("//a").OrderBy(m => m.InnerText).ToList();
 
             foreach (var a in htmla)
             {
@@ -236,7 +237,7 @@ namespace SPCoder.DotNetPerls.Utils
                     }
                     if (containsProgram)
                     {
-                        sb.AppendLine("Program.Main();");
+                        sb.AppendLine("\nProgram.Main();");
                     }
                     
                     BaseNode mySourceCodeNode = new PageLeafNode(sb.ToString());

@@ -18,7 +18,7 @@ namespace SPCoder.DotNetPerls.Utils.Nodes
         public PageLeafNode()
         {
             //default icon for web
-            base.IconPath = null;
+            base.IconPath = "csharp.png";
         }
 
         public PageLeafNode(String sourceCode) : this()
@@ -61,6 +61,6 @@ namespace SPCoder.DotNetPerls.Utils.Nodes
             return actions;
         }
 
-        //public override string LocalImagesSubfolder { get { return "DNP"; } }
+        public override string LocalImagesSubfolder { get { return "DNP"; } }
     }
 }
