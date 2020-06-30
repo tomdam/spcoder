@@ -42,6 +42,8 @@ foreach (var row in rows)
 
 //------------
 //connect to your SharePoint online site
+//instead of connecting from code, you can also choose "SharePoint Client O365" connector in Explorer view and 
+//enter authentication details there directly
 string myUsername = main.Decrypt("ENCRYPTEDUSERNAME");
 string myPassword = main.Decrypt("ENCRYPTEDPASSWORD");
 

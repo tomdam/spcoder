@@ -1,6 +1,6 @@
-﻿public class SPCoderField
+﻿using Microsoft.SharePoint.Client;
+public class SPCoderField
 {
-    
     public string DisplayName { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
@@ -14,7 +14,7 @@
     public string FieldAsXML()
     {
         string FieldAsXML = @"<Field ID='{3}' Name='"+ this.Name + "' DisplayName='" + this.DisplayName + "' Type='{0}' {1} Required='False' Hidden='False' Group='"+ this.Group +"' Description='" + this.Description + "' >{2}</Field> ";
-        //println(FieldAsXML);
+        
         string gId = this.Guid ?? "{" + System.Guid.NewGuid().ToString().ToUpper() + "}";
         switch(this.Type)
         {

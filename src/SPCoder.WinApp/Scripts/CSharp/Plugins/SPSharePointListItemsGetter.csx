@@ -22,7 +22,7 @@ public class SPSharePointListItemsGetter : BasePlugin
     public DataTable GetItemsValues(Microsoft.SharePoint.Client.List list)
     {
 
-        CamlQuery query = CamlQuery.CreateAllItemsQuery();
+        Microsoft.SharePoint.Client.CamlQuery query = Microsoft.SharePoint.Client.CamlQuery.CreateAllItemsQuery();
         var items = list.GetItems(query);
         list.Context.Load(items);
         list.Context.ExecuteQuery();

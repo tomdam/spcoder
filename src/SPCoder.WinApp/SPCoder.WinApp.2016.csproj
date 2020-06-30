@@ -581,7 +581,15 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>RD /S /Q "$(TargetDir)cs\"
+    <PostBuildEvent>cd $(OutDir)
+del *.xml
+del Microsoft.CodeAnalysis*.pdb
+del Microsoft.*.pdb
+del System.*.pdb
+del HtmlAgilityPack.pdb
+del Aga.Controls.pdb
+
+RD /S /Q "$(TargetDir)cs\"
 RD /S /Q "$(TargetDir)de\"
 RD /S /Q "$(TargetDir)es\"
 RD /S /Q "$(TargetDir)fr\"

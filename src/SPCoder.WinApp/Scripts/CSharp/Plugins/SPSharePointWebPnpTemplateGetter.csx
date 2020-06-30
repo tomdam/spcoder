@@ -28,7 +28,8 @@ public class SPSharePointWebPnpTemplateGetter : BasePlugin
         };
 
         // Execute actual extraction of the template
-        var template = web.GetProvisioningTemplate(ptci);
+        //var template = web.GetProvisioningTemplate(ptci);
+        var template = Microsoft.SharePoint.Client.WebExtensions.GetProvisioningTemplate(web, ptci);
 
         return template.ToXML(null);
     }

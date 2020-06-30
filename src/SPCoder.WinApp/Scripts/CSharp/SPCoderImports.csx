@@ -30,10 +30,11 @@ using System.Text;
 using SPCoder;
 using SPCoder.Core.Utils;
 
-using Microsoft.SharePoint.Client;
+//SharePoint CSOM 
+//using Microsoft.SharePoint.Client;
 
 //EPPlus - excel library
-using OfficeOpenXml;
+//using OfficeOpenXml;
 
 
 //for SharePoint SSOM, uncomment the next two lines
