@@ -7,9 +7,9 @@ namespace SPCoder.Windows
 {
     public interface ISPCoderLog
     {
-        void AppendToLog(string text);
-        void LogError(string text);
-        void LogWarning(string text);
-        void LogInfo(string text);
+        void AppendToLog(string text, bool logTimestamp = true);
+        void LogError(string text, bool logTimestamp = true);
+        void LogWarning(string text, bool logTimestamp = true);
+        void LogInfo(string text, bool logTimestamp = true);
     }
 }

@@ -50,28 +50,33 @@ public class SPCoderLog
     {
         this.main = main;
     }
-    public void Log(object text)
+    public void Log(object text, bool logTimestamp = true)
     {
         if (text != null)
-            main.SpLog.LogInfo(text.ToString());
+            main.SpLog.LogInfo(text.ToString(), logTimestamp);
     }
 
-    public void LogInfo(object text)
+    public void LogInfo(object text, bool logTimestamp = true)
     {
         if (text != null)
-            main.SpLog.LogInfo(text.ToString());
+            main.SpLog.LogInfo(text.ToString(), logTimestamp);
     }
 
-    public void LogError(object text)
+    public void LogError(object text, bool logTimestamp = true)
     {
         if (text != null)
-            main.SpLog.LogError(text.ToString());
+            main.SpLog.LogError(text.ToString(), logTimestamp);
     }
 
-    public void LogWarning(object text)
+    public void LogWarning(object text, bool logTimestamp = true)
     {
         if (text != null)
-            main.SpLog.LogWarning(text.ToString());
+            main.SpLog.LogWarning(text.ToString(), logTimestamp);
+    }
+
+    public void ClearLog()
+    {
+        main.SpLog.ClearLog();
     }
 }
 /// <summary>

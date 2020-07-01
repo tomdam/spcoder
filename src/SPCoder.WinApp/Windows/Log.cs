@@ -21,7 +21,9 @@ namespace SPCoder.Windows
         TextStyle errorStyle = new TextStyle(Brushes.Red, null, FontStyle.Regular);
 
         TextStyle blueStyle = new TextStyle(Brushes.Blue, null, FontStyle.Underline);
-
+        public FastColoredTextBox LogBox {
+            get { return this.fctb; }
+        }
         public Log()
         {
             InitializeComponent();
@@ -29,33 +31,33 @@ namespace SPCoder.Windows
             
         }
         
-        public void AppendToLog(string text)
+        public void AppendToLog(string text, bool logTimestamp = true)
         {
             //rtLog.Text += "[" + DateTime.Now.ToShortTimeString() + "]:" + text + "\n";
-            LogText(text, infoStyle);
+            LogText(text, infoStyle, logTimestamp);
         }
 
-        public void LogError(string text)
+        public void LogError(string text, bool logTimestamp = true)
         {
-            LogText(text, errorStyle);
+            LogText(text, errorStyle, logTimestamp);
         }
 
-        public void LogWarning(string text)
+        public void LogWarning(string text, bool logTimestamp = true)
         {
-            LogText(text, warningStyle);
+            LogText(text, warningStyle, logTimestamp);
         }
 
-        public void LogInfo(string text)
+        public void LogInfo(string text, bool logTimestamp = true)
         {
-            LogText(text, infoStyle);
+            LogText(text, infoStyle, logTimestamp);
         }
 
-        private void LogText(string text, Style style)
+        private void LogText(string text, Style style, bool logTimestamp = true)
         {
             if (fctb.InvokeRequired)
             {
                 LogTextVoidDelegate d = new LogTextVoidDelegate(LogText);
-                this.Invoke(d, new object[] { text, style });
+                this.Invoke(d, new object[] { text, style, logTimestamp });
             }
             else
             {
@@ -65,7 +67,15 @@ namespace SPCoder.Windows
                 //remember user selection
                 var userSelection = fctb.Selection.Clone();
                 //add text with predefined style
-                fctb.AppendText(DateTime.Now.ToLongTimeString() + ": " + text + "\r\n", style);
+                if (logTimestamp)
+                {
+                    fctb.AppendText(DateTime.Now.ToLongTimeString() + ": " + text + "\r\n", style);
+                }
+                else
+                {
+                    fctb.AppendText(text + "\r\n", style);
+                }
+                
                 //restore user selection
                 /*if (!userSelection.IsEmpty || userSelection.Start.iLine < fctb.LinesCount - 2)
                 {
@@ -79,7 +89,26 @@ namespace SPCoder.Windows
                 fctb.EndUpdate();
             }
         }
-        delegate void LogTextVoidDelegate(string text, Style style);
+        delegate void LogTextVoidDelegate(string text, Style style, bool logTimestamp);
+
+        public void ClearLog()
+        {
+            ClearLogPrivate();
+        }
+
+        private void ClearLogPrivate()
+        {
+            if (fctb.InvokeRequired)
+            {
+                ClearLogDelegate d = new ClearLogDelegate(ClearLogPrivate);
+                this.Invoke(d, new object[] {  });
+            }
+            else
+            {
+                fctb.Clear();
+            }
+        }
+        delegate void ClearLogDelegate();
 
         bool CharIsHyperlink(Place place)
         {
