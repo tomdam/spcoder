@@ -31,10 +31,14 @@ namespace SPCoder.Github.Utils.Nodes
             //actions.Add(new BaseActionItem { Node = this, Name = "Save", Action = Core.Utils.NodeActions.Save });
             return actions;
         }
-        public override string GetDefaultSource()
+        public override object GetDefaultSource()
         {            
             GithubConnector connector = (GithubConnector)this.RootNode.NodeConnector;
-            return connector.GetSource(this.Url);
+            OpenActionResult oar = new OpenActionResult();
+            oar.Source = connector.GetSource(this.Url);
+            var els = this.Url.Split('.');
+            oar.Language = els[els.Length - 1];
+            return oar;
         }
 
         public override object ExecuteAction(BaseActionItem actionItem)

@@ -563,10 +563,19 @@ namespace SPCoder.Windows
             {
                 //default action will be to open the file in new tab (we will later add different options)
                 //GenerateNewSourceTab
-                string source = node.GetDefaultSource();
+                object source = node.GetDefaultSource();
                 if (source != null)
                 {
-                    SPCoderForm.MainForm.GenerateNewSourceTab(node.Title, source, null);
+                    if (source is OpenActionResult)
+                    {
+                        var _source = source as OpenActionResult;
+                        SPCoderForm.MainForm.GenerateNewSourceTab(node.Title, _source.Source.ToString(), _source.Url, _source.Language);
+                    }
+                    else
+                    {
+                        SPCoderForm.MainForm.GenerateNewSourceTab(node.Title, source.ToString(), null);
+                    }
+                    //SPCoderForm.MainForm.GenerateNewSourceTab(node.Title, source, null);
                 }
             }
         }

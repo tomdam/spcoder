@@ -24,9 +24,14 @@ namespace SPCoder.FileSystem.Utils.Nodes
             return _file;
         }
 
-        public override string GetDefaultSource()
+        public override object GetDefaultSource()
         {
-            return File.ReadAllText(this.Url);
+            OpenActionResult oar = new OpenActionResult();
+            oar.Source = File.ReadAllText(this.Url);
+            oar.Url = this.Url;
+            var els = this.Url.Split('.');
+            oar.Language = els[els.Length - 1];
+            return oar;
         }
 
         public override object ExecuteAction(BaseActionItem actionItem)

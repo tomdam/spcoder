@@ -56,7 +56,7 @@ namespace SPCoder.Utils.Nodes
 
         public BaseConnector NodeConnector { get; set; }
 
-        public virtual string GetDefaultSource()
+        public virtual object GetDefaultSource()
         {
             return null;
         }
