@@ -2,6 +2,7 @@
 using SPCoder.Core.Plugins;
 using SPCoder.Core.Utils;
 using SPCoder.Core.Utils.Nodes;
+using SPCoder.SharePoint.Client.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -67,18 +68,36 @@ namespace SPCoder.Utils.Nodes
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
 
-                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, ((List)realObj).DefaultView.ServerRelativeUrl);
-                        return url;
+                        return WebUtils.MakeAbsoluteUrl(objWeb, ((Folder)realObj).ServerRelativeUrl);
                     }
                     else
                         return null;
                 case NodeActions.Copy:
                     if (realObj != null && actionItem.Name == "Copy link")
                     {
-                        Web objWeb = (Web)base.ParentNode.SPObject;
+                        Folder thisfolder = (Folder)realObj;
+                        thisfolder.EnsureProperties(f => f.ServerRelativeUrl);
 
-                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, ((List)realObj).DefaultView.ServerRelativeUrl);
-                        return url;
+                        if (base.ParentNode.SPObject is List)
+                        {
+                            // Parent is a List
+                            List objList = (List)base.ParentNode.SPObject;
+                            Web parentWeb = objList.ParentWeb;
+                            return WebUtils.MakeAbsoluteUrl(parentWeb, thisfolder.ServerRelativeUrl);
+                        }
+                        else if (base.ParentNode.SPObject is Web)
+                        {
+                            // Parent is a web
+                            Web objParent = (Web)base.ParentNode.SPObject;
+                            return WebUtils.MakeAbsoluteUrl(objParent, thisfolder.ServerRelativeUrl);
+                        }
+                        else
+                        {
+                            // Parent is a folder
+                            Folder parentFolder = (Folder)base.ParentNode.SPObject;
+                            Web objWeb = parentFolder.ListItemAllFields.ParentList.ParentWeb;
+                            return WebUtils.MakeAbsoluteUrl(objWeb, thisfolder.ServerRelativeUrl);
+                        }                      
                     }
                     else
                         return null;

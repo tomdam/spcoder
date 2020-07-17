@@ -2,6 +2,7 @@
 using SPCoder.Core.Plugins;
 using SPCoder.Core.Utils;
 using SPCoder.Core.Utils.Nodes;
+using SPCoder.SharePoint.Client.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -59,9 +60,10 @@ namespace SPCoder.Utils.Nodes
                     if (realObj != null)
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
+                        List list = (List)realObj;
+                        list.EnsureProperties(l => l.DefaultView.ServerRelativeUrl);
 
-                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, ((List)realObj).DefaultView.ServerRelativeUrl);
-                        return url;
+                        return WebUtils.MakeAbsoluteUrl(objWeb, list.DefaultView.ServerRelativeUrl);
                     }
                     else
                         return null;
@@ -70,8 +72,10 @@ namespace SPCoder.Utils.Nodes
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
 
-                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, ((List)realObj).DefaultView.ServerRelativeUrl);
-                        return url;
+                        List list = (List)realObj;
+                        list.EnsureProperties(l => l.DefaultView.ServerRelativeUrl);
+
+                        return WebUtils.MakeAbsoluteUrl(objWeb, list.DefaultView.ServerRelativeUrl);
                     }
                     else
                         return null;

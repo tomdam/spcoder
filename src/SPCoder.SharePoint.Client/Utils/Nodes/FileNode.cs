@@ -2,6 +2,7 @@
 using SPCoder.Core.Plugins;
 using SPCoder.Core.Utils;
 using SPCoder.Core.Utils.Nodes;
+using SPCoder.SharePoint.Client.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -50,6 +51,9 @@ namespace SPCoder.Utils.Nodes
         public override object ExecuteAction(BaseActionItem actionItem)
         {
             var realObj = GetRealSPObject();
+            File thisFile = ((File)realObj);
+            thisFile.EnsureProperties(f => f.ServerRelativeUrl);
+
             switch (actionItem.Action)
             {
                 case NodeActions.ExternalOpen:
@@ -58,7 +62,7 @@ namespace SPCoder.Utils.Nodes
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
 
-                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, ((List)realObj).DefaultView.ServerRelativeUrl);
+                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, thisFile.ServerRelativeUrl);
                         return url;
                     }
                     else
@@ -66,10 +70,20 @@ namespace SPCoder.Utils.Nodes
                 case NodeActions.Copy:
                     if (realObj != null && actionItem.Name == "Copy link")
                     {
-                        Web objWeb = (Web)base.ParentNode.SPObject;
+                        if (base.ParentNode.SPObject is Folder)
+                        {
+                            // Parent is a folder
+                            Folder parentFolder = (Folder)base.ParentNode.SPObject;
+                            Web objWeb = parentFolder.ListItemAllFields.ParentList.ParentWeb;
 
-                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, ((List)realObj).DefaultView.ServerRelativeUrl);
-                        return url;
+                            return WebUtils.MakeAbsoluteUrl(objWeb, thisFile.ServerRelativeUrl);
+                        } 
+                        else
+                        {
+                            // Parent is a web
+                            Web objParent = (Web)base.ParentNode.SPObject;
+                            return WebUtils.MakeAbsoluteUrl(objParent, thisFile.ServerRelativeUrl);
+                        }
                     }
                     else
                         return null;

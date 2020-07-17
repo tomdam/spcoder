@@ -212,6 +212,7 @@
     <Compile Include="Utils\Nodes\WebNode.cs" />
     <Compile Include="Utils\SharePointClientModule.cs" />
     <Compile Include="Utils\SharePointEditedFile.cs" />
+    <Compile Include="Utils\WebUtils.cs" />
     <Compile Include="Web References\ListsWebService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
