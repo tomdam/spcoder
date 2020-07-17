@@ -223,48 +223,10 @@ namespace SPCoder.Utils
         }
 
         private BaseNode DoSPList(Microsoft.SharePoint.Client.List list, BaseNode parentNode, BaseNode rootNode)
-        {
-            list.EnsureProperties(l => l.RootFolder);
+        {         
+            list.EnsureProperties(l => l.RootFolder, l => l.BaseType);
 
             return this.DoSPFolder(list.RootFolder, parentNode, rootNode);
-
-            //BaseNode myNode = null;
-            //try
-            //{
-            //    myNode = new FolderNode(list.RootFolder);
-            //    parentNode.Children.Add(myNode);
-
-            //    myNode.ParentNode = parentNode;
-            //    myNode.RootNode = rootNode;
-            //    myNode.NodeConnector = this;
-            //    myNode.LoadedData = true;
-
-            //    list.Context.Load(list.RootFolder.Folders);
-            //    list.Context.ExecuteQueryRetry();
-
-            //    try
-            //    {
-            //        foreach(var subfolder in list.RootFolder.Folders)
-            //        {
-            //            BaseNode childNode = new FolderNode(subfolder);
-            //            myNode.Children.Add(childNode);
-
-            //            childNode.ParentNode = parentNode;
-            //            childNode.RootNode = rootNode;
-            //            childNode.NodeConnector = this;
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        return myNode;
-            //    }
-            //}
-            //catch
-            //{
-            //    return myNode;
-            //}
-
-            //return myNode;
         }
 
         private BaseNode DoSPWeb(Web web, BaseNode parentNode, BaseNode rootNode)

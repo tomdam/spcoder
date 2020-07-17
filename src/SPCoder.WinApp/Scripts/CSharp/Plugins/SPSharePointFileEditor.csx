@@ -1,12 +1,9 @@
 ﻿using Microsoft.SharePoint.Client;
 using File = Microsoft.SharePoint.Client.File;
+using SPCoder.Core.Plugins;
+using SPCoder.Core.Utils;
+using SPCoder.SharePoint.Client.Utils;
 
-public class SPFileDetails
-{
-    public string FileName { get; set; }
-    public string FileContents { get; set; }
-    public string FileExtension { get; set; }
-}
 
 public class SPSharePointFileEditor : BasePlugin
 {
@@ -23,22 +20,20 @@ public class SPSharePointFileEditor : BasePlugin
         var stream = file.OpenBinaryStream();
 
         ctx.Load(file);
+        ctx.Load(file.ListItemAllFields);
         ctx.ExecuteQuery();
 
-        string fileContent = string.Empty;
+        var folderUrl = file.ListItemAllFields["FileDirRef"].ToString();
+        var parentFolder = file.ListItemAllFields.ParentList.ParentWeb.GetFolderByServerRelativeUrl(folderUrl);
+        ctx.Load(parentFolder);
+        ctx.ExecuteQuery();
 
-        using (StreamReader reader = new StreamReader(stream.Value))
+        var fileDetails = new SharePointEditedFile
         {
-            fileContent = reader.ReadToEnd();
-        }
-
-        Console.WriteLine("Read file 2");
-
-        var fileDetails = new SPFileDetails
-        {
-            FileName = file.Name,
-            FileContents = fileContent,
-            FileExtension = System.IO.Path.GetExtension(file.Name)
+            Filename = file.Name,
+            Stream = stream.Value,
+            ParentContainer = parentFolder,
+            FullFilePath = file.ServerRelativeUrl
         };
 
         Result = fileDetails;
@@ -48,10 +43,10 @@ public class SPSharePointFileEditor : BasePlugin
 
 public void GenerateNewSourceTabSPFile(object item)
 {
-    if (item is SPFileDetails)
+    if (item is SharePointEditedFile)
     {
-        var fileDetails = (SPFileDetails)item;
-        main.GenerateNewSourceTab(fileDetails.FileName, fileDetails.FileContents, null, fileDetails.FileExtension);
+        var fileDetails = (SharePointEditedFile)item;
+        main.GeneratedEditedFileTab(fileDetails);
     }
 }
 

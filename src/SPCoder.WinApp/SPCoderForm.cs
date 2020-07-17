@@ -888,6 +888,42 @@ namespace SPCoder
             codeWindows.Add(newCode);
         }
         
+        public void GeneratedEditedFileTab(BaseEditedFile editedFile)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    GeneratedEditedFileTabPrivate(editedFile);
+                });
+            }
+            else
+            {
+                GeneratedEditedFileTabPrivate(editedFile);
+            }
+        }
+
+        private void GeneratedEditedFileTabPrivate(BaseEditedFile editedFile)
+        {
+            CSharpCode newCode = new CSharpCode();
+            newCode.Fctb.ContextMenuStrip = cmMain;
+            newCode.Fctb.Language = GetLanguageFromFileName(editedFile.Filename);
+
+            using (StreamReader reader = new StreamReader(editedFile.Stream))
+            {
+                newCode.Source = reader.ReadToEnd();
+            }
+
+            newCode.EditedFile = editedFile;
+            newCode.Source = null;
+            newCode.Title = editedFile.Filename;
+            newCode.FullFileName = editedFile.Filename;
+            newCode.FileName = editedFile.Filename;
+
+            newCode.Show(dockPanel, DockState.Document);
+            codeWindows.Add(newCode);
+        }
+
         private Language GetLanguageFromFileName(string fileName)
         {
             Language lang = Language.CSharp;

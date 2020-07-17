@@ -24,13 +24,16 @@ namespace SPCoder.Windows
 
         public AutocompleteMenu popupMenu;
 
+        // Support saving to exotic locations
+        public BaseEditedFile EditedFile { get; set; }
+
         //string lang = "CSharp (custom highlighter)";
         //string lang = "CSharp";
 
         //styles
 
         TextStyle RedErrorStyle = new TextStyle(null, Brushes.LightPink, FontStyle.Regular);
-        
+
         MarkerStyle SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
 
         TextStyle LinkStyle = new TextStyle(Brushes.Blue, null, FontStyle.Underline);
@@ -56,9 +59,9 @@ namespace SPCoder.Windows
             //popupMenu.Items.MaximumSize = new System.Drawing.Size(300, 400);
             popupMenu.Items.MaximumSize = new System.Drawing.Size(300, 300);
             popupMenu.Items.Width = 250;
-            
+
             popupMenu.Items.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            
+
             //fctb.OnTextChangedDelayed(fctb.Range);
 
             //fctb.DescriptionFile = pythonStyle;
@@ -69,16 +72,16 @@ namespace SPCoder.Windows
             //fctb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
 
             fctb.CustomAction += fctb_CustomAction;
-            
+
             fctb.HotkeysMapping.Add(Keys.F5, FCTBAction.CustomAction1);
             fctb.HotkeysMapping.Add(Keys.Control | Keys.S, FCTBAction.CustomAction2);
             fctb.HotkeysMapping.Add(Keys.Control | Keys.W, FCTBAction.CustomAction3);
-            
+
             fctb.ClearStylesBuffer();
             fctb.AddStyle(RedErrorStyle);
             fctb.AddStyle(LinkStyle);
             fctb.AddStyle(SameWordsStyle);
-            
+
             //CSharpSyntaxHighlight(e);
 
 
@@ -127,7 +130,7 @@ namespace SPCoder.Windows
 
             e.ChangedRange.ClearStyle(LinkStyle);
             e.ChangedRange.SetStyle(LinkStyle, @"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
-            
+
         }
 
         bool CharIsHyperlink(Place place)
@@ -194,7 +197,7 @@ namespace SPCoder.Windows
                     r.SetStyle(SameWordsStyle);
         }
 
-        
+
 
         private void fctb_AutoIndentNeeded(object sender, AutoIndentEventArgs args)
         {
@@ -235,7 +238,7 @@ namespace SPCoder.Windows
             //        return;
             //    }
         }
-        
+
 
         void fctb_CustomAction(object sender, CustomActionEventArgs e)
         {
@@ -243,11 +246,11 @@ namespace SPCoder.Windows
             {
                 //this.ExecuteSelectionCSharp(true);
                 this.ExecuteSelectionCSharp(SPCoderForm.AsynchronousExecution);
-            } 
+            }
             else if (e.Action == FCTBAction.CustomAction2)
-                {
-                    this.SaveCurrentCode();    
-                }
+            {
+                this.SaveCurrentCode();
+            }
             else if (e.Action == FCTBAction.CustomAction3)
             {
                 this.CloseCodeWindow();
@@ -292,7 +295,7 @@ namespace SPCoder.Windows
                 fctb.Tag = value;
             }
         }
-        
+
         public string FileName { get; set; }
 
         Style invisibleCharsStyle = new InvisibleCharsRenderer(Pens.Gray);
@@ -309,7 +312,7 @@ namespace SPCoder.Windows
         }
 
         public void HighlightInvisibleChars(Range range)
-        {             
+        {
             range.ClearStyle(invisibleCharsStyle);
             if (SPCoderForm.MainForm.ShouldHighlightInvisibleChars())
                 range.SetStyle(invisibleCharsStyle, @".$|.\r\n|\s");
@@ -319,7 +322,7 @@ namespace SPCoder.Windows
         {
             string text = null;
             try
-            {               
+            {
                 string selection = fctb.SelectedText;
                 if (string.IsNullOrEmpty(selection))
                 {
@@ -342,7 +345,7 @@ namespace SPCoder.Windows
                 {
                     SPCoderForm.MainForm.ExecuteScriptAsync(text);
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -380,7 +383,7 @@ namespace SPCoder.Windows
                         string[] coordinatesStr = match.Groups[1].Value.Trim().Split(',');
                         if (coordinatesStr != null && coordinatesStr.Length == 2)
                         {
-                           
+
                             int row = int.Parse(coordinatesStr[0]) - 1;
                             int col = int.Parse(coordinatesStr[1]) + 1;
                             //now highlight the row in the text
@@ -416,9 +419,51 @@ namespace SPCoder.Windows
 
         public bool SaveCurrentCode(bool forceOverwrite)
         {
+            // If we have an exotic location and we're overwriting, save to that location
+            // Otherwise, pop up the Save As Dialog to allow the user to save the file locally
+            if (this.EditedFile != null && forceOverwrite)
+            {
+                // We're saving to somewhere exotic
+                try
+                {
+                    if (this.EditedFile.Stream != null)
+                    {
+                        this.EditedFile.Stream.Close();
+                        this.EditedFile.Stream.Dispose();
+                        this.EditedFile.Stream = new MemoryStream();
+                    }
+                    else
+                    {
+                        this.EditedFile.Stream = new MemoryStream();
+                    }
+
+                    // Todo: think about how to clean up this StreamWriter. If you dispose here, it closes the EditedFile.Stream reference too.
+                    StreamWriter sWriter = new StreamWriter(this.EditedFile.Stream);
+                    sWriter.Write(this.Source);
+                    sWriter.Flush();
+
+                    this.EditedFile.Stream.Position = 0;
+
+                    var saved = this.EditedFile.Save(forceOverwrite);
+                    if (saved)
+                    {
+                        SPCoderForm.MainForm.AppendToLog($"File {this.EditedFile.FullFilePath} has been saved");
+                        this.Text = this.EditedFile.Filename;
+                        fctb.Tag = this.EditedFile.Filename;
+                    }
+
+                    return saved;
+                }
+                catch (Exception ex)
+                {
+                    SPCoderForm.MainForm.AppendToLog($"Fatal error saving file: {ex.Message}");
+                    return false;
+                }
+            }
+
             //Save a file            
             bool result = false;
-            
+
             string text = fctb.Text;
             bool written = false;
             if (forceOverwrite)
@@ -429,9 +474,9 @@ namespace SPCoder.Windows
                     if (System.IO.File.Exists(tempFileName))
                     {
                         File.WriteAllText(tempFileName, text, Encoding.UTF8);
-                        
+
                         SPCoderForm.MainForm.AppendToLog(string.Format("File '{0}' has been saved.", tempFileName));
-                        written = true;                        
+                        written = true;
                         this.Text = Path.GetFileName(tempFileName);
                         result = true;
                     }
@@ -461,7 +506,7 @@ namespace SPCoder.Windows
                     }
 
                     File.WriteAllText(saveFileDialog.FileName, text, Encoding.UTF8);
-                    written = true;                    
+                    written = true;
                     this.Text = Path.GetFileName(saveFileDialog.FileName);
                     fctb.Tag = saveFileDialog.FileName;
                     SPCoderForm.MainForm.AppendToLog(string.Format("File '{0}' has been saved.", saveFileDialog.FileName));
@@ -494,7 +539,7 @@ namespace SPCoder.Windows
         }
 
         private void Code_FormClosing(object sender, FormClosingEventArgs e)
-        {           
+        {
             if (this.Text.EndsWith("*"))
             {
                 var result = MessageBox.Show(this, "Save " + this.Text.TrimEnd('*') + "?", "Save",
@@ -507,7 +552,7 @@ namespace SPCoder.Windows
                 }
                 else if (result == DialogResult.Yes)
                 {
-                    SaveCurrentCode(true);                    
+                    SaveCurrentCode(true);
                 }
             }
             //add to history
@@ -519,7 +564,7 @@ namespace SPCoder.Windows
         }
 
         protected void CloseCodeWindow()
-        {            
+        {
             this.Close();
         }
 
@@ -535,7 +580,7 @@ namespace SPCoder.Windows
             SPCoderForm.MainForm.UpdateMenuButtons();
         }
 
-       
+
         private void CSharpCode_Activated_1(object sender, EventArgs e)
         {
             SPCoderForm.MainForm.UpdateMenuButtons();
@@ -584,7 +629,7 @@ namespace SPCoder.Windows
         {
             this.menu = menu;
             this.tb = tb;
-            
+
         }
 
         public IEnumerator<AutocompleteItem> GetEnumerator()
@@ -617,7 +662,7 @@ namespace SPCoder.Windows
             }
 
             //extract class name (part before dot)
-           var parts = text.Split('.');
+            var parts = text.Split('.');
             if (parts.Length < 2)
                 yield break;
             var myVar = parts[parts.Length - 2];
@@ -626,8 +671,8 @@ namespace SPCoder.Windows
             if (parts.Length <= 2)
             {
                 var contextVariable = SPCoderForm.ScriptStateCSharp.GetVariable(myVar);
-                
-                if (contextVariable != null)  
+
+                if (contextVariable != null)
                 {
                     object variable = ((Microsoft.CodeAnalysis.Scripting.ScriptVariable)contextVariable).Value;
                     IList<string> all = SPCoderUtils.GetPropertiesAndMethods(variable, myVar, SPCoderForm.MainForm.PutExtensionMethodsToAutocomplete);
@@ -727,7 +772,7 @@ namespace SPCoder.Windows
         }
     }
 
-    
+
     /// <summary>
     /// This item appears when any part of snippet text is typed
     /// </summary>
@@ -794,7 +839,7 @@ namespace SPCoder.Windows
         }
     }
 
-    
+
 
     /// <summary>
     /// Divides numbers and words: "123AND456" -> "123 AND 456"
@@ -814,7 +859,7 @@ namespace SPCoder.Windows
             : this(@"^(\d+)([a-zA-Z_]+)(\d*)$")
         {
         }
-        
+
         public override CompareResult Compare(string fragmentText)
         {
             if (Regex.IsMatch(fragmentText, pattern))
