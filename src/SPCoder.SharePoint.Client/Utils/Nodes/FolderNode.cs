@@ -6,43 +6,50 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+
 namespace SPCoder.Utils.Nodes
 {
-    /// <summary>
-    /// Represents the List node in treeview when connecting through CSOM
-    /// </summary>
-    public class ListNode : BaseNode
+    public class FolderNode : BaseNode
     {
-        List<Expression<Func<ListItemCollection, object>>> allIncludes = new List<Expression<Func<ListItemCollection, object>>>();
-        public ListNode(List list)
+        public FolderNode(Folder folder)
         {
-            list.Context.Load(list);
-            base.Title = list.Title;
-            base.SPObjectType = list.GetType().Name;
-            base.Url = list.Title;
-            base.IconPath = list.ImageUrl;
+            folder.Context.Load(folder);
+            base.Title = folder.Name;
+            base.SPObjectType = folder.GetType().Name;
+            base.Url = folder.ServerRelativeUrl;
         }
 
-        private List realObject;
+        private Folder realObject;
         public override object GetRealSPObject()
         {
             if (realObject != null)
                 return realObject;
 
-            object objWeb = base.ParentNode.SPObject;
-            if (objWeb != null)
-            {                
-                if (objWeb is Web)
+            object objParent = base.ParentNode.SPObject;
+            if (objParent != null)
+            {
+                if (objParent is List)
                 {
-                    List list = ((Web)objWeb).Lists.GetByTitle(this.Title);
-                    list.Context.Load(list);
-                    //TODO:
-                    //check this - in sp2010 DefaultView doesn't exist
-                    //use DefaultViewUrl instead in externalopen and copy link
-                    list.Context.Load(list.DefaultView);
-                    //list.Context.ExecuteQuery();
-                    realObject = list;
-                    return list;
+                    Folder folder = ((List)objParent).RootFolder.ResolveSubFolder(this.Title);
+
+                    realObject = folder;
+                    return folder;
+                }
+
+                if (objParent is Web)
+                {
+                    Folder folder = ((Web)objParent).GetFolderByServerRelativeUrl(this.Url);
+                    realObject = folder;
+
+                    return folder;
+                }
+
+                if (objParent is Folder)
+                {
+                    Folder folder = ((Folder)objParent).ResolveSubFolder(this.Title);
+
+                    realObject = folder;
+                    return folder;
                 }
             }
 
@@ -55,7 +62,7 @@ namespace SPCoder.Utils.Nodes
             switch (actionItem.Action)
             {
                 case NodeActions.ExternalOpen:
-                    
+
                     if (realObj != null)
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
@@ -65,7 +72,7 @@ namespace SPCoder.Utils.Nodes
                     }
                     else
                         return null;
-                case NodeActions.Copy:                    
+                case NodeActions.Copy:
                     if (realObj != null && actionItem.Name == "Copy link")
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
@@ -75,7 +82,7 @@ namespace SPCoder.Utils.Nodes
                     }
                     else
                         return null;
-                    //for plugins always return the real object
+                //for plugins always return the real object
                 case NodeActions.Plugin:
                     if (realObj != null)
                     {
@@ -97,11 +104,8 @@ namespace SPCoder.Utils.Nodes
             var baseActions = base.GetNodeActions();
             if (baseActions.Count > 0)
                 actions.AddRange(baseActions);
-            
+
             return actions;
         }
-
-        
-        public override string LocalImagesSubfolder { get { return "SP"; } }
     }
 }

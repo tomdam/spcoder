@@ -12,6 +12,13 @@ namespace SPCoder.Core.Plugins
 
         public static void Register(BasePlugin plugin)
         {
+            if (Plugins.Any(p => p.Name == plugin.Name))
+            {
+                // remove & re-register
+                var p = Plugins.First(p1 => p1.Name == plugin.Name);
+                Plugins.Remove(p);
+            }
+
             Plugins.Add(plugin);
         }
     }
