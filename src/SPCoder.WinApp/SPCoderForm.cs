@@ -915,7 +915,6 @@ namespace SPCoder
             }
 
             newCode.EditedFile = editedFile;
-            newCode.Source = null;
             newCode.Title = editedFile.Filename;
             newCode.FullFileName = editedFile.Filename;
             newCode.FileName = editedFile.Filename;
