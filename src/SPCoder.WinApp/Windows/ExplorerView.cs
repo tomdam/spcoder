@@ -14,10 +14,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using SPCoder.Properties;
 using SPCoder.Core.Utils.Nodes;
 using System.Diagnostics;
-using SPCoder.SharePoint.Client.Utils;
-using SPCoder.Web.Utils;
-using SPCoder.FileSystem.Utils;
-using SPCoder.Github.Utils;
+
 
 namespace SPCoder.Windows
 {
@@ -60,10 +57,10 @@ namespace SPCoder.Windows
                 //Workaround for .NET framework Bug related to MEF
                 SPCoderForm.MainForm.Modules = new List<ModuleDescription>();
                 //SPCoderForm.MainForm.Modules.Add(new FBModule());
-                SPCoderForm.MainForm.Modules.Add(new GithubModule());
-                SPCoderForm.MainForm.Modules.Add(new FSModule());
-                SPCoderForm.MainForm.Modules.Add(new WebModule());                
-                SPCoderForm.MainForm.Modules.Add(new SharePointClientModule());                               
+                //SPCoderForm.MainForm.Modules.Add(new GithubModule());
+                //SPCoderForm.MainForm.Modules.Add(new FSModule());
+                //SPCoderForm.MainForm.Modules.Add(new WebModule());                
+                //SPCoderForm.MainForm.Modules.Add(new SharePointClientModule());                               
             }
             
             foreach (ModuleDescription module in SPCoderForm.MainForm.Modules)

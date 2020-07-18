@@ -5,6 +5,7 @@ using SPCoder.Utils.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Security;
@@ -207,6 +208,27 @@ namespace SPCoder.Utils
                         fileNode.ParentNode = parentNode;
                         fileNode.RootNode = rootNode;
                         fileNode.NodeConnector = this;
+
+                        try
+                        {
+                            //
+                            if (fileNode.Title != null && fileNode.Title.Contains("."))
+                            {
+                                var els = fileNode.Title.Split('.');
+                                string extension = "." + els[els.Length - 1];
+                                //Icon icon = Icon.ExtractAssociatedIcon(file.FullName);
+                                Icon icon = ShellIcon.GetSmallIconFromExtension(extension);
+                                fileNode.IconObject = icon.ToBitmap();
+                                if (fileNode.IconObject.Width != 16)
+                                {
+                                    fileNode.IconObject = new Bitmap(fileNode.IconObject, 16, 16);
+                                }/**/
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            //skip if exception happens here... the default icon will be shown
+                        }
                     }
                 }
                 catch
