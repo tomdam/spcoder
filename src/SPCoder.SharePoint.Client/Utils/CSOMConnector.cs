@@ -1,4 +1,5 @@
-﻿using Microsoft.SharePoint.Client;
+﻿using Microsoft.Graph;
+using Microsoft.SharePoint.Client;
 using SPCoder.HelperWindows;
 using SPCoder.Utils.Nodes;
 using System;
@@ -14,8 +15,8 @@ using System.Windows.Forms;
 namespace SPCoder.Utils
 {
     public class CSOMConnector : BaseConnector
-    {        
-        public ClientContext Context { get; set;  }
+    {
+        public ClientContext Context { get; set; }
         public CSOMConnector() : base()
         { }
 
@@ -31,11 +32,11 @@ namespace SPCoder.Utils
             else if (connectorType.Contains(SPCoderConstants.WIN))
                 this.AuthenticationType = SPCoderConstants.WIN;
         }
-        
+
         public CSOMConnector(string username, string password)
         {
             this.Username = username;
-            this.Password = password;        
+            this.Password = password;
         }
 
         public override BaseNode ExpandNode(BaseNode node, bool doIfLoaded = false)
@@ -54,6 +55,33 @@ namespace SPCoder.Utils
                     node = DoSPWeb((Web)node.SPObject, node.ParentNode, node.RootNode);
                 }
             }
+
+            if (node is ListNode)
+            {
+                if (!doIfLoaded)
+                {
+                    if (node.ParentNode.Children != null && node.ParentNode.Children.Contains(node))
+                    {
+                        node.ParentNode.Children.Remove(node);
+                    }
+
+                    node = DoSPList((Microsoft.SharePoint.Client.List)node.SPObject, node.ParentNode, node.RootNode);
+                }
+            }
+
+            if (node is FolderNode)
+            {
+                if (!doIfLoaded)
+                {
+                    if (node.ParentNode.Children != null && node.ParentNode.Children.Contains(node))
+                    {
+                        node.ParentNode.Children.Remove(node);
+                    }
+
+                    node = DoSPFolder((Microsoft.SharePoint.Client.Folder)node.SPObject, node.ParentNode, node.RootNode);
+                }
+            }
+
             return node;
         }
         public override BaseNode GetSPStructure(string siteUrl)
@@ -93,7 +121,7 @@ namespace SPCoder.Utils
                 }
             }
 
-            
+
             if (this.AuthenticationType == SPCoderConstants.O365)
             {
                 Context = new ClientContext(siteUrl);
@@ -101,13 +129,13 @@ namespace SPCoder.Utils
                 foreach (char c in Password.ToCharArray()) pass.AppendChar(c);
                 Context.Credentials = new SharePointOnlineCredentials(Username, pass);
             }
-            else if(this.AuthenticationType == SPCoderConstants.O365_APP)
+            else if (this.AuthenticationType == SPCoderConstants.O365_APP)
             {
                 //Get the realm for the URL
                 string realm = SPCoder.SharePoint.Client.TokenHelper.GetRealmFromTargetUrl(new Uri(siteUrl));
                 string accessToken = SPCoder.SharePoint.Client.TokenHelper.GetAppOnlyAccessToken(SPCoder.SharePoint.Client.TokenHelper.SharePointPrincipal, new Uri(siteUrl).Authority, realm).AccessToken;
                 Context = SPCoder.SharePoint.Client.TokenHelper.GetClientContextWithAccessToken(siteUrl, accessToken);
-                
+
             }
             else if (this.AuthenticationType == SPCoderConstants.FBA)
             {
@@ -128,7 +156,7 @@ namespace SPCoder.Utils
 
         public override BaseNode GenerateRootNode()
         {
-            Site site = Context.Site;
+            Microsoft.SharePoint.Client.Site site = Context.Site;
             Context.Load(site);
             Context.ExecuteQuery();
             BaseNode rootNode = new SiteNode(site);
@@ -139,6 +167,66 @@ namespace SPCoder.Utils
             rootNode.LoadedData = true;
             DoSPWeb(site.RootWeb, rootNode, rootNode);
             return rootNode;
+        }
+
+        private BaseNode DoSPFolder(Microsoft.SharePoint.Client.Folder folder, BaseNode parentNode, BaseNode rootNode)
+        {
+            BaseNode myNode = null;
+            folder.EnsureProperties(f => f.Folders, f => f.Files, f => f.Name, f => f.ServerRelativeUrl);
+
+            try
+            {
+                myNode = new FolderNode(folder);
+                parentNode.Children.Add(myNode);
+
+                myNode.ParentNode = parentNode;
+                myNode.RootNode = rootNode;
+                myNode.NodeConnector = this;
+                myNode.LoadedData = true;
+
+                folder.Context.Load(folder.Folders);
+                folder.Context.ExecuteQueryRetry();
+
+                try
+                {
+                    foreach (var subfolder in folder.Folders.OrderBy(f => f.Name))
+                    {
+                        BaseNode childNode = new FolderNode(subfolder);
+                        myNode.Children.Add(childNode);
+
+                        childNode.ParentNode = parentNode;
+                        childNode.RootNode = rootNode;
+                        childNode.NodeConnector = this;
+                    }
+
+                    foreach(var file in folder.Files.OrderBy(f => f.Name))
+                    {
+                        BaseNode fileNode = new FileNode(file);
+                        myNode.Children.Add(fileNode);
+
+                        fileNode.ParentNode = parentNode;
+                        fileNode.RootNode = rootNode;
+                        fileNode.NodeConnector = this;
+                    }
+                }
+                catch
+                {
+                    return myNode;
+                }
+            }
+            catch
+            {
+                return myNode;
+            }
+
+            return myNode;
+        }
+
+        private BaseNode DoSPList(Microsoft.SharePoint.Client.List list, BaseNode parentNode, BaseNode rootNode)
+        {         
+            list.EnsureProperties(l => l.RootFolder, l => l.BaseType);
+
+            return this.DoSPFolder(list.RootFolder, parentNode, rootNode);
         }
 
         private BaseNode DoSPWeb(Web web, BaseNode parentNode, BaseNode rootNode)
@@ -154,7 +242,7 @@ namespace SPCoder.Utils
                 myNode.LoadedData = true;
                 web.Context.Load(web.Webs);
                 web.Context.Load(web.Lists);
-                
+
                 web.Context.ExecuteQuery();
                 try
                 {
@@ -173,8 +261,8 @@ namespace SPCoder.Utils
                 {
                     return myNode;
                 }
-                
-                foreach (List list in web.Lists)
+
+                foreach (Microsoft.SharePoint.Client.List list in web.Lists)
                 {
                     BaseNode myListNode = new ListNode(list);
                     myNode.Children.Add(myListNode);

@@ -9,41 +9,39 @@ using System.Linq.Expressions;
 
 namespace SPCoder.Utils.Nodes
 {
-    /// <summary>
-    /// Represents the List node in treeview when connecting through CSOM
-    /// </summary>
-    public class ListNode : BaseNode
+    public class FileNode : BaseNode, LeafNode
     {
-        List<Expression<Func<ListItemCollection, object>>> allIncludes = new List<Expression<Func<ListItemCollection, object>>>();
-        public ListNode(List list)
+        public FileNode(File file)
         {
-            list.Context.Load(list);
-            base.Title = list.Title;
-            base.SPObjectType = list.GetType().Name;
-            base.Url = list.Title;
-            base.IconPath = list.ImageUrl;
+            file.Context.Load(file);
+            base.Title = file.Name;
+            base.SPObjectType = file.GetType().Name;
+            base.Url = file.ServerRelativeUrl;
         }
 
-        private List realObject;
+        private File realObject;
         public override object GetRealSPObject()
         {
             if (realObject != null)
                 return realObject;
 
-            object objWeb = base.ParentNode.SPObject;
-            if (objWeb != null)
-            {                
-                if (objWeb is Web)
+            object objParent = base.ParentNode.SPObject;
+            if (objParent != null)
+            {
+                if (objParent is Web)
                 {
-                    List list = ((Web)objWeb).Lists.GetByTitle(this.Title);
-                    list.Context.Load(list);
-                    //TODO:
-                    //check this - in sp2010 DefaultView doesn't exist
-                    //use DefaultViewUrl instead in externalopen and copy link
-                    list.Context.Load(list.DefaultView);
-                    //list.Context.ExecuteQuery();
-                    realObject = list;
-                    return list;
+                    File file = ((Web)objParent).GetFileByServerRelativeUrl(this.Url);
+                    realObject = file;
+
+                    return file;
+                }
+
+                if (objParent is Folder)
+                {
+                    File file = ((Folder)objParent).GetFile(this.Title);
+
+                    realObject = file;
+                    return file;
                 }
             }
 
@@ -53,33 +51,43 @@ namespace SPCoder.Utils.Nodes
         public override object ExecuteAction(BaseActionItem actionItem)
         {
             var realObj = GetRealSPObject();
+            File thisFile = ((File)realObj);
+            thisFile.EnsureProperties(f => f.ServerRelativeUrl);
+
             switch (actionItem.Action)
             {
                 case NodeActions.ExternalOpen:
-                    
+
                     if (realObj != null)
                     {
                         Web objWeb = (Web)base.ParentNode.SPObject;
-                        List list = (List)realObj;
-                        list.EnsureProperties(l => l.DefaultView.ServerRelativeUrl);
 
-                        return WebUtils.MakeAbsoluteUrl(objWeb, list.DefaultView.ServerRelativeUrl);
+                        string url = objWeb.Url.Replace(objWeb.ServerRelativeUrl, thisFile.ServerRelativeUrl);
+                        return url;
                     }
                     else
                         return null;
-                case NodeActions.Copy:                    
+                case NodeActions.Copy:
                     if (realObj != null && actionItem.Name == "Copy link")
                     {
-                        Web objWeb = (Web)base.ParentNode.SPObject;
+                        if (base.ParentNode.SPObject is Folder)
+                        {
+                            // Parent is a folder
+                            Folder parentFolder = (Folder)base.ParentNode.SPObject;
+                            Web objWeb = parentFolder.ListItemAllFields.ParentList.ParentWeb;
 
-                        List list = (List)realObj;
-                        list.EnsureProperties(l => l.DefaultView.ServerRelativeUrl);
-
-                        return WebUtils.MakeAbsoluteUrl(objWeb, list.DefaultView.ServerRelativeUrl);
+                            return WebUtils.MakeAbsoluteUrl(objWeb, thisFile.ServerRelativeUrl);
+                        } 
+                        else
+                        {
+                            // Parent is a web
+                            Web objParent = (Web)base.ParentNode.SPObject;
+                            return WebUtils.MakeAbsoluteUrl(objParent, thisFile.ServerRelativeUrl);
+                        }
                     }
                     else
                         return null;
-                    //for plugins always return the real object
+                //for plugins always return the real object
                 case NodeActions.Plugin:
                     if (realObj != null)
                     {
@@ -101,11 +109,8 @@ namespace SPCoder.Utils.Nodes
             var baseActions = base.GetNodeActions();
             if (baseActions.Count > 0)
                 actions.AddRange(baseActions);
-            
+
             return actions;
         }
-
-        
-        public override string LocalImagesSubfolder { get { return "SP"; } }
     }
 }

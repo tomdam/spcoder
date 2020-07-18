@@ -303,6 +303,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Scripts\CSharp\Plugins\SPSharePointFileEditor.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\ISPCoderForm.cs" />
     <Compile Include="Utils\SPCoderSettings.cs" />
@@ -572,6 +575,22 @@
     <ProjectReference Include="..\SPCoder.Core\SPCoder.Core.csproj">
       <Project>{4c10cebc-afa4-425a-a87c-ca04c8bc2d88}</Project>
       <Name>SPCoder.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SPCoder.FileSystem\SPCoder.FileSystem.csproj">
+      <Project>{63FDF3F5-BB6D-4459-9F83-C64DE73B4484}</Project>
+      <Name>SPCoder.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SPCoder.Github\SPCoder.Github.csproj">
+      <Project>{978149EA-1411-494D-8C27-CFF1C40F1BD6}</Project>
+      <Name>SPCoder.Github</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SPCoder.SharePoint.Client\SPCoder.SharePoint.Client.csproj">
+      <Project>{255A1D98-A7CC-451A-AC11-A4CC9F174BBD}</Project>
+      <Name>SPCoder.SharePoint.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SPCoder.Web\SPCoder.Web.csproj">
+      <Project>{9FFBAFCB-2892-4F84-9DD1-67BE7CC67BB0}</Project>
+      <Name>SPCoder.Web</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
