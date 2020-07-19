@@ -3,7 +3,7 @@
 The built-in code editor is available, with syntax highlighting and autocomplete features.
 SPCoder also contains various useful features like Grid viewer, Properties window, Describer window, which can be used for inspecting variables.
 
-SPCoder can be extended by creating new _connectors_, _plugins_ or _autorun scripts_. You can find more about those in the documentation.
+SPCoder can be extended by creating new _connectors_, _plugins_ or _autorun scripts_. You can find more about those in the [wiki documentation](https://github.com/tomdam/spcoder/wiki).
 
 Some of the standard cases for using SPCoder are:
 * 	Testing and learning C# language features
