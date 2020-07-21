@@ -31,7 +31,7 @@ using SPCoder;
 using SPCoder.Core.Utils;
 
 //SharePoint CSOM 
-//using Microsoft.SharePoint.Client;
+using Microsoft.SharePoint.Client;
 
 //EPPlus - excel library
 //using OfficeOpenXml;

@@ -576,6 +576,10 @@
       <Project>{4c10cebc-afa4-425a-a87c-ca04c8bc2d88}</Project>
       <Name>SPCoder.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SPCoder.SharePoint.Client\SPCoder.SharePoint.Client.csproj">
+      <Project>{255A1D98-A7CC-451A-AC11-A4CC9F174BBD}</Project>
+      <Name>SPCoder.SharePoint.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
