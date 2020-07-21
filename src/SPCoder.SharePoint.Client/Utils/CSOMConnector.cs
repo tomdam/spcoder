@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graph;
 using Microsoft.Online.SharePoint.TenantAdministration;
 using Microsoft.SharePoint.Client;
+using SPCoder.Core.Utils;
 using SPCoder.HelperWindows;
 using SPCoder.SharePoint.Client.Utils;
 using SPCoder.Utils.Nodes;
@@ -314,8 +315,9 @@ namespace SPCoder.Utils
                         childNode.NodeConnector = this;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    SPCoderLogging.Logger.Error($"Error expanding Web: {ex.Message}");
                     return myNode;
                 }
 
@@ -329,8 +331,9 @@ namespace SPCoder.Utils
                 }
                 return myNode;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SPCoderLogging.Logger.Error($"Error expanding Web: {ex.Message}");
                 return myNode;
             }
         }
@@ -347,6 +350,7 @@ namespace SPCoder.Utils
                 foreach(var site in siteProps)
                 {
                     var websContext = AuthUtil.GetContext(this.AuthenticationType, site.Url, this.Username, this.Password);
+                    // Leaving this commented out for now, slows the load down massively
                     //websContext.Web.EnsureProperties(w => w.Title, w => w.Url);
                     
                     BaseNode webNode = new ScopedWebNode(websContext);
@@ -356,12 +360,17 @@ namespace SPCoder.Utils
                     webNode.RootNode = rootNode;
                     webNode.NodeConnector = this;
 
+                    if (string.IsNullOrWhiteSpace(webNode.Title))
+                    {
+                        webNode.Title = webNode.Url;
+                    }
+
                     tenantNode.Children.Add(webNode);
                 }
             }
             catch(Exception ex)
             {
-                
+                SPCoderLogging.Logger.Error($"Failed to fetch site: {ex.Message}");
             }
         }
 

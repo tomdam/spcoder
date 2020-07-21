@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace SPCoder.Utils.Nodes
 {
+    /// <summary>
+    /// Represents a Web Node that can have it's own ClientContext
+    /// This is necessary when a WebNode is used as a child of a Tenant Node
+    /// </summary>
     public class ScopedWebNode : WebNode
     {
         private readonly ClientContext ctx;
