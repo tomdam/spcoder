@@ -34,6 +34,7 @@ namespace SPCoder.Utils.Nodes
             base.LoadedData = false;
 
             this.AbsoluteUrl = WebUtils.MakeAbsoluteUrl(web, base.Url);
+            this.realObject = web;
         }
 
         public override object GetRealSPObject()
