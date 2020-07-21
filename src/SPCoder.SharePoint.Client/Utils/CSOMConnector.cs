@@ -416,6 +416,10 @@ namespace SPCoder.Utils
                     // Leaving this commented out for now, slows the load down massively
                     //websContext.Web.EnsureProperties(w => w.Title, w => w.Url);
                     
+                    // By using a Scoped Web, we can let the iteration continue as normal and rendering can be quick
+                    // Because otherwise we need to use Tenant.GetSiteByUrl() and request that each time
+                    // Which makes rendering the contents of the tenant VERY slow.
+                    
                     BaseNode webNode = new ScopedWebNode(websContext);
                     webNode.Title = site.Title;
                     webNode.Url = site.Url;
