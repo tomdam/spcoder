@@ -59,7 +59,7 @@ namespace SPCoder.Utils.Nodes
 
         public override object ExecuteAction(BaseActionItem actionItem)
         {
-            var realObj = GetRealSPObject();
+            var realObj = this.SPObject;
             File thisFile = ((File)realObj);
             thisFile.EnsureProperties(f => f.ServerRelativeUrl);
 

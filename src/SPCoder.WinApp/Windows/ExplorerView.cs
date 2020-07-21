@@ -60,7 +60,7 @@ namespace SPCoder.Windows
                 //SPCoderForm.MainForm.Modules.Add(new GithubModule());
                 //SPCoderForm.MainForm.Modules.Add(new FSModule());
                 //SPCoderForm.MainForm.Modules.Add(new WebModule());                
-                SPCoderForm.MainForm.Modules.Add(new SharePointClientModule());                               
+                //SPCoderForm.MainForm.Modules.Add(new SharePointClientModule());                               
             }
             
             foreach (ModuleDescription module in SPCoderForm.MainForm.Modules)

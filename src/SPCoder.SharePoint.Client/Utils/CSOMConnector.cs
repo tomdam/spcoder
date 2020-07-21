@@ -235,6 +235,7 @@ namespace SPCoder.Utils
                     parentNode.Children.Add(myNode);
                 }
 
+                myNode.SPObject = folder;
                 myNode.ParentNode = parentNode;
                 myNode.RootNode = rootNode;
                 myNode.NodeConnector = this;
@@ -250,7 +251,8 @@ namespace SPCoder.Utils
                         BaseNode childNode = new FolderNode(subfolder);
                         myNode.Children.Add(childNode);
 
-                        childNode.ParentNode = parentNode;
+                        childNode.SPObject = subfolder;
+                        childNode.ParentNode = myNode;
                         childNode.RootNode = rootNode;
                         childNode.NodeConnector = this;
                     }
@@ -260,6 +262,7 @@ namespace SPCoder.Utils
                         BaseNode fileNode = new FileNode(file);
                         myNode.Children.Add(fileNode);
 
+                        fileNode.SPObject = file;
                         fileNode.ParentNode = parentNode;
                         fileNode.RootNode = rootNode;
                         fileNode.NodeConnector = this;
