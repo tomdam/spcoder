@@ -6,6 +6,7 @@
 #r "System.Windows.Forms"
 #r "System.Data"
 #r "System.Web.Extensions"
+#r "{{WorkingDirectory}}\\Microsoft.Online.SharePoint.Client.Tenant.dll"
 /*
 #r "{{WorkingDirectory}}\SPCoder.Core.dll"
 #r "{{WorkingDirectory}}\OfficeDevPnP.Core.dll"
@@ -31,7 +32,7 @@ using SPCoder;
 using SPCoder.Core.Utils;
 
 //SharePoint CSOM 
-//using Microsoft.SharePoint.Client;
+using Microsoft.SharePoint.Client;
 
 //EPPlus - excel library
 //using OfficeOpenXml;

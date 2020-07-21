@@ -36,6 +36,15 @@ namespace SPCoder.Utils.Nodes
                     return file;
                 }
 
+                if (objParent is List)
+                {
+                    List list = objParent as List;
+                    File file = list.RootFolder.GetFile(this.Title);
+
+                    realObject = file;
+                    return file;
+                }
+
                 if (objParent is Folder)
                 {
                     File file = ((Folder)objParent).GetFile(this.Title);
@@ -50,7 +59,7 @@ namespace SPCoder.Utils.Nodes
 
         public override object ExecuteAction(BaseActionItem actionItem)
         {
-            var realObj = GetRealSPObject();
+            var realObj = this.SPObject;
             File thisFile = ((File)realObj);
             thisFile.EnsureProperties(f => f.ServerRelativeUrl);
 
@@ -78,6 +87,17 @@ namespace SPCoder.Utils.Nodes
 
                             return WebUtils.MakeAbsoluteUrl(objWeb, thisFile.ServerRelativeUrl);
                         } 
+                        else if (base.ParentNode.SPObject is List)
+                        {
+                            // Parent list a list 
+                            List parentList = (List)base.ParentNode.SPObject;
+                            ClientContext ctx = parentList.Context as ClientContext;
+
+                            File file = parentList.RootFolder.GetFile(this.Title);
+                            file.EnsureProperties(f => f.ServerRelativeUrl);
+
+                            return WebUtils.MakeAbsoluteUrl(ctx.Web, file.ServerRelativeUrl);
+                        }
                         else
                         {
                             // Parent is a web

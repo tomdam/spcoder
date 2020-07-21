@@ -14,7 +14,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using SPCoder.Properties;
 using SPCoder.Core.Utils.Nodes;
 using System.Diagnostics;
-
+using SPCoder.SharePoint.Client.Utils;
 
 namespace SPCoder.Windows
 {
@@ -299,8 +299,15 @@ namespace SPCoder.Windows
             SPTreeViewNode root = CreateNode(rootNode.Title, rootNode.IconPath, rootNode, objectModelType);
             _model.Nodes.Add(root);
 
-            CreateTreeViewNode(root, rootNode.Children[0], objectModelType);
-            
+            //CreateTreeViewNode(root, rootNode.Children[0], objectModelType);
+            //CreateTreeViewNode(root, rootNode, objectModelType);
+
+            foreach(var child in rootNode.Children)
+            {
+                CreateTreeViewNode(root, child, objectModelType);
+            }
+
+
             client.Dispose();
         }
 

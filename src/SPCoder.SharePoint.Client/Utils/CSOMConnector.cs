@@ -1,6 +1,10 @@
-﻿using Microsoft.Graph;
+﻿using CamlexNET;
+using Microsoft.Graph;
+using Microsoft.Online.SharePoint.TenantAdministration;
 using Microsoft.SharePoint.Client;
+using SPCoder.Core.Utils;
 using SPCoder.HelperWindows;
+using SPCoder.SharePoint.Client.Utils;
 using SPCoder.Utils.Nodes;
 using System;
 using System.Collections.Generic;
@@ -42,8 +46,22 @@ namespace SPCoder.Utils
 
         public override BaseNode ExpandNode(BaseNode node, bool doIfLoaded = false)
         {
+            if (node is TenantNode)
+            {
+                //If not loaded
+                if (!doIfLoaded)
+                {
+                    if (node.ParentNode.Children != null && node.ParentNode.Children.Contains(node))
+                    {
+                        node.ParentNode.Children.Remove(node);
+                    }
+
+                    DoTenant((Tenant)node.SPObject, node.ParentNode, node.RootNode);
+                }
+            }
+
             //If it is a web node
-            if (node is WebNode)
+            if (node is WebNode || node is ScopedWebNode)
             {
                 //If not loaded
                 if (!doIfLoaded)
@@ -66,7 +84,7 @@ namespace SPCoder.Utils
                         node.ParentNode.Children.Remove(node);
                     }
 
-                    node = DoSPList((Microsoft.SharePoint.Client.List)node.SPObject, node.ParentNode, node.RootNode);
+                    node = DoSPList((Microsoft.SharePoint.Client.List)node.SPObject, node, node.RootNode);
                 }
             }
 
@@ -83,8 +101,22 @@ namespace SPCoder.Utils
                 }
             }
 
+            if (node is ContentTypeContainerNode)
+            {
+                if (!doIfLoaded)
+                {
+                    if (node.Children != null && node.Children.Contains(node))
+                    {
+                        node.Children.Remove(node);
+                    }
+
+                    DoContentTypes((ContentTypeCollection)node.SPObject, node, node.RootNode);
+                }
+            }
+
             return node;
         }
+
         public override BaseNode GetSPStructure(string siteUrl)
         {
             this.Endpoint = siteUrl;
@@ -157,20 +189,39 @@ namespace SPCoder.Utils
 
         public override BaseNode GenerateRootNode()
         {
-            Microsoft.SharePoint.Client.Site site = Context.Site;
-            Context.Load(site);
-            Context.ExecuteQuery();
-            BaseNode rootNode = new SiteNode(site);
-            rootNode.Title = RootNodeTitle + rootNode.Title;
-            rootNode.NodeConnector = this;
-            rootNode.OMType = ObjectModelType.REMOTE;
-            rootNode.SPObject = site;
-            rootNode.LoadedData = true;
-            DoSPWeb(site.RootWeb, rootNode, rootNode);
-            return rootNode;
+            if (Context.Url.Contains("-admin"))
+            {
+                // We're connected to the Admin URL. Load the Tenant object
+                Tenant tenant = new Tenant(Context);
+                tenant.EnsureProperties(t => t.RootSiteUrl);
+
+                BaseNode rootNode = new TenantNode(tenant);
+                rootNode.Title = "Tenant " + rootNode.Title;
+                rootNode.NodeConnector = this;
+                rootNode.OMType = ObjectModelType.REMOTE;
+                rootNode.SPObject = tenant;
+                DoTenant(tenant, rootNode, rootNode);
+
+               
+                return rootNode;
+            }
+            else
+            {
+                Microsoft.SharePoint.Client.Site site = Context.Site;
+                Context.Load(site);
+                Context.ExecuteQuery();
+                BaseNode rootNode = new SiteNode(site);
+                rootNode.Title = RootNodeTitle + rootNode.Title;
+                rootNode.NodeConnector = this;
+                rootNode.OMType = ObjectModelType.REMOTE;
+                rootNode.SPObject = site;
+                rootNode.LoadedData = true;
+                DoSPWeb(site.RootWeb, rootNode, rootNode);
+                return rootNode;
+            }
         }
 
-        private BaseNode DoSPFolder(Microsoft.SharePoint.Client.Folder folder, BaseNode parentNode, BaseNode rootNode)
+        private BaseNode DoSPFolder(Microsoft.SharePoint.Client.Folder folder, BaseNode parentNode, BaseNode rootNode, bool isRoot = false)
         {
             BaseNode myNode = null;
             folder.EnsureProperties(f => f.Folders, f => f.Files, f => f.Name, f => f.ServerRelativeUrl);
@@ -178,8 +229,13 @@ namespace SPCoder.Utils
             try
             {
                 myNode = new FolderNode(folder);
-                parentNode.Children.Add(myNode);
 
+                if (!isRoot)
+                {
+                    parentNode.Children.Add(myNode);
+                }
+
+                myNode.SPObject = folder;
                 myNode.ParentNode = parentNode;
                 myNode.RootNode = rootNode;
                 myNode.NodeConnector = this;
@@ -191,20 +247,22 @@ namespace SPCoder.Utils
                 try
                 {
                     foreach (var subfolder in folder.Folders.OrderBy(f => f.Name))
-                    {
+                    {         
                         BaseNode childNode = new FolderNode(subfolder);
                         myNode.Children.Add(childNode);
 
-                        childNode.ParentNode = parentNode;
+                        childNode.SPObject = subfolder;
+                        childNode.ParentNode = myNode;
                         childNode.RootNode = rootNode;
                         childNode.NodeConnector = this;
                     }
 
-                    foreach(var file in folder.Files.OrderBy(f => f.Name))
+                    foreach (var file in folder.Files.OrderBy(f => f.Name))
                     {
                         BaseNode fileNode = new FileNode(file);
                         myNode.Children.Add(fileNode);
 
+                        fileNode.SPObject = file;
                         fileNode.ParentNode = parentNode;
                         fileNode.RootNode = rootNode;
                         fileNode.NodeConnector = this;
@@ -246,9 +304,26 @@ namespace SPCoder.Utils
 
         private BaseNode DoSPList(Microsoft.SharePoint.Client.List list, BaseNode parentNode, BaseNode rootNode)
         {         
-            list.EnsureProperties(l => l.RootFolder, l => l.BaseType);
+            list.EnsureProperties(l => l.RootFolder, l => l.BaseType, l => l.ContentTypes);
 
-            return this.DoSPFolder(list.RootFolder, parentNode, rootNode);
+            ListNode listNode = parentNode as ListNode;            
+
+            // Add Content Type Container node
+            BaseNode listContentTypeContainerNode = new ContentTypeContainerNode(list.ContentTypes);
+            listNode.Children.Add(listContentTypeContainerNode);
+
+            listContentTypeContainerNode.ParentNode = listNode;
+            listContentTypeContainerNode.RootNode = rootNode;
+            listContentTypeContainerNode.NodeConnector = this;
+
+            // Add immediate children of the root folder
+            BaseNode rootFolder = this.DoSPFolder(list.RootFolder, listNode, rootNode, true);
+            foreach (var subFolder in rootFolder.Children)
+            {
+                listNode.Children.Add(subFolder);
+            }
+
+            return listNode;
         }
 
         private BaseNode DoSPWeb(Web web, BaseNode parentNode, BaseNode rootNode)
@@ -279,10 +354,18 @@ namespace SPCoder.Utils
                         childNode.NodeConnector = this;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    SPCoderLogging.Logger.Error($"Error expanding Web: {ex.Message}");
                     return myNode;
                 }
+
+                // Add Content Type Container node
+                BaseNode contentTypeContainerNode = new ContentTypeContainerNode(web.ContentTypes);
+                myNode.Children.Add(contentTypeContainerNode);
+                contentTypeContainerNode.ParentNode = myNode;
+                contentTypeContainerNode.RootNode = rootNode;
+                contentTypeContainerNode.NodeConnector = this;
 
                 foreach (Microsoft.SharePoint.Client.List list in web.Lists)
                 {
@@ -294,9 +377,70 @@ namespace SPCoder.Utils
                 }
                 return myNode;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SPCoderLogging.Logger.Error($"Error expanding Web: {ex.Message}");
                 return myNode;
+            }
+        }
+
+        private void DoContentTypes(ContentTypeCollection contentTypes, BaseNode parentNode, BaseNode rootNode)
+        {
+            try
+            {
+                foreach(var contentType in contentTypes.OrderBy(c => c.Name))
+                {
+                    ContentTypeNode contentTypeNode = new ContentTypeNode(contentType);
+
+                    parentNode.Children.Add(contentTypeNode);
+                    contentTypeNode.ParentNode = parentNode;
+                    contentTypeNode.RootNode = rootNode;
+                    contentTypeNode.NodeConnector = this;
+                }
+            }
+            catch(Exception ex)
+            {
+               // log
+            }
+        }
+
+        private void DoTenant(Tenant tenant, BaseNode tenantNode, BaseNode rootNode)
+        {
+            try
+            {
+                var context = tenant.Context as ClientContext;
+                var siteProps = tenant.GetSiteProperties(0, true);
+                context.Load(siteProps);
+                context.ExecuteQuery();
+
+                foreach(var site in siteProps)
+                {
+                    var websContext = AuthUtil.GetContext(this.AuthenticationType, site.Url, this.Username, this.Password);
+                    // Leaving this commented out for now, slows the load down massively
+                    //websContext.Web.EnsureProperties(w => w.Title, w => w.Url);
+                    
+                    // By using a Scoped Web, we can let the iteration continue as normal and rendering can be quick
+                    // Because otherwise we need to use Tenant.GetSiteByUrl() and request that each time
+                    // Which makes rendering the contents of the tenant VERY slow.
+                    
+                    BaseNode webNode = new ScopedWebNode(websContext);
+                    webNode.Title = site.Title;
+                    webNode.Url = site.Url;
+                    webNode.ParentNode = tenantNode;
+                    webNode.RootNode = rootNode;
+                    webNode.NodeConnector = this;
+
+                    if (string.IsNullOrWhiteSpace(webNode.Title))
+                    {
+                        webNode.Title = webNode.Url;
+                    }
+
+                    tenantNode.Children.Add(webNode);
+                }
+            }
+            catch(Exception ex)
+            {
+                SPCoderLogging.Logger.Error($"Failed to fetch site: {ex.Message}");
             }
         }
 

@@ -1,6 +1,9 @@
-﻿using Microsoft.SharePoint.Client;
+﻿using Microsoft.Online.SharePoint.TenantAdministration;
+using Microsoft.SharePoint.Client;
+using OfficeOpenXml.Packaging.Ionic.Zip;
 using SPCoder.Core.Utils;
 using SPCoder.Core.Utils.Nodes;
+using SPCoder.SharePoint.Client.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +14,9 @@ namespace SPCoder.Utils.Nodes
 {
     public class WebNode : BaseNode
     {
-         public WebNode()
+        public string AbsoluteUrl { get; set; }
+
+        public WebNode()
         {
             //default icon for web
             base.IconPath = "SharePointFoundation16.png";
@@ -19,12 +24,16 @@ namespace SPCoder.Utils.Nodes
         }
 
         private Web realObject;
-         public WebNode(Web web) : this()
+        public WebNode(Web web) : this()
         {
+            web.EnsureProperties(w => w.Title, w => w.ServerRelativeUrl);
+
             base.Title = web.Title;
             base.SPObjectType = web.GetType().Name;
             base.Url = web.ServerRelativeUrl;
             base.LoadedData = false;
+
+            this.AbsoluteUrl = WebUtils.MakeAbsoluteUrl(web, base.Url);
         }
 
         public override object GetRealSPObject()
@@ -33,7 +42,7 @@ namespace SPCoder.Utils.Nodes
                 return realObject;
 
             if (RootNode != null && RootNode.SPObject != null)
-            {                               
+            {
                 if (RootNode.SPObject is Site)
                 {
                     Site site = RootNode.SPObject as Site;
@@ -42,34 +51,51 @@ namespace SPCoder.Utils.Nodes
                     web.Context.ExecuteQuery();
                     realObject = web;
                     return web;
-                }                
+                }
+
+                if (RootNode.SPObject is Tenant)
+                {
+                    Tenant tenant = RootNode.SPObject as Tenant;
+                    Site site = tenant.GetSiteByUrl(this.AbsoluteUrl);
+
+                    tenant.Context.Load(site);
+                    tenant.Context.Load(site.RootWeb);
+
+                    tenant.Context.ExecuteQueryRetry();
+
+                    realObject = site.RootWeb;
+                    return realObject;
+                }
             }
-            return null;            
+            return null;
         }
 
         public override object ExecuteAction(BaseActionItem actionItem)
         {
             var realObj = GetRealSPObject();
+            Web realWeb = realObj as Web;
+            realWeb.EnsureProperties(w => w.Url);
+
             switch (actionItem.Action)
             {
                 case NodeActions.ExternalOpen:
-                    
+
                     if (realObj != null)
                     {
-                        return ((Web)realObj).Url;
+                        return realWeb.Url;
                     }
                     else
                         return null;
                 case NodeActions.Copy:
                     if (realObj != null && actionItem.Name == "Copy link")
                     {
-                        string url = ((Web)realObj).Url;
+                        string url = realWeb.Url;
                         return url;
                     }
                     else
                         return null;
                 case NodeActions.Refresh:
-                    
+
                     Site site = RootNode.SPObject as Site;
                     Web web = site.OpenWeb(base.Url);
                     web.Context.Load(web);

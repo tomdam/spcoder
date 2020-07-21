@@ -203,12 +203,17 @@
     </Compile>
     <Compile Include="SharePointContext.cs" />
     <Compile Include="TokenHelper.cs" />
+    <Compile Include="Utils\AuthUtil.cs" />
     <Compile Include="Utils\CSOMConnector.cs" />
     <Compile Include="Utils\Dummy.cs" />
+    <Compile Include="Utils\Nodes\ContentTypeContainerNode.cs" />
+    <Compile Include="Utils\Nodes\ContentTypeNode.cs" />
     <Compile Include="Utils\Nodes\FileNode.cs" />
     <Compile Include="Utils\Nodes\FolderNode.cs" />
     <Compile Include="Utils\Nodes\ListNode.cs" />
+    <Compile Include="Utils\Nodes\ScopedWebNode.cs" />
     <Compile Include="Utils\Nodes\SiteNode.cs" />
+    <Compile Include="Utils\Nodes\TenantNode.cs" />
     <Compile Include="Utils\Nodes\WebNode.cs" />
     <Compile Include="Utils\SharePointClientModule.cs" />
     <Compile Include="Utils\SharePointEditedFile.cs" />
