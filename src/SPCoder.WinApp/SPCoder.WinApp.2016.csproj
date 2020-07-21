@@ -452,6 +452,9 @@
     <None Include="Scripts\CSharp\Plugins\SPSharePointListItemsGetter.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scripts\CSharp\Plugins\SPSharePointListPnpTemplateGetter.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\CSharp\Plugins\SPSharePointWebPnpTemplateGetter.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
