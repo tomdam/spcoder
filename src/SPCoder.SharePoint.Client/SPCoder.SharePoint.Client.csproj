@@ -206,6 +206,8 @@
     <Compile Include="Utils\AuthUtil.cs" />
     <Compile Include="Utils\CSOMConnector.cs" />
     <Compile Include="Utils\Dummy.cs" />
+    <Compile Include="Utils\Nodes\ContentTypeContainerNode.cs" />
+    <Compile Include="Utils\Nodes\ContentTypeNode.cs" />
     <Compile Include="Utils\Nodes\FileNode.cs" />
     <Compile Include="Utils\Nodes\FolderNode.cs" />
     <Compile Include="Utils\Nodes\ListNode.cs" />

@@ -1,4 +1,5 @@
-﻿using Microsoft.Graph;
+﻿using CamlexNET;
+using Microsoft.Graph;
 using Microsoft.Online.SharePoint.TenantAdministration;
 using Microsoft.SharePoint.Client;
 using SPCoder.Core.Utils;
@@ -83,7 +84,7 @@ namespace SPCoder.Utils
                         node.ParentNode.Children.Remove(node);
                     }
 
-                    node = DoSPList((Microsoft.SharePoint.Client.List)node.SPObject, node.ParentNode, node.RootNode);
+                    node = DoSPList((Microsoft.SharePoint.Client.List)node.SPObject, node, node.RootNode);
                 }
             }
 
@@ -100,8 +101,22 @@ namespace SPCoder.Utils
                 }
             }
 
+            if (node is ContentTypeContainerNode)
+            {
+                if (!doIfLoaded)
+                {
+                    if (node.Children != null && node.Children.Contains(node))
+                    {
+                        node.Children.Remove(node);
+                    }
+
+                    DoContentTypes((ContentTypeCollection)node.SPObject, node, node.RootNode);
+                }
+            }
+
             return node;
         }
+
         public override BaseNode GetSPStructure(string siteUrl)
         {
             this.Endpoint = siteUrl;
@@ -206,7 +221,7 @@ namespace SPCoder.Utils
             }
         }
 
-        private BaseNode DoSPFolder(Microsoft.SharePoint.Client.Folder folder, BaseNode parentNode, BaseNode rootNode)
+        private BaseNode DoSPFolder(Microsoft.SharePoint.Client.Folder folder, BaseNode parentNode, BaseNode rootNode, bool isRoot = false)
         {
             BaseNode myNode = null;
             folder.EnsureProperties(f => f.Folders, f => f.Files, f => f.Name, f => f.ServerRelativeUrl);
@@ -214,7 +229,11 @@ namespace SPCoder.Utils
             try
             {
                 myNode = new FolderNode(folder);
-                parentNode.Children.Add(myNode);
+
+                if (!isRoot)
+                {
+                    parentNode.Children.Add(myNode);
+                }
 
                 myNode.ParentNode = parentNode;
                 myNode.RootNode = rootNode;
@@ -227,7 +246,7 @@ namespace SPCoder.Utils
                 try
                 {
                     foreach (var subfolder in folder.Folders.OrderBy(f => f.Name))
-                    {
+                    {         
                         BaseNode childNode = new FolderNode(subfolder);
                         myNode.Children.Add(childNode);
 
@@ -281,10 +300,27 @@ namespace SPCoder.Utils
         }
 
         private BaseNode DoSPList(Microsoft.SharePoint.Client.List list, BaseNode parentNode, BaseNode rootNode)
-        {
-            list.EnsureProperties(l => l.RootFolder, l => l.BaseType);
+        {         
+            list.EnsureProperties(l => l.RootFolder, l => l.BaseType, l => l.ContentTypes);
 
-            return this.DoSPFolder(list.RootFolder, parentNode, rootNode);
+            ListNode listNode = parentNode as ListNode;            
+
+            // Add Content Type Container node
+            BaseNode listContentTypeContainerNode = new ContentTypeContainerNode(list.ContentTypes);
+            listNode.Children.Add(listContentTypeContainerNode);
+
+            listContentTypeContainerNode.ParentNode = listNode;
+            listContentTypeContainerNode.RootNode = rootNode;
+            listContentTypeContainerNode.NodeConnector = this;
+
+            // Add immediate children of the root folder
+            BaseNode rootFolder = this.DoSPFolder(list.RootFolder, listNode, rootNode, true);
+            foreach (var subFolder in rootFolder.Children)
+            {
+                listNode.Children.Add(subFolder);
+            }
+
+            return listNode;
         }
 
         private BaseNode DoSPWeb(Web web, BaseNode parentNode, BaseNode rootNode)
@@ -321,6 +357,13 @@ namespace SPCoder.Utils
                     return myNode;
                 }
 
+                // Add Content Type Container node
+                BaseNode contentTypeContainerNode = new ContentTypeContainerNode(web.ContentTypes);
+                myNode.Children.Add(contentTypeContainerNode);
+                contentTypeContainerNode.ParentNode = myNode;
+                contentTypeContainerNode.RootNode = rootNode;
+                contentTypeContainerNode.NodeConnector = this;
+
                 foreach (Microsoft.SharePoint.Client.List list in web.Lists)
                 {
                     BaseNode myListNode = new ListNode(list);
@@ -335,6 +378,26 @@ namespace SPCoder.Utils
             {
                 SPCoderLogging.Logger.Error($"Error expanding Web: {ex.Message}");
                 return myNode;
+            }
+        }
+
+        private void DoContentTypes(ContentTypeCollection contentTypes, BaseNode parentNode, BaseNode rootNode)
+        {
+            try
+            {
+                foreach(var contentType in contentTypes.OrderBy(c => c.Name))
+                {
+                    ContentTypeNode contentTypeNode = new ContentTypeNode(contentType);
+
+                    parentNode.Children.Add(contentTypeNode);
+                    contentTypeNode.ParentNode = parentNode;
+                    contentTypeNode.RootNode = rootNode;
+                    contentTypeNode.NodeConnector = this;
+                }
+            }
+            catch(Exception ex)
+            {
+               // log
             }
         }
 
