@@ -6,6 +6,7 @@
 #r "System.Windows.Forms"
 #r "System.Data"
 #r "System.Web.Extensions"
+#r "{{WorkingDirectory}}\\Microsoft.Online.SharePoint.Client.Tenant.dll"
 /*
 #r "{{WorkingDirectory}}\SPCoder.Core.dll"
 #r "{{WorkingDirectory}}\OfficeDevPnP.Core.dll"

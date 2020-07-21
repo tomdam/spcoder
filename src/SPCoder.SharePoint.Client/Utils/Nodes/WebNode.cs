@@ -21,6 +21,8 @@ namespace SPCoder.Utils.Nodes
         private Web realObject;
          public WebNode(Web web) : this()
         {
+            web.EnsureProperties(w => w.Title, w => w.ServerRelativeUrl);
+
             base.Title = web.Title;
             base.SPObjectType = web.GetType().Name;
             base.Url = web.ServerRelativeUrl;
@@ -50,20 +52,23 @@ namespace SPCoder.Utils.Nodes
         public override object ExecuteAction(BaseActionItem actionItem)
         {
             var realObj = GetRealSPObject();
+            Web realWeb = realObj as Web;
+            realWeb.EnsureProperties(w => w.Url);
+
             switch (actionItem.Action)
             {
                 case NodeActions.ExternalOpen:
                     
                     if (realObj != null)
                     {
-                        return ((Web)realObj).Url;
+                        return realWeb.Url;
                     }
                     else
                         return null;
                 case NodeActions.Copy:
                     if (realObj != null && actionItem.Name == "Copy link")
                     {
-                        string url = ((Web)realObj).Url;
+                        string url = realWeb.Url;
                         return url;
                     }
                     else
