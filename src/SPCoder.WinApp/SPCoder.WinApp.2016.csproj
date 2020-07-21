@@ -523,6 +523,7 @@
     <Content Include="Images\ClosedFolder.ICO" />
     <Content Include="Images\CSFile.ico" />
     <Content Include="Images\CSProject.ico" />
+    <Content Include="Images\DETAIL.GIF" />
     <Content Include="Images\File.ico" />
     <Content Include="Images\Form.ico" />
     <Content Include="Images\ITCONTCT.GIF" />
