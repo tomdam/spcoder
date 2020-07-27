@@ -1,4 +1,5 @@
 ﻿using FastColoredTextBoxNS;
+using SPCoder.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,7 +29,8 @@ namespace SPCoder.Windows
         {
             InitializeComponent();
             //RtLog = rtLog;
-            
+            //registering the logger so that other modules can write to SPCoder log window
+            SPCoderLogger.Logger = this;
         }
         
         public void AppendToLog(string text, bool logTimestamp = true)
@@ -42,6 +44,11 @@ namespace SPCoder.Windows
             LogText(text, errorStyle, logTimestamp);
         }
 
+        public void LogError(Exception exception, bool logTimestamp = true)
+        {
+            string text = exception.Message + "\n" + exception.StackTrace;
+            LogText(text, errorStyle, logTimestamp);
+        }
         public void LogWarning(string text, bool logTimestamp = true)
         {
             LogText(text, warningStyle, logTimestamp);

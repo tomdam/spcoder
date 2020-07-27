@@ -333,7 +333,6 @@
     <Compile Include="Windows\GridViewer.Designer.cs">
       <DependentUpon>GridViewer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ISPCoderLog.cs" />
     <Compile Include="Windows\Log.cs">
       <SubType>Form</SubType>
     </Compile>

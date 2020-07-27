@@ -1,17 +1,15 @@
-﻿using SPCoder.FileSystem.Utils.Nodes;
+﻿using SPCoder.Core.Utils;
+using SPCoder.FileSystem.Utils.Nodes;
 using SPCoder.Utils;
 using SPCoder.Utils.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SPCoder.FileSystem.Utils
 {
-    
+
     public class FSConnector : BaseConnector
     {
         DirectoryInfo Folder { get; set; }
@@ -38,7 +36,8 @@ namespace SPCoder.FileSystem.Utils
 
         public override BaseNode ExpandNode(BaseNode node, bool doIfLoaded = false)
         {
-            //Ako je web node
+            SPCoderLogger.Logger.LogInfo("Expanding " + node.Url);
+            //Ako je folder node
             if (node is FolderNode)
             {
                 //Ako nije ucitan

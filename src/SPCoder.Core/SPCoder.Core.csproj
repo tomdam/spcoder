@@ -71,6 +71,7 @@
     <Compile Include="Utils\Common.cs" />
     <Compile Include="Utils\CrossThreadFormsExtensions.cs" />
     <Compile Include="Utils\Delegates.cs" />
+    <Compile Include="Utils\ISPCoderLog.cs" />
     <Compile Include="Utils\Logging.cs" />
     <Compile Include="Utils\ModuleDescription.cs" />
     <Compile Include="Utils\Nodes\BaseActionItem.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Utils\ObjectModelType.cs" />
     <Compile Include="Utils\ShellIcon.cs" />
     <Compile Include="Utils\SPCoderConstants.cs" />
+    <Compile Include="Utils\SPCoderLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
