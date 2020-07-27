@@ -31,6 +31,9 @@ namespace SPCoder.Context
             typeNameMappings.Add("ClientContext", "context");
 
             typeNameMappings.Add("String", "str");
+
+            typeNameMappings.Add("List", "list");
+            typeNameMappings.Add("Field", "fld");
         } 
         #endregion
 
@@ -45,6 +48,8 @@ namespace SPCoder.Context
             }
             string name = null;
             string prefferefName = type.ToLower();
+            if (prefferefName.EndsWith("]"))
+                prefferefName = prefferefName.TrimEnd(']');
             if (typeNameMappings.ContainsKey(type))
             {
                 prefferefName = typeNameMappings[type];

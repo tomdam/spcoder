@@ -114,6 +114,19 @@ namespace SPCoder.Utils
                 }
             }
 
+            if (node is FieldContainerNode)
+            {
+                if (!doIfLoaded)
+                {
+                    if (node.Children != null && node.Children.Contains(node))
+                    {
+                        node.Children.Remove(node);
+                    }
+
+                    DoFields((List<Field>)node.SPObject, node, node.RootNode);
+                }
+            }
+
             return node;
         }
 
@@ -304,7 +317,7 @@ namespace SPCoder.Utils
 
         private BaseNode DoSPList(Microsoft.SharePoint.Client.List list, BaseNode parentNode, BaseNode rootNode)
         {         
-            list.EnsureProperties(l => l.RootFolder, l => l.BaseType, l => l.ContentTypes);
+            list.EnsureProperties(l => l.RootFolder, l => l.BaseType, l => l.ContentTypes, l => l.Fields);
 
             ListNode listNode = parentNode as ListNode;            
 
@@ -315,6 +328,13 @@ namespace SPCoder.Utils
             listContentTypeContainerNode.ParentNode = listNode;
             listContentTypeContainerNode.RootNode = rootNode;
             listContentTypeContainerNode.NodeConnector = this;
+
+            // Add Field Container node
+            BaseNode fieldContainerNode = new FieldContainerNode(list.Fields);
+            listNode.Children.Add(fieldContainerNode);
+            fieldContainerNode.ParentNode = listNode;
+            fieldContainerNode.RootNode = rootNode;
+            fieldContainerNode.NodeConnector = this;
 
             // Add immediate children of the root folder
             BaseNode rootFolder = this.DoSPFolder(list.RootFolder, listNode, rootNode, true);
@@ -367,6 +387,13 @@ namespace SPCoder.Utils
                 contentTypeContainerNode.RootNode = rootNode;
                 contentTypeContainerNode.NodeConnector = this;
 
+                // Add Field Container node
+                BaseNode fieldContainerNode = new FieldContainerNode(web.Fields);
+                myNode.Children.Add(fieldContainerNode);
+                fieldContainerNode.ParentNode = myNode;
+                fieldContainerNode.RootNode = rootNode;
+                fieldContainerNode.NodeConnector = this;
+
                 foreach (Microsoft.SharePoint.Client.List list in web.Lists)
                 {
                     BaseNode myListNode = new ListNode(list);
@@ -401,6 +428,26 @@ namespace SPCoder.Utils
             catch(Exception ex)
             {
                // log
+            }
+        }
+
+        private void DoFields(List<Field> fields, BaseNode parentNode, BaseNode rootNode)
+        {
+            try
+            {
+                foreach (var contentType in fields.OrderBy(c => c.InternalName))
+                {
+                    FieldNode fieldNode = new FieldNode(contentType);
+
+                    parentNode.Children.Add(fieldNode);
+                    fieldNode.ParentNode = parentNode;
+                    fieldNode.RootNode = rootNode;
+                    fieldNode.NodeConnector = this;
+                }
+            }
+            catch (Exception ex)
+            {
+                // log
             }
         }
 
