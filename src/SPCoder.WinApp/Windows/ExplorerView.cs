@@ -547,7 +547,7 @@ namespace SPCoder.Windows
                         var newNode = node.RootNode.NodeConnector.ExpandNode(node);
                         //SPCoderForm.MainForm.AppendToLog("Data retrieved " + node.Url);
                         
-                        CreateTreeViewNode2((Node)e.Node.Tag, newNode, newNode.RootNode.OMType);
+                        CreateTreeViewNode2((Node)e.Node.Tag, newNode, node.RootNode.OMType);
                         
                         node.LoadedData = true;
                         ((Node)e.Node.Tag).Image = oldImage;

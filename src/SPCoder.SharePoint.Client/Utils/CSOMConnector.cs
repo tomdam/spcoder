@@ -4,6 +4,7 @@ using Microsoft.Online.SharePoint.TenantAdministration;
 using Microsoft.SharePoint.Client;
 using SPCoder.Core.Utils;
 using SPCoder.HelperWindows;
+using SPCoder.SharePoint.Client.ListsWebService;
 using SPCoder.SharePoint.Client.Utils;
 using SPCoder.Utils.Nodes;
 using System;
@@ -130,6 +131,12 @@ namespace SPCoder.Utils
             return node;
         }
 
+        static void clientContext_ExecutingWebRequest_Auth(object sender, Microsoft.SharePoint.Client.WebRequestEventArgs e)
+        {
+            //in case your custom FBA requires custom headers, you can set those here
+            //e.WebRequestExecutor.WebRequest.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
+        }
+
         public override BaseNode GetSPStructure(string siteUrl)
         {
             this.Endpoint = siteUrl;
@@ -196,6 +203,11 @@ namespace SPCoder.Utils
                 Context.Credentials = new NetworkCredential(Username, Password);
             }
 
+            //in case your custom FBA requires custom headers you could set the event handler here
+            //if (/* custom logic */)
+            //{
+            //    Context.ExecutingWebRequest += new EventHandler<Microsoft.SharePoint.Client.WebRequestEventArgs>(clientContext_ExecutingWebRequest_Auth);
+            //}
             var rootNode = this.GenerateRootNode();
             return rootNode;
         }

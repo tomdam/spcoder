@@ -13,15 +13,22 @@ namespace SPCoder.RunnerApp
     {
         static void Main(string[] args)
         {
+            if (args != null && args.Length > 0)
+            {
+                log4net.GlobalContext.Properties["RunnerId"] = args[0];
+            }
             XmlConfigurator.Configure();
-
+            SPCoderLogging.Logger.Info("Start");
             RoslynExecutor re = new RoslynExecutor();
+            re.Arguments = args;
             re.Execute();
+            SPCoderLogging.Logger.Info("Finish");
         }
     }
 
     public class RoslynExecutor
     {
+        public string[] Arguments = null;
         public List<string> FilesRegisteredForExecution = new List<string>();
         public static ScriptState<object> ScriptStateCSharp = null;
         public void Execute()
@@ -44,7 +51,10 @@ namespace SPCoder.RunnerApp
                 }
                 catch (Exception ex)
                 {
-                    SPCoderLogging.Logger.Error("Error during execution of FilesRegisteredForExecution: " + script + "; " + ex.Message);
+                    SPCoderLogging.Logger.Error("Error during execution of FilesRegisteredForExecution: " + script + "; " + ex.Message + "; " + ex.StackTrace);
+                    Console.Error.WriteLine("Error during execution of FilesRegisteredForExecution: " + script + "; " + ex.Message + "; " + ex.StackTrace);
+                    //Environment.ExitCode = 500;
+                    //Environment.Exit(500);
                 }
             }
         }
@@ -91,14 +101,24 @@ namespace SPCoder.RunnerApp
             }
         }
 
-        public void LogError(string err)
+        public static void LogError(string err)
         {
             SPCoderLogging.Logger.Error(err);
         }
 
-        public void LogInfo(string err)
+        public static void LogError(object err, Exception exc)
+        {
+            SPCoderLogging.Logger.Error(err, exc);
+        }
+
+        public static void LogInfo(string err)
         {
             SPCoderLogging.Logger.Info(err);
+        }
+
+        public static void LogWarning(string text)
+        {
+            SPCoderLogging.Logger.Warn(text);
         }
     }
 }
