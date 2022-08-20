@@ -678,6 +678,7 @@ namespace SPCoder.Windows
                         }
                         break;
                     case NodeActions.Save:
+                        action.Node.ExecuteAction(action);
                         break;
                     case NodeActions.Close:
                         //close works only on root

@@ -111,7 +111,9 @@
     <Compile Include="Utils\Nodes\PPFlowContainerNode.cs" />
     <Compile Include="Utils\Nodes\PPFlowNode.cs" />
     <Compile Include="Utils\PPConnector.cs" />
+    <Compile Include="Utils\PPFlowApiDetails.cs" />
     <Compile Include="Utils\PPModule.cs" />
+    <Compile Include="Utils\PPFlowJsonEditedFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

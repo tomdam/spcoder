@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -143,7 +144,8 @@ namespace SPCoder.PowerPlatform.Utils
                 }
             }
         }
-       
+
+        
 
         public override string ImagesPath
         {
@@ -163,6 +165,14 @@ namespace SPCoder.PowerPlatform.Utils
             }
             set
             {}
+        }
+
+
+        public override List<object> AutoAddToContext()
+        {
+            List<object> objects = new List<object>();
+            objects.Add(this);
+            return objects;
         }
     }
 }
