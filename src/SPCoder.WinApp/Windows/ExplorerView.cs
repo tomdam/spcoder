@@ -503,12 +503,15 @@ namespace SPCoder.Windows
         private void CreateTreeViewNode2(Node tvNode, BaseNode node, ObjectModelType objectModelType)
         {
             RemoveAllChildren(tvNode);
-            foreach (BaseNode child in node.Children)
-            {
-                SPTreeViewNode myNode = CreateNode(child.Title, child.IconPath, child, objectModelType);
-                myNode.Parent = tvNode;
+            if (node != null)
+            { 
+                foreach (BaseNode child in node.Children)
+                {
+                    SPTreeViewNode myNode = CreateNode(child.Title, child.IconPath, child, objectModelType);
+                    myNode.Parent = tvNode;
 
-                tvNode.Nodes.Add(myNode);
+                    tvNode.Nodes.Add(myNode);
+                }
             }
         }
 

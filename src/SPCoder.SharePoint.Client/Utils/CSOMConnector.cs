@@ -16,7 +16,7 @@ using System.Net;
 using System.Security;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Web.Helpers;
 
 namespace SPCoder.Utils
 {
@@ -60,7 +60,7 @@ namespace SPCoder.Utils
                     DoTenant((Tenant)node.SPObject, node.ParentNode, node.RootNode);
                 }
             }
-
+            else
             //If it is a web node
             if (node is WebNode || node is ScopedWebNode)
             {
@@ -75,6 +75,7 @@ namespace SPCoder.Utils
                     node = DoSPWeb((Web)node.SPObject, node.ParentNode, node.RootNode);
                 }
             }
+            else
 
             if (node is ListNode)
             {
@@ -88,6 +89,7 @@ namespace SPCoder.Utils
                     node = DoSPList((Microsoft.SharePoint.Client.List)node.SPObject, node, node.RootNode);
                 }
             }
+            else
 
             if (node is FolderNode)
             {
@@ -101,6 +103,7 @@ namespace SPCoder.Utils
                     node = DoSPFolder((Microsoft.SharePoint.Client.Folder)node.SPObject, node.ParentNode, node.RootNode);
                 }
             }
+            else
 
             if (node is ContentTypeContainerNode)
             {
@@ -114,6 +117,7 @@ namespace SPCoder.Utils
                     DoContentTypes((ContentTypeCollection)node.SPObject, node, node.RootNode);
                 }
             }
+            else
 
             if (node is FieldContainerNode)
             {
@@ -125,6 +129,20 @@ namespace SPCoder.Utils
                     }
 
                     DoFields((List<Field>)node.SPObject, node, node.RootNode);
+                }
+            }
+            else
+
+            if (node is FlowContainerNode)
+            {
+                if (!doIfLoaded)
+                {
+                    if (node.Children != null && node.Children.Contains(node))
+                    {
+                        node.Children.Remove(node);
+                    }
+
+                    DoFlows((string)node.SPObject, node, node.RootNode);
                 }
             }
 
@@ -348,6 +366,13 @@ namespace SPCoder.Utils
             fieldContainerNode.RootNode = rootNode;
             fieldContainerNode.NodeConnector = this;
 
+            // Add Flows Container node
+            BaseNode flowsContainerNode = new FlowContainerNode();
+            listNode.Children.Add(flowsContainerNode);
+            flowsContainerNode.ParentNode = listNode;
+            flowsContainerNode.RootNode = rootNode;
+            flowsContainerNode.NodeConnector = this;
+
             // Add immediate children of the root folder
             BaseNode rootFolder = this.DoSPFolder(list.RootFolder, listNode, rootNode, true);
             foreach (var subFolder in rootFolder.Children)
@@ -442,7 +467,7 @@ namespace SPCoder.Utils
                // log
             }
         }
-
+        
         private void DoFields(List<Field> fields, BaseNode parentNode, BaseNode rootNode)
         {
             try
@@ -455,6 +480,29 @@ namespace SPCoder.Utils
                     fieldNode.ParentNode = parentNode;
                     fieldNode.RootNode = rootNode;
                     fieldNode.NodeConnector = this;
+                }
+            }
+            catch (Exception ex)
+            {
+                // log
+            }
+        }
+
+        private void DoFlows(string synchronizationData, BaseNode parentNode, BaseNode rootNode)
+        {
+            try
+            {
+
+                dynamic data = Json.Decode(synchronizationData);
+                for (var i = 0; i < data.value.Length; i++)
+                {
+                    //Console.WriteLine(data.value[i].properties.displayName);
+                    FlowNode flowNode = new FlowNode(data.value[i]);
+
+                    parentNode.Children.Add(flowNode);
+                    flowNode.ParentNode = parentNode;
+                    flowNode.RootNode = rootNode;
+                    flowNode.NodeConnector = this;
                 }
             }
             catch (Exception ex)
