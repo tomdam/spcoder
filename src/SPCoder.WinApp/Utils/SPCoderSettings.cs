@@ -74,7 +74,7 @@ namespace SPCoder.Utils
                 {
                     foreach (string lang1 in llangs)
                     {
-                        if (lang1 == ext)
+                        if (lang1.ToLower() == ext.ToLower())
                         {
                             return GetLanguageByExtension(k);
                         }
