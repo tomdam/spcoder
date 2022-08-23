@@ -111,7 +111,7 @@ namespace SPCoder.PowerPlatform.Utils
             }
         }
         //GenerateFlowNodes
-        async Task<object> GetAllFlows()
+        public async Task<object> GetAllFlows()
         {
             using (var client = new HttpClient())
             {

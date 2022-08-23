@@ -7,6 +7,8 @@ using System.Net.Http;
 using System;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace SPCoder.PowerPlatform.Utils.Nodes
 {
@@ -36,6 +38,11 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
             return null;
         }
 
+        private string GetWorkflowId()
+        {
+            return this.realObject.workflowid;
+        }
+
         public override object ExecuteAction(BaseActionItem actionItem)
         {
             var realObj = this.SPObject;
@@ -63,20 +70,27 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
                         oar.Language = "JSON";
                         return oar;
                     }
-                    /*else
-                        if (realObj != null && actionItem.Name == "View client data" && realObject["clientdata"] != null)
-                    {
-                        OpenActionResult oar = new OpenActionResult();
-                        oar.Source = JsonConvert.SerializeObject(System.Web.Helpers.Json.Decode(realObject["clientdata"].ToString()), Formatting.Indented);
-                        oar.Language = "JSON";
-                        return oar;
-                    }*/
-                    //
                     return null;
                 case NodeActions.Save:
-                    if (realObj != null && realObject["category"] != null)
+                    if (actionItem.Name == "Update cloud flow (push changes to server)")
                     {
-                        UpdateFlow();
+                        if (realObj != null && realObject["category"] != null)
+                        {
+                            var flowdata = new
+                            {
+                                clientdata = realObject["clientdata"].ToString()
+                            };
+                            string dataToUpdate = JsonConvert.SerializeObject(flowdata);
+                            UpdateFlow(dataToUpdate);
+                        }
+                    }
+                    else if (actionItem.Name == "Turn ON the flow")
+                    {
+                        TurnTheFlowOnOff(1);
+                    }
+                    else if (actionItem.Name == "Turn OFF the flow")
+                    {
+                        TurnTheFlowOnOff(0);
                     }
                     return null;
                     break;
@@ -96,13 +110,19 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
         public override List<BaseActionItem> GetNodeActions()
         {
             List<BaseActionItem> actions = new List<BaseActionItem>();
-            actions.Add(new BaseActionItem { Node = this, Name = "Open in browser", Action = Core.Utils.NodeActions.ExternalOpen });
+            //actions.Add(new BaseActionItem { Node = this, Name = "Open in browser", Action = Core.Utils.NodeActions.ExternalOpen });
             //actions.Add(new BaseActionItem { Node = this, Name = "Copy link", Action = Core.Utils.NodeActions.Copy });
+            
+            actions.Add(new BaseActionItem { Node = this, Name = "Turn ON the flow", Action = Core.Utils.NodeActions.Save });
+            actions.Add(new BaseActionItem { Node = this, Name = "Turn OFF the flow", Action = Core.Utils.NodeActions.Save });
+            actions.Add(new BaseActionItem { Node = this, Name = "Update cloud flow (push changes to server)", Action = Core.Utils.NodeActions.Save });
+
+
             actions.Add(new BaseActionItem { Node = this, Name = "View json", Action = Core.Utils.NodeActions.Open });
+
             //this will be done from a plugin
             //actions.Add(new BaseActionItem { Node = this, Name = "View client data", Action = Core.Utils.NodeActions.Open });
-                        
-            actions.Add(new BaseActionItem { Node = this, Name = "Update cloud flow (push changes to server)", Action = Core.Utils.NodeActions.Save });
+
             //Check all plugins
             var baseActions = base.GetNodeActions();
             if (baseActions.Count > 0)
@@ -111,16 +131,69 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
             return actions;
         }
 
-        public void UpdateFlow()
+        /// <summary>
+        /// Just checks if json object is valid.
+        /// Used before sending json to the server to prevent obvious errors and not to make unnecessary trafic.
+        /// </summary>
+        /// <param name="jsonCode"></param>
+        /// <returns></returns>
+        public static bool CheckIfJsonIsValid(string jsonCode)
         {
-            /**/
-            SPCoderLogger.Logger.LogInfo("Updating the flow definition on the server.");
-            var flowdata = new
+            try
             {
-                clientdata = realObject["clientdata"].ToString()
-            };
+                var tmp = JToken.Parse(jsonCode);
+                return tmp.Type == JTokenType.Object;
+            }
+            catch (Exception) 
+            {
+                return false;
+            }
+        }
 
-            using (var client = new HttpClient())
+        public async Task<object> GetFlowFromServer(string workflowid)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ((PPConnector)this.NodeConnector).Token.AccessToken);
+                client.Timeout = new TimeSpan(0, 3, 0);
+                client.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
+                client.DefaultRequestHeaders.Add("OData-Version", "4.0");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                
+                try
+                {
+                    HttpResponseMessage response = client.GetAsync(((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/workflows(" + workflowid + ")").Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject(jsonString);
+                    }
+                    else
+                    {
+                        SPCoderLogger.Logger.LogError("Not able to get the flow definition from server: " + workflowid + ", " + response.ReasonPhrase);
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SPCoderLogger.Logger.LogError("Error while getting the flow from server: " + workflowid);
+                    SPCoderLogger.Logger.LogError(ex);
+                    return null;
+                }
+            }
+        }
+
+        public bool UpdateFlow(string dataToUpdate)
+        {
+            if (!CheckIfJsonIsValid(dataToUpdate))
+            {
+                SPCoderLogger.Logger.LogError("Json string is not valid. Please check the string before sending it to the server");
+                return false;
+            }
+
+            SPCoderLogger.Logger.LogInfo("Updating the flow definition on the server.");            
+            using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri(((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ((PPConnector)this.NodeConnector).Token.AccessToken);
@@ -131,7 +204,7 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
 
                 var request = new HttpRequestMessage(new HttpMethod("PATCH"), ((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/workflows(" + realObject["workflowid"].ToString() + ")");
 
-                request.Content = new StringContent(JsonConvert.SerializeObject(flowdata), Encoding.UTF8, "application/json");
+                request.Content = new StringContent(dataToUpdate, Encoding.UTF8, "application/json");
                 var response = client.SendAsync(request).Result;
 
                 if (!response.IsSuccessStatusCode)
@@ -142,9 +215,45 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
                 else
                 {
                     SPCoderLogger.Logger.LogInfo("Successfully updated flow definition on the server!");
+                    
+                    //now get the flow and store the json in the node
+                    var rez = GetFlowFromServer(GetWorkflowId());
+                    if (rez != null && rez.Result != null)
+                    {
+                        dynamic jsond = JsonConvert.DeserializeObject(rez.Result.ToString());
+                        this.realObject = jsond;
+                    }
                 }
+                
+                return response.IsSuccessStatusCode;
             }
         }
 
+        public void TurnTheFlowOnOff(int stateCode) //0 off - 1 onn
+        {
+            /**/
+            if (stateCode == 0)
+            {
+                SPCoderLogger.Logger.LogInfo("Turning the flow OFF. (On the server)");
+            }
+            else
+            {
+                SPCoderLogger.Logger.LogInfo("Turning the flow ON. (On the server)");
+            }
+
+            string dataToUpdate = "{\"statecode\":" + stateCode + "}";
+            bool responseSuccessStatusCode = UpdateFlow(dataToUpdate);
+            if (responseSuccessStatusCode)
+            {
+                if (stateCode == 0)
+                {
+                    SPCoderLogger.Logger.LogInfo("Successfully turned the flow OFF on the server");
+                }
+                else
+                {
+                    SPCoderLogger.Logger.LogInfo("Successfully turned the flow ON on the server");
+                }
+            }
+        }
     }
 }
