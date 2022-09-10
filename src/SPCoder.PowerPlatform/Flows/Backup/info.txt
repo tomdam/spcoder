@@ -1,0 +1,2 @@
+﻿Folder used for storing the backups of Flow definitions
+Each flow will be saved in subfolder named by workflowid (a guid)
