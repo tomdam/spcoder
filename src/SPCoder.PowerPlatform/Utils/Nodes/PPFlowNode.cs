@@ -14,6 +14,7 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
 {
     public class PPFlowNode : BaseNode, LeafNode
     {
+        public PPEnvironmentNode EnvironmentNode { get; set; }
         public PPFlowNode(dynamic dynamicDataFromJson)
         {
             base.Title = dynamicDataFromJson.name;
@@ -37,6 +38,9 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
 
             return null;
         }
+
+        
+
 
         private string GetWorkflowId()
         {
@@ -63,7 +67,7 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
                     else
                         return null;
                 case NodeActions.Open:
-                    if (realObj != null && actionItem.Name == "View json")
+                    if (realObj != null && actionItem.Name == PPConstants.View_Json)
                     {
                         OpenActionResult oar = new OpenActionResult();
                         oar.Source = JsonConvert.SerializeObject(System.Web.Helpers.Json.Decode(realObject.ToString()), Formatting.Indented);
@@ -72,7 +76,7 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
                     }
                     return null;
                 case NodeActions.Save:
-                    if (actionItem.Name == "Update cloud flow (push changes to server)")
+                    if (actionItem.Name == PPConstants.Update_Cloud_Flow)
                     {
                         if (realObj != null && realObject["category"] != null)
                         {
@@ -84,11 +88,11 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
                             UpdateFlow(dataToUpdate);
                         }
                     }
-                    else if (actionItem.Name == "Turn ON the flow")
+                    else if (actionItem.Name == PPConstants.Turn_On_The_Flow)
                     {
                         TurnTheFlowOnOff(1);
                     }
-                    else if (actionItem.Name == "Turn OFF the flow")
+                    else if (actionItem.Name == PPConstants.Turn_Off_The_Flow)
                     {
                         TurnTheFlowOnOff(0);
                     }
@@ -113,12 +117,12 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
             //actions.Add(new BaseActionItem { Node = this, Name = "Open in browser", Action = Core.Utils.NodeActions.ExternalOpen });
             //actions.Add(new BaseActionItem { Node = this, Name = "Copy link", Action = Core.Utils.NodeActions.Copy });
             
-            actions.Add(new BaseActionItem { Node = this, Name = "Turn ON the flow", Action = Core.Utils.NodeActions.Save });
-            actions.Add(new BaseActionItem { Node = this, Name = "Turn OFF the flow", Action = Core.Utils.NodeActions.Save });
-            actions.Add(new BaseActionItem { Node = this, Name = "Update cloud flow (push changes to server)", Action = Core.Utils.NodeActions.Save });
+            actions.Add(new BaseActionItem { Node = this, Name = PPConstants.Turn_On_The_Flow, Action = Core.Utils.NodeActions.Save });
+            actions.Add(new BaseActionItem { Node = this, Name = PPConstants.Turn_Off_The_Flow, Action = Core.Utils.NodeActions.Save });
+            actions.Add(new BaseActionItem { Node = this, Name = PPConstants.Update_Cloud_Flow, Action = Core.Utils.NodeActions.Save });
 
 
-            actions.Add(new BaseActionItem { Node = this, Name = "View json", Action = Core.Utils.NodeActions.Open });
+            actions.Add(new BaseActionItem { Node = this, Name = PPConstants.View_Json, Action = Core.Utils.NodeActions.Open });
 
             //this will be done from a plugin
             //actions.Add(new BaseActionItem { Node = this, Name = "View client data", Action = Core.Utils.NodeActions.Open });
@@ -154,8 +158,8 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ((PPConnector)this.NodeConnector).Token.AccessToken);
+                client.BaseAddress = new Uri(EnvironmentNode.EnvironmentUrl + "/api/data/v9.1/");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", EnvironmentNode.Token.AccessToken);
                 client.Timeout = new TimeSpan(0, 3, 0);
                 client.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
                 client.DefaultRequestHeaders.Add("OData-Version", "4.0");
@@ -163,7 +167,7 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
                 
                 try
                 {
-                    HttpResponseMessage response = client.GetAsync(((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/workflows(" + workflowid + ")").Result;
+                    HttpResponseMessage response = client.GetAsync(EnvironmentNode.EnvironmentUrl + "/api/data/v9.1/workflows(" + workflowid + ")").Result;
                     if (response.IsSuccessStatusCode)
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
@@ -195,14 +199,14 @@ namespace SPCoder.PowerPlatform.Utils.Nodes
             SPCoderLogger.Logger.LogInfo("Updating the flow definition on the server.");            
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ((PPConnector)this.NodeConnector).Token.AccessToken);
+                client.BaseAddress = new Uri(EnvironmentNode.EnvironmentUrl + "/api/data/v9.1/");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", EnvironmentNode.Token.AccessToken);
                 client.Timeout = new TimeSpan(0, 3, 0);
                 client.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
                 client.DefaultRequestHeaders.Add("OData-Version", "4.0");
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var request = new HttpRequestMessage(new HttpMethod("PATCH"), ((PPConnector)this.NodeConnector).EnvironmentUrl + "/api/data/v9.1/workflows(" + realObject["workflowid"].ToString() + ")");
+                var request = new HttpRequestMessage(new HttpMethod("PATCH"), EnvironmentNode.EnvironmentUrl + "/api/data/v9.1/workflows(" + realObject["workflowid"].ToString() + ")");
 
                 request.Content = new StringContent(dataToUpdate, Encoding.UTF8, "application/json");
                 var response = client.SendAsync(request).Result;

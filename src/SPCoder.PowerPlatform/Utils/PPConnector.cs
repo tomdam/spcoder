@@ -6,11 +6,13 @@ using SPCoder.Utils;
 using SPCoder.Utils.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +22,20 @@ namespace SPCoder.PowerPlatform.Utils
 
     public class PPConnector : BaseConnector
     {
-        public AuthenticationResult Token { get; set; }
-        public string EnvironmentUrl { get; set; }
+        public AuthenticationResult AzureManagementToken2 { get; set; }
+        public AuthenticationResult FlowsApiToken {
+            get
+            {
+                if (_flowsApiToken == null)
+                {
+                    _flowsApiToken = GetFlowsApiToken();
+                }
+                return _flowsApiToken;
+            }
+        }
+        //public string EnvironmentUrl { get; set; }
 
+        
         DirectoryInfo Folder { get; set; }
         public PPConnector(string connectorType)
         { }
@@ -30,46 +43,179 @@ namespace SPCoder.PowerPlatform.Utils
         public PPConnector()
         { }
 
-        string RootNodeTitle = "Power platform environment: ";
+        string RootNodeTitle = "Power platform";
 
+        private string clientId = "";
+        private Uri redirectUrl = null;
+        private string authUrl = "";
+        private string flowApiUrl = "";
+        private AuthenticationResult _flowsApiToken;
+
+        private string azureManagementApiUrl = "";
+
+        private Configuration _configuration;
         public override SPCoder.Utils.Nodes.BaseNode GetSPStructure(string envUrl)
         {
-            this.EnvironmentUrl = envUrl;
-            var clientId = "51f81489-12ee-4a9e-aaae-a2591f45987d";            
-            var redirectUrl = new Uri("app://58145B91-0C36-4500-8554-080854F2AC97");
-            string auth = "https://login.microsoftonline.com/common";
-            var context = new AuthenticationContext(auth, false);
+            _configuration = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+            //this.EnvironmentUrl = envUrl;
+            //the default value is the one of MS Samples app.
+            clientId = _configuration.AppSettings.Settings["PPClientId"].Value;//  "51f81489-12ee-4a9e-aaae-a2591f45987d";
+            //the default value is the one of MS Samples app.
+            redirectUrl = new Uri(_configuration.AppSettings.Settings["PPRedirectUrl"].Value);// new Uri("app://58145B91-0C36-4500-8554-080854F2AC97");            
+            authUrl = _configuration.AppSettings.Settings["PPAuthUrl"].Value;// "https://login.microsoftonline.com/common";
+            var context = new AuthenticationContext(authUrl, false);
             var platformParameters = new PlatformParameters(PromptBehavior.SelectAccount);
-            Token = context.AcquireTokenAsync(this.EnvironmentUrl, clientId, redirectUrl, platformParameters, UserIdentifier.AnyUser).Result;
+            azureManagementApiUrl = _configuration.AppSettings.Settings["PPFAzureManagementApiUrl"].Value; // "https://management.azure.com";
+
+            //This could be used to connect just to one Environment
+            AzureManagementToken2 = context.AcquireTokenAsync(azureManagementApiUrl, clientId, redirectUrl, platformParameters, UserIdentifier.AnyUser).Result;
 
             return GenerateRootNode();
+        }
+
+        /*public async Task<AuthenticationResult> SilentlyGetTokenForUrl(string apiUrlForGettingToken)
+        {
+            var context = new AuthenticationContext(authUrl, false);
+            var tkn = await context.AcquireTokenSilentAsync(apiUrlForGettingToken, clientId);
+            return tkn;
+        }*/
+
+        public AuthenticationResult SilentlyGetTokenForUrl(string apiUrlForGettingToken)
+        {
+            var context = new AuthenticationContext(authUrl, false);
+            var tkn = context.AcquireTokenSilentAsync(apiUrlForGettingToken, clientId).Result;
+            return tkn;
+        }
+
+        private AuthenticationResult GetFlowsApiToken()
+        {
+            flowApiUrl = _configuration.AppSettings.Settings["PPFlowApiUrl"].Value; // "https://service.flow.microsoft.com";
+            var context = new AuthenticationContext(authUrl, false);            
+            var tkn = context.AcquireTokenSilentAsync(flowApiUrl, clientId).Result;
+            return tkn;
         }
 
         public override BaseNode GenerateRootNode()
         {
             //PPFlowContainerNode
-            var rezFlows = GetAllFlows();
+            var rezFlows = GetAllEnvironments();
+            dynamic jsond = JsonConvert.DeserializeObject(rezFlows.Result.ToString());
+            //rezFlows.Result;
+
+
+            BaseNode rootNode = new PPEnvironmentContainerNode();
+            rootNode.Title = RootNodeTitle;
+            rootNode.NodeConnector = this;
+            rootNode.OMType = ObjectModelType.REMOTE;
+            rootNode.SPObject = jsond["value"];
+            rootNode.LoadedData = true;
+            GenerateEnvironmentNodes(rootNode, jsond);
+            return rootNode;
+        }
+
+        public void GenerateEnvironmentNodes(BaseNode rootNode, dynamic jsond)
+        {
+            
+
+            List<Newtonsoft.Json.Linq.JObject> list = new List<Newtonsoft.Json.Linq.JObject>();
+            foreach (var flow in jsond["value"])
+            {
+                list.Add(flow);
+            }
+
+            list = list.OrderBy(m => m["properties"]["displayName"]).ToList();
+            foreach (var environment in list)
+            {
+                var myNode = new PPEnvironmentNode(environment);
+                rootNode.Children.Add(myNode);
+                myNode.ParentNode = rootNode;
+                myNode.RootNode = rootNode;
+                myNode.NodeConnector = this;
+                myNode.LoadedData = false;
+                myNode.SPObject = environment;
+            }
+
+        }
+
+        public override BaseNode ExpandNode(BaseNode node, bool doIfLoaded = false)
+        {
+            if (node is PPEnvironmentNode)
+            {
+                //If not loaded
+                if (!doIfLoaded)
+                {
+                    if (node.ParentNode.Children != null && node.ParentNode.Children.Contains(node))
+                    {
+                        node.ParentNode.Children.Remove(node);
+                    }
+                    //
+                    var rezFlows = ((PPEnvironmentNode)node).GetAllFlows();
+                    dynamic jsond = JsonConvert.DeserializeObject(rezFlows.Result.ToString());
+                    GenerateFlowNodes(node.RootNode, node, jsond);
+                }
+            }
+            return node;
+        }
+
+        public async Task<object> GetAllEnvironments()
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AzureManagementToken2.AccessToken);
+                client.Timeout = new TimeSpan(0, 3, 0);
+                client.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
+                client.DefaultRequestHeaders.Add("OData-Version", "4.0");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                try
+                {
+                    string endpoint = _configuration.AppSettings.Settings["PPFAzureManagementApiGetEnvironmentsEndpoint"].Value;
+                    HttpResponseMessage response = client.GetAsync(endpoint).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        return jsonString;
+                    }
+                    else
+                    {
+                        SPCoderLogger.Logger.LogError(string.Format("Getting flows failed: {0}", response.ReasonPhrase));
+                        Console.WriteLine("Getting flows failed: {0}", response.ReasonPhrase);
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SPCoderLogger.Logger.LogError(ex);
+                    Console.WriteLine("Error: {0}", ex.Message);
+                    return null;
+                }
+            }
+        }
+        /*public BaseNode ExpandEnvironmentNode(string environmentUrl)
+        {
+            //PPFlowContainerNode
+            var rezFlows = GetAllFlows(environmentUrl);
             dynamic jsond = JsonConvert.DeserializeObject(rezFlows.Result.ToString());
             //rezFlows.Result;
 
 
             BaseNode rootNode = new PPEnvironmentNode();
-            rootNode.Title = RootNodeTitle + EnvironmentUrl;
+            rootNode.Title = RootNodeTitle + environmentUrl;
             rootNode.NodeConnector = this;
             rootNode.OMType = ObjectModelType.REMOTE;
             rootNode.SPObject = jsond["value"];
             rootNode.LoadedData = true;
             GenerateFlowNodes(rootNode, jsond);
             return rootNode;
-        }
-        public void GenerateFlowNodes(BaseNode rootNode, dynamic jsond)
+        }*/
+        public void GenerateFlowNodes(BaseNode rootNode, BaseNode environmentNode, dynamic jsond)
         {
             var myNode = new PPFlowContainerNode();
-            rootNode.Children.Add(myNode);
-            myNode.ParentNode = rootNode;
+            environmentNode.Children.Add(myNode);
+            myNode.ParentNode = environmentNode;
             myNode.RootNode = rootNode;
             myNode.NodeConnector = this;
-            myNode.LoadedData = true;
+            myNode.LoadedData = false;
 
             List<Newtonsoft.Json.Linq.JObject> list = new List<Newtonsoft.Json.Linq.JObject>();
             foreach (var flow in jsond["value"])
@@ -91,19 +237,20 @@ namespace SPCoder.PowerPlatform.Utils
 
         protected void AddCategoryAndFlows(BaseNode parentNode, BaseNode rootNode, List<Newtonsoft.Json.Linq.JObject> flows, string categoryNumber, string categoryName)
         {
-            var myCategoryNode = new PPFlowContainerNode();
+            var myCategoryNode = new PPFlowContainerNode();            
             myCategoryNode.Title = categoryName;
             parentNode.Children.Add(myCategoryNode);
             myCategoryNode.ParentNode = parentNode;
             myCategoryNode.RootNode = rootNode;
             myCategoryNode.NodeConnector = this;
-            myCategoryNode.LoadedData = true;
+            myCategoryNode.LoadedData = false;
 
             foreach (var flow in flows)
             {
                 if (categoryNumber != flow["category"].ToString()) continue;
 
-                BaseNode myListNode = new PPFlowNode(flow);
+                PPFlowNode myListNode = new PPFlowNode(flow);
+                myListNode.EnvironmentNode = (PPEnvironmentNode)parentNode.ParentNode;
                 myCategoryNode.Children.Add(myListNode);
                 myListNode.ParentNode = myCategoryNode;
                 myListNode.RootNode = rootNode;
@@ -111,40 +258,6 @@ namespace SPCoder.PowerPlatform.Utils
             }
         }
         //GenerateFlowNodes
-        public async Task<object> GetAllFlows()
-        {
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token.AccessToken);
-                client.Timeout = new TimeSpan(0, 3, 0);
-                client.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
-                client.DefaultRequestHeaders.Add("OData-Version", "4.0");
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                try
-                {
-                    HttpResponseMessage response = client.GetAsync(this.EnvironmentUrl + "/api/data/v9.1/workflows").Result;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonString = await response.Content.ReadAsStringAsync();
-                        return jsonString; 
-                    }
-                    else
-                    {
-                        SPCoderLogger.Logger.LogError(string.Format("Getting flows failed: {0}", response.ReasonPhrase));
-                        Console.WriteLine("Getting flows failed: {0}", response.ReasonPhrase);
-                        return null;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SPCoderLogger.Logger.LogError(ex);
-                    Console.WriteLine("Error: {0}", ex.Message);
-                    return null;
-                }
-            }
-        }
-
         
 
         public override string ImagesPath

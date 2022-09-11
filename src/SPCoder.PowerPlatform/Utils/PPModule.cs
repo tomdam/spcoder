@@ -36,7 +36,7 @@ namespace SPCoder.PowerPlatform.Utils
         {
             get
             {
-                return new List<string> { "Power platform environment" };
+                return new List<string> { "Power platform" };
             }
             set
             { }
