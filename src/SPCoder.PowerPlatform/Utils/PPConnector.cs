@@ -22,7 +22,7 @@ namespace SPCoder.PowerPlatform.Utils
 
     public class PPConnector : BaseConnector
     {
-        public AuthenticationResult AzureManagementToken2 { get; set; }
+        public AuthenticationResult AzureManagementToken { get; set; }
         public AuthenticationResult FlowsApiToken {
             get
             {
@@ -68,7 +68,7 @@ namespace SPCoder.PowerPlatform.Utils
             azureManagementApiUrl = _configuration.AppSettings.Settings["PPFAzureManagementApiUrl"].Value; // "https://management.azure.com";
 
             //This could be used to connect just to one Environment
-            AzureManagementToken2 = context.AcquireTokenAsync(azureManagementApiUrl, clientId, redirectUrl, platformParameters, UserIdentifier.AnyUser).Result;
+            AzureManagementToken = context.AcquireTokenAsync(azureManagementApiUrl, clientId, redirectUrl, platformParameters, UserIdentifier.AnyUser).Result;
 
             return GenerateRootNode();
         }
@@ -83,16 +83,16 @@ namespace SPCoder.PowerPlatform.Utils
         public AuthenticationResult SilentlyGetTokenForUrl(string apiUrlForGettingToken)
         {
             var context = new AuthenticationContext(authUrl, false);
-            var tkn = context.AcquireTokenSilentAsync(apiUrlForGettingToken, clientId).Result;
+            //, AzureManagementToken.UserInfo.UniqueId
+            var ui = new UserIdentifier(AzureManagementToken.UserInfo.UniqueId, UserIdentifierType.UniqueId);
+            var tkn = context.AcquireTokenSilentAsync(apiUrlForGettingToken, clientId, ui).Result;
             return tkn;
         }
 
         private AuthenticationResult GetFlowsApiToken()
         {
             flowApiUrl = _configuration.AppSettings.Settings["PPFlowApiUrl"].Value; // "https://service.flow.microsoft.com";
-            var context = new AuthenticationContext(authUrl, false);            
-            var tkn = context.AcquireTokenSilentAsync(flowApiUrl, clientId).Result;
-            return tkn;
+            return SilentlyGetTokenForUrl(flowApiUrl);
         }
 
         public override BaseNode GenerateRootNode()
@@ -161,7 +161,7 @@ namespace SPCoder.PowerPlatform.Utils
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AzureManagementToken2.AccessToken);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AzureManagementToken.AccessToken);
                 client.Timeout = new TimeSpan(0, 3, 0);
                 client.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
                 client.DefaultRequestHeaders.Add("OData-Version", "4.0");
