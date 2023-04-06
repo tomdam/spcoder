@@ -25,6 +25,7 @@
 
         public const string O365 = "O365";
         public const string O365_APP = "O365 APP";
+        public const string O365_MFA = "O365 MFA";
         public const string FBA = "FBA";
         public const string WIN = "WIN";
         public const string FILESYSTEM = "FILESYSTEM";
