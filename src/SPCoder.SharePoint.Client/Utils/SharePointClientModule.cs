@@ -39,8 +39,9 @@ namespace SPCoder.SharePoint.Client.Utils
                 return new List<string> {
                     "SharePoint Client WIN",
                     "SharePoint Client FBA",
-                    "SharePoint Client O365",
-                    "SharePoint Client O365 APP"};
+                    "SharePoint Client O365",                    
+                    "SharePoint Client O365 APP",
+                    "SharePoint Client O365 MFA",};
             }
             set
             { }

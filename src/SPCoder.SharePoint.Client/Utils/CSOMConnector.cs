@@ -17,6 +17,7 @@ using System.Security;
 using System.Text;
 using System.Windows.Forms;
 using System.Web.Helpers;
+using System.Runtime.Remoting.Contexts;
 
 namespace SPCoder.Utils
 {
@@ -31,6 +32,8 @@ namespace SPCoder.Utils
         {
             if (connectorType.Contains(SPCoderConstants.O365_APP))
                 this.AuthenticationType = SPCoderConstants.O365_APP;
+            else if (connectorType.Contains(SPCoderConstants.O365_MFA))
+                this.AuthenticationType = SPCoderConstants.O365_MFA;
             else if (connectorType.Contains(SPCoderConstants.O365))
                 this.AuthenticationType = SPCoderConstants.O365;
             else if (connectorType.Contains(SPCoderConstants.FBA))
@@ -207,6 +210,11 @@ namespace SPCoder.Utils
                 string accessToken = SPCoder.SharePoint.Client.TokenHelper.GetAppOnlyAccessToken(SPCoder.SharePoint.Client.TokenHelper.SharePointPrincipal, new Uri(siteUrl).Authority, realm).AccessToken;
                 Context = SPCoder.SharePoint.Client.TokenHelper.GetClientContextWithAccessToken(siteUrl, accessToken);
 
+            }
+            else if (this.AuthenticationType == SPCoderConstants.O365_MFA)
+            {
+                var authManager = new OfficeDevPnP.Core.AuthenticationManager();
+                Context = authManager.GetWebLoginClientContext(siteUrl);
             }
             else if (this.AuthenticationType == SPCoderConstants.FBA)
             {
