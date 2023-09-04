@@ -32,7 +32,7 @@ namespace SPCoder.Utils
         {
             if (connectorType.Contains(SPCoderConstants.O365_APP))
                 this.AuthenticationType = SPCoderConstants.O365_APP;
-            if (connectorType.Contains(SPCoderConstants.O365_MFA))
+            else if (connectorType.Contains(SPCoderConstants.O365_MFA))
                 this.AuthenticationType = SPCoderConstants.O365_MFA;
             else if (connectorType.Contains(SPCoderConstants.O365))
                 this.AuthenticationType = SPCoderConstants.O365;

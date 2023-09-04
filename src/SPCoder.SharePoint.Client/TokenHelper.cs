@@ -24,6 +24,7 @@ using AudienceRestriction = Microsoft.IdentityModel.Tokens.AudienceRestriction;
 using AudienceUriValidationFailedException = Microsoft.IdentityModel.Tokens.AudienceUriValidationFailedException;
 using SecurityTokenHandlerConfiguration = Microsoft.IdentityModel.Tokens.SecurityTokenHandlerConfiguration;
 using X509SigningCredentials = Microsoft.IdentityModel.SecurityTokenService.X509SigningCredentials;
+using System.Configuration;
 
 namespace SPCoder.SharePoint.Client
 {
@@ -476,7 +477,7 @@ namespace SPCoder.SharePoint.Client
             clientContext.AuthenticationMode = ClientAuthenticationMode.Anonymous;
             clientContext.FormDigestHandlingEnabled = false;
             clientContext.ExecutingWebRequest +=
-                delegate(object oSender, WebRequestEventArgs webRequestEventArgs)
+                delegate (object oSender, WebRequestEventArgs webRequestEventArgs)
                 {
                     webRequestEventArgs.WebRequestExecutor.RequestHeaders["Authorization"] =
                         "Bearer " + accessToken;
@@ -709,19 +710,38 @@ namespace SPCoder.SharePoint.Client
         //
         // Hosted add-in configuration
         //
-        private static readonly string ClientId = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("ClientId")) ? WebConfigurationManager.AppSettings.Get("HostedAppName") : WebConfigurationManager.AppSettings.Get("ClientId");
-        private static readonly string IssuerId = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("IssuerId")) ? ClientId : WebConfigurationManager.AppSettings.Get("IssuerId");
-        private static readonly string HostedAppHostNameOverride = WebConfigurationManager.AppSettings.Get("HostedAppHostNameOverride");
-        private static readonly string HostedAppHostName = WebConfigurationManager.AppSettings.Get("HostedAppHostName");
-        private static readonly string ClientSecret = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("ClientSecret")) ? WebConfigurationManager.AppSettings.Get("HostedAppSigningKey") : WebConfigurationManager.AppSettings.Get("ClientSecret");
-        private static readonly string SecondaryClientSecret = WebConfigurationManager.AppSettings.Get("SecondaryClientSecret");
-        private static readonly string Realm = WebConfigurationManager.AppSettings.Get("Realm");
-        private static readonly string ServiceNamespace = WebConfigurationManager.AppSettings.Get("Realm");
+        //private static readonly string ClientId = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("ClientId")) ? WebConfigurationManager.AppSettings.Get("HostedAppName") : WebConfigurationManager.AppSettings.Get("ClientId");
+        private static string ClientId
+        {
+            get
+            {
+                return string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("ClientId")) ? ConfigurationManager.AppSettings.Get("HostedAppName") : ConfigurationManager.AppSettings.Get("ClientId");
+            }
+        }
+        private static string IssuerId
+        {
+            get
+            {
+                return string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("IssuerId")) ? ClientId : ConfigurationManager.AppSettings.Get("IssuerId");
+            }
+        }
+        private static string HostedAppHostNameOverride = WebConfigurationManager.AppSettings.Get("HostedAppHostNameOverride");
+        private static string HostedAppHostName = WebConfigurationManager.AppSettings.Get("HostedAppHostName");
+        //private static readonly string ClientSecret = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("ClientSecret")) ? WebConfigurationManager.AppSettings.Get("HostedAppSigningKey") : WebConfigurationManager.AppSettings.Get("ClientSecret");
+        private static string ClientSecret
+        {  get 
+            { 
+                return string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("ClientSecret")) ? ConfigurationManager.AppSettings.Get("HostedAppSigningKey") : ConfigurationManager.AppSettings.Get("ClientSecret"); 
+            }
+        }
+        private static string SecondaryClientSecret = ConfigurationManager.AppSettings.Get("SecondaryClientSecret");
+        private static string Realm = ConfigurationManager.AppSettings.Get("Realm");
+        private static string ServiceNamespace = ConfigurationManager.AppSettings.Get("Realm");
 
-        private static readonly string ClientSigningCertificatePath = WebConfigurationManager.AppSettings.Get("ClientSigningCertificatePath");
-        private static readonly string ClientSigningCertificatePassword = WebConfigurationManager.AppSettings.Get("ClientSigningCertificatePassword");
-        private static readonly X509Certificate2 ClientCertificate = (string.IsNullOrEmpty(ClientSigningCertificatePath) || string.IsNullOrEmpty(ClientSigningCertificatePassword)) ? null : new X509Certificate2(ClientSigningCertificatePath, ClientSigningCertificatePassword);
-        private static readonly X509SigningCredentials SigningCredentials = (ClientCertificate == null) ? null : new X509SigningCredentials(ClientCertificate, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest);
+        private static string ClientSigningCertificatePath = ConfigurationManager.AppSettings.Get("ClientSigningCertificatePath");
+        private static string ClientSigningCertificatePassword = ConfigurationManager.AppSettings.Get("ClientSigningCertificatePassword");
+        private static X509Certificate2 ClientCertificate = (string.IsNullOrEmpty(ClientSigningCertificatePath) || string.IsNullOrEmpty(ClientSigningCertificatePassword)) ? null : new X509Certificate2(ClientSigningCertificatePath, ClientSigningCertificatePassword);
+        private static X509SigningCredentials SigningCredentials = (ClientCertificate == null) ? null : new X509SigningCredentials(ClientCertificate, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest);
 
         #endregion
 
