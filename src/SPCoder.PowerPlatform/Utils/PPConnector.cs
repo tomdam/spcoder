@@ -99,6 +99,10 @@ namespace SPCoder.PowerPlatform.Utils
         {
             //PPFlowContainerNode
             var rezFlows = GetAllEnvironments();
+            if (rezFlows == null || rezFlows.Result == null)
+            { 
+                return null;
+            }
             dynamic jsond = JsonConvert.DeserializeObject(rezFlows.Result.ToString());
             //rezFlows.Result;
 

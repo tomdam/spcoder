@@ -8,6 +8,16 @@ public void DoShowObjectInGrid(object item)
     main.ShowGridWindow();
 }
 
+// Helper variable and method, used for showing a DataTable of a DataSet object in gridview.
+System.Data.DataSet datasetObjectForGrid = null;
+public void DoShowDatasetObjectInGrid(object item)
+{
+    if (item == null) return;
+    datasetObjectForGrid = (System.Data.DataSet)item;
+    main.SpGrid.ShowExpressionInGrid("datasetObjectForGrid.Tables[0]");
+    main.ShowGridWindow();
+}
+
 //Opens new code window (tab)
 //Used by one of the plugins
 public void GenerateNewSourceTab(object item)
